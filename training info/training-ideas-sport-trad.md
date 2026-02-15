@@ -82,7 +82,6 @@ Typical weekly loading:
   - Foot-on campusing (optional): choose ~1 min sequence; start rest 1-2x work and reduce over time; guardrails: avoid with elbow/shoulder irritation; keep volume low; stop on tendon warning signs.
 - Anaerobic power:
   - Boulders with short rests: 4 reps of 5-7 moves; rest <= climb time; 4 sets with ~10 min between sets. Progress toward less rest; target true max power output.
-  - Broken circuit / redpoint circuit: ~25 moves split into 3-4 sections (or sustained 20-30 moves). Link sections, then full circuit; if you fall, pull back on and finish; progressively add moves and/or difficulty.
 - Strength:
   - Primary methods: limit bouldering + fingerboard; maintain strength emphasis across all phases.
 
