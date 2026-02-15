@@ -49,7 +49,7 @@
   - immutable version creation + tweak history persistence
 - Added chat backend foundations:
   - owner-scoped thread/message APIs
-  - assistant response generation using condensed context fallback
+  - assistant response generation using discipline-specific training context files
   - no direct plan JSON mutation from chat operations
 
 ## Subagent-D (Tests)

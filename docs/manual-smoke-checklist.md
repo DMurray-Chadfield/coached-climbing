@@ -12,7 +12,8 @@ Run this checklist with Docker runtime:
 ## Plan Creation + Onboarding
 - Dashboard shows primary `Create Plan` action.
 - Clicking `Create Plan` creates a draft and routes to `/onboarding?planId=...`.
-- Questionnaire saves successfully for that specific plan.
+- Questionnaire saves successfully for that specific plan and redirects to `/plans/[planId]`.
+- Questionnaire requires `Plan Type` (`Sport/Trad` or `Bouldering`).
 - Invalid questionnaire fields are rejected.
 
 ## Plan Generation
@@ -23,8 +24,10 @@ Run this checklist with Docker runtime:
 ## Plans
 - Dashboard lists draft and generated plans newest-first.
 - Draft plan row shows onboarding + generate actions.
+- Generated plan row shows prominent `Open plan` action.
 - Plan detail only available to owner.
 - Current plan detail renders sessions/activities and completion controls without errors.
+- Deleting a plan from dashboard hides it from dashboard and blocks plan detail/onboarding access.
 
 ## Completion Tracking
 - Activity checkbox toggles persist after page reload.

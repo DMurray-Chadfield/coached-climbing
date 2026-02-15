@@ -65,7 +65,6 @@ Taper guidance (pre-trip / pre-performance):
 
 Training methods by component (quick):
 - Aero Cap: sustained controllable pump; no terminal failure.
-  - Keep each continuous climbing interval <= 15 minutes.
   - Keep total climbing work <= 45 minutes/session (rests allowed between blocks).
 - An Cap: 12-15 move hard circuits/boulders with longer rests.
 - Aero Pow: sustained hard pump circuits with shorter rests.
@@ -73,7 +72,7 @@ Training methods by component (quick):
 
 System/component prescriptions (detailed):
 - Aero Cap / ARC:
-  - Continuous climbing: 20-40 min continuous (or ~10 min as warm-down). Cue: stay in control; no terminal pump.
+  - Continuous climbing: 20-40 min continuous (or ~10 min as warm-down). Cue: stay in control; no terminal pump. Start off plan with blocs of 10 mins and build up. Don't go above 40 mins total on for a session.
   - General x-on / x-off: e.g., 10 min on / 10 min off x 4. Cue: off blocks can be replaced with low-intensity ARC for continuous 30-40 min.
   - Route 4x4s: lead one route 4 times, then repeat with more sets as tolerated. Cue: adjust route grade to stay in Aero Cap intensity.
 - An Cap:

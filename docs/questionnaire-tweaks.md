@@ -9,9 +9,12 @@
 6. Replace `Boulder Grade`, `Route Grade`, and `Current Level Notes` with one combined field asking for all three details.
 
 ## New Contract
+- `plan_discipline: "bouldering" | "sport_trad"`
 - `target_focus: { summary: string, date?: string }`
 - `current_level_summary: string`
+- `facilities_and_equipment_available: string`
 - onboarding is plan-scoped and saved with `planId`
+- successful save redirects to `/plans/[planId]`
 
 ## Implemented In
 - [x] `/Users/Student/src/tomteece.github.io/src/lib/schemas/questionnaire.ts`

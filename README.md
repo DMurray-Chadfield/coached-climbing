@@ -49,7 +49,10 @@ MVP vertical slice implementation for:
 ## Key Requirements Implemented
 - Dashboard-first flow with primary `Create Plan` action.
 - Onboarding is plan-scoped (`/onboarding?planId=...`).
+- Onboarding includes explicit `plan_discipline` selection (`bouldering` or `sport_trad`).
+- Onboarding save redirects to the plan page.
 - Generation is plan-scoped and uses the latest questionnaire for that plan.
+- Soft-delete is supported for plans (hidden from active UI, retained in DB).
 - Structured output:
   - `response_format.type = json_schema`
   - `json_schema.strict = true`
