@@ -70,7 +70,7 @@ Web application that collects climber profile data, sends structured inputs to a
 15. Backend validates JSON and saves as new plan version with tweak metadata.
 16. System runs completion/log carry-forward mapping from prior version:
    - copy high-confidence matches
-   - flag low-confidence items as `review_needed`
+   - skip low-confidence matches (no automatic carry-forward)
 17. UI shows updated plan plus LLM change summary.
 18. In separate plan-chat UI, user asks questions about their plan (without auto-editing).
 19. Backend sends to LLM:

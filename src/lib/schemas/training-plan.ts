@@ -1,0 +1,80 @@
+import Ajv, { type ErrorObject } from "ajv";
+
+export const trainingPlanJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["plan_name", "start_date", "weeks"],
+  properties: {
+    plan_name: { type: "string", minLength: 1 },
+    start_date: { type: "string", minLength: 1 },
+    weeks: {
+      type: "array",
+      minItems: 1,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["week_number", "focus", "sessions"],
+        properties: {
+          week_number: { type: "integer", minimum: 1 },
+          focus: { type: "string", minLength: 1 },
+          sessions: {
+            type: "array",
+            minItems: 1,
+            items: {
+              type: "object",
+              additionalProperties: false,
+              required: [
+                "session_number",
+                "session_type",
+                "description",
+                "estimated_minutes",
+                "activities"
+              ],
+              properties: {
+                session_number: { type: "integer", minimum: 1 },
+                session_type: { type: "string", minLength: 1 },
+                description: { type: "string", minLength: 1 },
+                estimated_minutes: { type: "integer", minimum: 1 },
+                activities: {
+                  type: "array",
+                  minItems: 1,
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    required: ["activity_id", "name", "description"],
+                    properties: {
+                      activity_id: { type: "string", minLength: 1 },
+                      name: { type: "string", minLength: 1 },
+                      description: { type: "string", minLength: 1 },
+                      duration_minutes: { type: "integer", minimum: 1 },
+                      intensity: { type: "string" },
+                      completion_criteria: { type: "string" }
+                    },
+                    anyOf: [
+                      { required: ["duration_minutes"] },
+                      { required: ["completion_criteria"] }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} as const;
+
+const ajv = new Ajv({ allErrors: true, strict: false });
+const validator = ajv.compile(trainingPlanJsonSchema);
+
+export function validateTrainingPlan(value: unknown): {
+  valid: boolean;
+  errors: ErrorObject[];
+} {
+  const valid = validator(value);
+  return {
+    valid: Boolean(valid),
+    errors: (validator.errors ?? []) as ErrorObject[]
+  };
+}

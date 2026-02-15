@@ -227,7 +227,6 @@
   - Copy recent activity logs only for high-confidence matches
 - If mapping confidence is low:
   - leave unchecked / not copied
-  - flag item as `review_needed` for user confirmation
 - Keep all prior completions/logs intact on old version for audit history
 
 ## Homepage Query Requirements
