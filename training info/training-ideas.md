@@ -32,7 +32,7 @@ Training components used in this framework:
 
 ## Periodization Approach
 - `Base phase`: prioritize Strength + `An Cap` + `Aero Cap`; maintain powers.
-- `Peak phase`: prioritize `Aero Pow` + `An Pow`; maintain strength; increase route specificity.
+- `Specialization phase`: prioritize `Aero Pow` + `An Pow`; maintain strength; increase route specificity.
 - Late peak: include mixed circuits that replicate objective structure (hard sections, rests, pacing).
 
 ## Adaptation Timelines (Approx.)

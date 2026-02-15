@@ -18,9 +18,20 @@ vi.mock("@/lib/services/plan-chat", () => ({
   generatePlanChatReply: vi.fn()
 }));
 
+vi.mock("@/lib/services/plan-completion", () => ({
+  getCompletionSnapshot: vi.fn()
+}));
+
+vi.mock("@/lib/services/plan-notes", () => ({
+  getNotesSnapshot: vi.fn()
+}));
+
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     trainingPlan: {
+      findFirst: vi.fn()
+    },
+    questionnaireResponse: {
       findFirst: vi.fn()
     },
     trainingPlanVersion: {
@@ -71,6 +82,8 @@ vi.mock("@/lib/prisma", () => ({
 import { requireUserId } from "@/lib/server/auth-guard";
 import { prisma } from "@/lib/prisma";
 import { generatePlanChatReply } from "@/lib/services/plan-chat";
+import { getCompletionSnapshot } from "@/lib/services/plan-completion";
+import { getNotesSnapshot } from "@/lib/services/plan-notes";
 import { GET as GET_THREADS, POST as POST_THREADS } from "@/app/api/plans/[planId]/chat/threads/route";
 import {
   GET as GET_MESSAGES,
@@ -94,6 +107,10 @@ describe("chat routes", () => {
 
   it("returns 404 when creating thread with unauthorized version", async () => {
     vi.mocked(requireUserId).mockResolvedValue("user_1");
+    vi.mocked(prisma.trainingPlan.findFirst).mockResolvedValue({
+      id: "plan_1",
+      currentPlanVersionId: "version_1"
+    } as never);
     vi.mocked(prisma.trainingPlanVersion.findFirst).mockResolvedValue(null as never);
 
     const response = await POST_THREADS(
@@ -133,6 +150,39 @@ describe("chat routes", () => {
     expect(response.status).toBe(200);
   });
 
+  it("reuses existing default thread for current plan version", async () => {
+    vi.mocked(requireUserId).mockResolvedValue("user_1");
+    vi.mocked(prisma.trainingPlan.findFirst).mockResolvedValue({
+      id: "plan_1",
+      currentPlanVersionId: "version_1"
+    } as never);
+    vi.mocked(prisma.trainingPlanVersion.findFirst).mockResolvedValue({
+      id: "version_1",
+      trainingPlanId: "plan_1"
+    } as never);
+    vi.mocked(prisma.planChatThread.findFirst).mockResolvedValue({
+      id: "thread_1",
+      planVersionId: "version_1",
+      title: "Plan chat",
+      createdAt: new Date("2026-02-15T00:00:00.000Z"),
+      updatedAt: new Date("2026-02-15T00:00:00.000Z")
+    } as never);
+
+    const response = await POST_THREADS(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      }),
+      {
+        params: { planId: "ckzv3m9ub0000n8p7h9grq2la" }
+      }
+    );
+
+    expect(response.status).toBe(200);
+    expect(prisma.planChatThread.create).not.toHaveBeenCalled();
+  });
+
   it("returns 404 for message post to non-owned thread", async () => {
     vi.mocked(requireUserId).mockResolvedValue("user_1");
     vi.mocked(prisma.planChatThread.findFirst).mockResolvedValue(null as never);
@@ -169,6 +219,22 @@ describe("chat routes", () => {
       }
     } as never);
     vi.mocked(prisma.planChatMessage.findMany).mockResolvedValue([] as never);
+    vi.mocked(prisma.questionnaireResponse.findFirst).mockResolvedValue({
+      data: { sessions_per_week: 3 }
+    } as never);
+    vi.mocked(getCompletionSnapshot).mockResolvedValue({
+      plan_completion_percent: 25,
+      completed_sessions: 1,
+      total_sessions: 4,
+      completed_activities: 2,
+      total_activities: 8,
+      sessions: [],
+      activities: []
+    });
+    vi.mocked(getNotesSnapshot).mockResolvedValue({
+      sessions: [],
+      activities: []
+    });
     vi.mocked(generatePlanChatReply).mockResolvedValue("Assistant response");
 
     const response = await POST_MESSAGES(
@@ -187,6 +253,13 @@ describe("chat routes", () => {
 
     expect(response.status).toBe(201);
     expect(prisma.trainingPlanVersion.update).not.toHaveBeenCalled();
+    expect(getCompletionSnapshot).toHaveBeenCalledTimes(1);
+    expect(getNotesSnapshot).toHaveBeenCalledTimes(1);
+    expect(generatePlanChatReply).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onboarding: { sessions_per_week: 3 }
+      })
+    );
   });
 
   it("lists messages for owned thread", async () => {

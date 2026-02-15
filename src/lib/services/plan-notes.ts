@@ -15,20 +15,20 @@ export type NotesSnapshot = {
   }>;
 };
 
-type SnapshotInput = {
+type GetNotesSnapshotInput = {
   userId: string;
   trainingPlanId: string;
   planVersionId: string;
 };
 
-type SetSessionNoteInput = SnapshotInput & {
+type SetSessionNoteInput = GetNotesSnapshotInput & {
   weekNumber: number;
   sessionNumber: number;
   noteText: string;
   planJson: unknown;
 };
 
-type SetActivityNoteInput = SnapshotInput & {
+type SetActivityNoteInput = GetNotesSnapshotInput & {
   weekNumber: number;
   sessionNumber: number;
   activityId: string;
@@ -58,7 +58,7 @@ function assertSessionAndActivity(input: {
   }
 }
 
-export async function getNotesSnapshot(input: SnapshotInput): Promise<NotesSnapshot> {
+export async function getNotesSnapshot(input: GetNotesSnapshotInput): Promise<NotesSnapshot> {
   const [sessionNotes, activityNotes] = await Promise.all([
     prisma.sessionNote.findMany({
       where: {

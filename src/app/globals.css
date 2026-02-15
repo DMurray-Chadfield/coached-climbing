@@ -267,3 +267,67 @@ a:hover {
   color: #0f3760;
   margin-bottom: 0.45rem;
 }
+
+.plan-chat-card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.plan-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.plan-chat-subtitle {
+  margin: 0;
+  color: #475569;
+}
+
+.plan-chat-messages {
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #f8fbff;
+  padding: 0.75rem;
+  max-height: 420px;
+  overflow: auto;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.plan-chat-empty {
+  margin: 0;
+  color: #475569;
+}
+
+.plan-chat-message {
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #dbe3ef;
+  background: #ffffff;
+}
+
+.plan-chat-message.user {
+  background: #e8f0fb;
+  border-color: #c8d9f0;
+}
+
+.plan-chat-message.assistant {
+  background: #f8fbff;
+}
+
+.plan-chat-message h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+}
+
+.plan-chat-message p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.plan-chat-form {
+  display: grid;
+  gap: 0.45rem;
+}

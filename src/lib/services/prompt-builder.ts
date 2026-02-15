@@ -6,7 +6,8 @@ const SAFETY_CONSTRAINTS = [
   "Respect injuries and constraints exactly.",
   "Output must match JSON schema exactly.",
   "Use session_number based plans; do not assume weekdays.",
-  "Keep volumes realistic for the user profile."
+  "Keep volumes realistic for the user profile.",
+  "If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable)."
 ].join(" ");
 
 export function buildGenerationMessages(params: {

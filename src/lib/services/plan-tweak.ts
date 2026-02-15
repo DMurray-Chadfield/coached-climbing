@@ -124,7 +124,7 @@ export function buildTweakMessages(params: {
     {
       role: "system",
       content:
-        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema."
+        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema. If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable)."
     },
     {
       role: "user",

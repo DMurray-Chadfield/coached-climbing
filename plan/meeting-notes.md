@@ -24,3 +24,27 @@
 | Install Node.js + pnpm locally and run lint/typecheck/tests | Team | 2026-02-16 |
 | Run manual desktop/mobile smoke checklist for implemented flows | Team | 2026-02-16 |
 | Start next slice (completion tracking + tweak/chat flows) | Team | 2026-02-17 |
+
+## 2026-02-15 - Slice 2/3 Follow-up (Completion, Notes, Context-Rich Chat)
+
+### Agenda
+- Complete completion + notes UX and ship plan-page context-aware chat
+
+### Notes
+- Implemented activity/session completion persistence and progress UI.
+- Added session/activity notes persistence and plan UI note editors.
+- Added context-rich chat prompts that include latest onboarding, plan, completion, and notes.
+- Implemented default-thread-per-plan-version behavior and manual chat reset endpoint.
+- Added plan-page chat panel with optimistic sends and `Enter` submit (`Shift+Enter` newline).
+- Updated training context terminology from `Peak phase` to `Specialization phase`.
+- Added explicit instruction to include rest timing whenever sets/reps are prescribed.
+
+### Decisions
+- Keep chat thread UX simple for now: one default thread per current plan version + manual reset.
+- Keep chat in plan page (rendered above plan content) instead of separate standalone screen in this slice.
+
+### Action Items
+| Action | Owner | Due |
+|---|---|---|
+| Add optional "Apply as tweak" action from chat messages | Team | 2026-02-18 |
+| Run full manual smoke pass for chat + notes + completion on mobile/desktop | Team | 2026-02-16 |

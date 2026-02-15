@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api";
 import { requireUserId } from "@/lib/server/auth-guard";
 import { PlanChatError, generatePlanChatReply } from "@/lib/services/plan-chat";
+import { getCompletionSnapshot } from "@/lib/services/plan-completion";
+import { getNotesSnapshot } from "@/lib/services/plan-notes";
 
 const postSchema = z.object({
   content: z.string().min(1).max(4000),
@@ -132,8 +134,36 @@ export async function POST(
       }
     });
 
+    const latestQuestionnaire = await prisma.questionnaireResponse.findFirst({
+      where: {
+        userId,
+        trainingPlanId: thread.trainingPlanId
+      } as never,
+      orderBy: { createdAt: "desc" },
+      select: {
+        data: true
+      }
+    });
+
+    const [completion, notes] = await Promise.all([
+      getCompletionSnapshot({
+        userId,
+        trainingPlanId: thread.trainingPlanId,
+        planVersionId: thread.planVersionId,
+        planJson: thread.planVersion.planJson as Record<string, unknown>
+      }),
+      getNotesSnapshot({
+        userId,
+        trainingPlanId: thread.trainingPlanId,
+        planVersionId: thread.planVersionId
+      })
+    ]);
+
     const assistantContent = await generatePlanChatReply({
+      onboarding: (latestQuestionnaire?.data as Record<string, unknown> | null) ?? null,
       planJson: thread.planVersion.planJson as Record<string, unknown>,
+      completion,
+      notes,
       history: history.map((item) => ({
         role: item.role,
         content: item.content

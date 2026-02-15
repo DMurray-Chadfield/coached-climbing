@@ -27,12 +27,12 @@
 | T-019 | P1 | Persist tweak request history and resulting plan versions | Team | Todo | Auditability + rollback confidence |
 | T-020 | P0 | Enforce LLM base context loading from `training info/training-ideas-condensed.md` (fallback `training-ideas.md`) for all LLM endpoints | Team | Done | Generation, tweak, and chat services now all load condensed context with fallback |
 | T-021 | P1 | Build plan chat API + thread/message persistence | Team | Done | Added owned thread/message APIs with assistant reply persistence and no plan mutation |
-| T-022 | P1 | Add separate plan chat UI with "Apply as tweak" action | Team | Todo | Convert chat suggestions into tweak flow |
+| T-022 | P1 | Add separate plan chat UI with "Apply as tweak" action | Team | In Progress | Plan-page chat UI shipped (default thread + reset + context-aware replies); "Apply as tweak" action still pending |
 | T-023 | P0 | Implement and QA responsive UI for mobile + desktop across all core flows | Team | In Progress | Basic responsive layout for auth/onboarding/dashboard/plan detail implemented |
 | T-024 | P0 | Set up local Postgres Docker workflow and `.env` bootstrap docs | Team | Done | Docker Compose + `.env.example` added |
 | T-030 | P0 | Define and implement Docker Compose stack (`web`,`db`,`proxy`) for local/staging/prod | Team | Done | `docker-compose.yml` includes `web`,`db`,`proxy` |
 | T-025 | P0 | Implement unit/integration test suites and CI test gate | Team | In Progress | Unit gate required in CI; integration suite added as non-blocking job |
-| T-029 | P1 | Create manual smoke test checklist for desktop + mobile core flows | Team | Todo | Replace E2E requirement for MVP |
+| T-029 | P1 | Create manual smoke test checklist for desktop + mobile core flows | Team | Done | Checklist now includes completion, notes, tweak, and chat/reset coverage |
 | T-026 | P1 | Implement staging -> production deployment pipeline and smoke tests | Team | Todo | Safer releases |
 | T-027 | P0 | Implement migration tooling/workflow with migration state tracking table | Team | In Progress | Prisma migration + SQL committed; deployment workflow scaffolded |
 | T-028 | P1 | Add pre-release backup + rollback checklist to release workflow | Team | Todo | Production safety |

@@ -12,6 +12,8 @@
 - PlanTweakRequest
 - PlanChatThread
 - PlanChatMessage
+- SessionNote
+- ActivityNote
 
 ## Relationships
 - One `User` can have many `TrainingPlan` records
@@ -24,6 +26,8 @@
 - One `TrainingPlan` can have many `PlanTweakRequest` records
 - One `TrainingPlan` can have many `PlanChatThread` records
 - One `PlanChatThread` can have many `PlanChatMessage` records
+- One `TrainingPlanVersion` can have many `SessionNote` records
+- One `TrainingPlanVersion` can have many `ActivityNote` records
 
 ## MVP Onboarding Questions (Concise)
 1. Profile: "What is your age?"
@@ -221,6 +225,35 @@
   - Multiple log entries per activity are allowed (history-friendly)
   - Plan chat can reference these logs for coaching discussion
 
+## Session Notes Model
+- Session notes are stored outside immutable plan JSON
+- Suggested `SessionNote` fields:
+  - `id`
+  - `user_id`
+  - `training_plan_id`
+  - `plan_version_id`
+  - `week_number`
+  - `session_number`
+  - `note_text`
+  - `created_at`, `updated_at`
+- Uniqueness:
+  - unique on (`user_id`, `plan_version_id`, `week_number`, `session_number`)
+
+## Activity Notes Model
+- Activity notes are stored outside immutable plan JSON
+- Suggested `ActivityNote` fields:
+  - `id`
+  - `user_id`
+  - `training_plan_id`
+  - `plan_version_id`
+  - `week_number`
+  - `session_number`
+  - `activity_id`
+  - `note_text`
+  - `created_at`, `updated_at`
+- Uniqueness:
+  - unique on (`user_id`, `plan_version_id`, `week_number`, `session_number`, `activity_id`)
+
 ## Completion/Log Carry-Forward on New Plan Versions
 - When a tweak creates a new plan version, run carry-forward mapping:
   - Match old/new activities by (`week_number`, `session_number`, `activity_id`)
@@ -246,6 +279,15 @@
 - `POST /api/plans/[planId]/chat/threads/[threadId]/messages`, `GET /api/plans/[planId]/chat/threads/[threadId]/messages`
   - Owner-scoped plan chat persistence with assistant responses
   - Chat flow does not mutate plan JSON
+  - Message generation uses latest plan-scoped onboarding + completion + notes + plan JSON context
+- `POST /api/plans/[planId]/chat/threads/[threadId]/reset`
+  - Clears thread message history for owned thread; thread record persists
+- `PATCH /api/plans/[planId]/sessions/notes`
+- `PATCH /api/plans/[planId]/activities/notes`
+  - Owner-scoped note persistence by plan version/session/activity keys
+- Chat thread behavior:
+  - one default thread per plan version (idempotent create/reuse)
+  - manual reset supported via reset endpoint
 
 ## Homepage Query Requirements
 - List plans for the authenticated user only

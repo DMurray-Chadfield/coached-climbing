@@ -66,3 +66,39 @@
 - Updated planning docs (`plan/data-model.md`, `plan/backlog.md`) to reflect delivered behavior/status.
 - Updated manual smoke checklist with completion and tweak/chat foundation checks.
 - Review gate result: no unresolved P0/P1 findings in delivered slice-2 scope.
+
+# Subagent Lane Execution (Slice 3: Context-Rich Chat + Notes UX)
+
+## Subagent-A (Chat Context Backend)
+- Upgraded chat service prompt assembly to include:
+  - latest plan-scoped onboarding response
+  - current plan JSON
+  - completion snapshot
+  - session/activity notes snapshot
+- Added actionable coach response framing in prompt instructions.
+
+## Subagent-B (Thread Lifecycle + Reset)
+- Implemented idempotent default-thread create/reuse per plan version.
+- Added owner-scoped chat reset endpoint that clears messages while preserving thread identity/metadata.
+
+## Subagent-C (Plan Page Chat UI)
+- Added full `PlanChatPanel` component to plan detail view.
+- Chat panel supports:
+  - auto-thread bootstrap
+  - message history
+  - optimistic send
+  - `Enter` submit (`Shift+Enter` newline)
+  - manual reset action
+- Moved chat panel to top above plan content per UX preference.
+
+## Subagent-D (Tests)
+- Updated chat unit test coverage for enriched context prompt structure.
+- Expanded chat integration tests for:
+  - default-thread idempotency
+  - enriched context forwarding
+  - reset endpoint auth/ownership behavior
+
+## Subagent-E (Docs + Terminology)
+- Updated docs to reflect chat UI + reset + notes endpoints.
+- Updated training context terminology from `Peak phase` to `Specialization phase`.
+- Added explicit rest-time instruction when sets/reps are prescribed in prompt/context guidance.

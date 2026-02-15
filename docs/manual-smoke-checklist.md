@@ -37,9 +37,17 @@ Run this checklist with Docker runtime:
 - Tweak API accepts valid payloads and returns a new plan version + change summary.
 - Invalid tweak payloads are rejected with a readable validation error.
 - Tweak history endpoint lists only tweak requests for the authenticated plan owner.
-- Chat thread create/list endpoints are owner-scoped.
+- Chat thread create/list endpoints are owner-scoped and default-thread create is idempotent for a plan version.
 - Chat message create/list endpoints are owner-scoped.
+- Chat reset endpoint clears thread messages without deleting thread metadata.
 - Chat requests do not mutate existing plan JSON versions.
+- Chat replies reference onboarding + completion + notes context for the selected plan version.
+
+## Plan Chat UI
+- Plan detail shows chat panel above the plan content.
+- Sending chat message on `Enter` works; `Shift+Enter` inserts new line.
+- Optimistic user message appears immediately, followed by assistant response.
+- `Reset chat` clears visible transcript after confirmation.
 
 ## Responsive
 - Login, signup, onboarding, dashboard, plan detail are usable on mobile width (~390px).

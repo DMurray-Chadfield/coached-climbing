@@ -29,6 +29,9 @@ type SnapshotActivity = {
   completed: boolean;
 };
 
+export type CompletionSnapshotSession = SnapshotSession;
+export type CompletionSnapshotActivity = SnapshotActivity;
+
 export type CompletionSnapshot = {
   plan_completion_percent: number;
   completed_sessions: number;

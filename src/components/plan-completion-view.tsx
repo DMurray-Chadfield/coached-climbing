@@ -475,12 +475,13 @@ export function PlanCompletionView({ planId }: Props) {
                     rows={3}
                     placeholder="Add notes for this session..."
                     value={sessionNoteDrafts[`${selectedWeek.weekNumber}:${session.sessionNumber}`] ?? ""}
-                    onChange={(event) =>
+                    onChange={(event) => {
+                      const nextValue = event.currentTarget.value;
                       setSessionNoteDrafts((current) => ({
                         ...current,
-                        [`${selectedWeek.weekNumber}:${session.sessionNumber}`]: event.currentTarget.value
-                      }))
-                    }
+                        [`${selectedWeek.weekNumber}:${session.sessionNumber}`]: nextValue
+                      }));
+                    }}
                   />
                   <button
                     type="button"
@@ -538,12 +539,13 @@ export function PlanCompletionView({ planId }: Props) {
                             rows={2}
                             placeholder="Add notes for this activity..."
                             value={activityNoteDrafts[key] ?? ""}
-                            onChange={(event) =>
+                            onChange={(event) => {
+                              const nextValue = event.currentTarget.value;
                               setActivityNoteDrafts((current) => ({
                                 ...current,
-                                [key]: event.currentTarget.value
-                              }))
-                            }
+                                [key]: nextValue
+                              }));
+                            }}
                           />
                           <button
                             type="button"

@@ -33,8 +33,8 @@ Capacity vs power:
 
 Periodization (default):
 - Base phase: Strength + An Cap + Aero Cap; maintain power.
-- Peak phase: Aero Pow + An Pow; maintain strength; increase specificity.
-- Taper 1-2 weeks: reduce volume about 50%, keep intensity/specificity.
+- Specialization phase: Aero Pow + An Pow; maintain strength; increase specificity.
+- Taper 1 week: reduce volume about 50%, keep intensity/specificity.
 
 Approx adaptation windows:
 - Aero Cap: 8+ weeks
@@ -114,6 +114,7 @@ Protocol snapshots:
 ## Plan/Tweak Heuristics for LLM Use
 - Keep recommendations realistic for available sessions per week and time budget.
 - Prefer clear session intent: reason, goals, target effort.
+- If you prescribe sets and reps, explicitly include rest timing (between reps/sets/rounds as relevant).
 - Avoid conflicting stress stacking on consecutive days when possible.
 - Keep progression conservative when injury history, low recovery, or novice status is present.
 - When uncertain, choose safer/moderate loading and explain tradeoffs.

@@ -3,6 +3,8 @@ import path from "node:path";
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { getEnv } from "@/lib/env";
+import type { CompletionSnapshot } from "@/lib/services/plan-completion";
+import type { NotesSnapshot } from "@/lib/services/plan-notes";
 
 type PlanChatHistoryItem = {
   role: "user" | "assistant";
@@ -10,7 +12,10 @@ type PlanChatHistoryItem = {
 };
 
 type GeneratePlanChatReplyInput = {
+  onboarding: Record<string, unknown> | null;
   planJson: Record<string, unknown>;
+  completion: CompletionSnapshot;
+  notes: NotesSnapshot;
   history: PlanChatHistoryItem[];
   userMessage: string;
 };
@@ -72,10 +77,40 @@ async function loadTrainingContext(): Promise<string> {
 
 export function buildPlanChatMessages(params: {
   trainingContext: string;
+  onboarding: Record<string, unknown> | null;
   planJson: Record<string, unknown>;
+  completion: CompletionSnapshot;
+  notes: NotesSnapshot;
   history: PlanChatHistoryItem[];
   userMessage: string;
 }): ChatCompletionMessageParam[] {
+  const onboardingSummary = params.onboarding
+    ? JSON.stringify(params.onboarding, null, 2)
+    : "No onboarding response saved yet for this plan. Ask concise clarifying questions when needed.";
+
+  const completionSummary = JSON.stringify(
+    {
+      plan_completion_percent: params.completion.plan_completion_percent,
+      completed_sessions: params.completion.completed_sessions,
+      total_sessions: params.completion.total_sessions,
+      completed_activities: params.completion.completed_activities,
+      total_activities: params.completion.total_activities,
+      sessions: params.completion.sessions,
+      activities: params.completion.activities
+    },
+    null,
+    2
+  );
+
+  const notesSummary = JSON.stringify(
+    {
+      session_notes: params.notes.sessions,
+      activity_notes: params.notes.activities
+    },
+    null,
+    2
+  );
+
   const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
@@ -84,7 +119,24 @@ export function buildPlanChatMessages(params: {
     {
       role: "system",
       content:
-        "You are discussing the user's plan. Explain reasoning clearly. Do not mutate data; provide coaching guidance only."
+        "You are discussing the user's plan. Do not mutate plan data. Be a practical, supportive coach and tailor advice to current adherence and notes."
+    },
+    {
+      role: "system",
+      content:
+        "Response format: 1) Brief assessment 2) Next session adjustments 3) Safety/constraint callouts (if relevant). Keep it concise and actionable."
+    },
+    {
+      role: "system",
+      content: `Onboarding context:\n${onboardingSummary}`
+    },
+    {
+      role: "system",
+      content: `Completion context:\n${completionSummary}`
+    },
+    {
+      role: "system",
+      content: `Notes context:\n${notesSummary}`
     },
     {
       role: "system",
@@ -114,7 +166,10 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
 
   const messages = buildPlanChatMessages({
     trainingContext: context,
+    onboarding: input.onboarding,
     planJson: input.planJson,
+    completion: input.completion,
+    notes: input.notes,
     history: input.history,
     userMessage: input.userMessage
   });

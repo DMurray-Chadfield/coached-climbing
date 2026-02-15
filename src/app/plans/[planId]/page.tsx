@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { GeneratePlanButton } from "@/components/generate-plan-button";
 import { PlanCompletionView } from "@/components/plan-completion-view";
+import { PlanChatPanel } from "@/components/plan-chat-panel";
 
 export default async function PlanDetailPage({
   params
@@ -57,6 +58,7 @@ export default async function PlanDetailPage({
           <GeneratePlanButton planId={plan.id} label="Regenerate" />
         </div>
       </section>
+      <PlanChatPanel planId={plan.id} planVersionId={plan.currentPlanVersion.id} />
       <PlanCompletionView planId={plan.id} />
     </>
   );
