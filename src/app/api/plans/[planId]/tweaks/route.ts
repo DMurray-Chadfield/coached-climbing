@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api";
 import { requireUserId } from "@/lib/server/auth-guard";
 import { PlanTweakError, generateTweakedPlan } from "@/lib/services/plan-tweak";
+import { carryForwardPlanVersionState } from "@/lib/services/plan-version-rollover";
 import { normalizePlanDiscipline } from "@/lib/services/training-context";
 
 const postSchema = z
@@ -210,6 +211,15 @@ export async function POST(
         select: {
           id: true
         }
+      });
+
+      await carryForwardPlanVersionState(tx, {
+        userId,
+        trainingPlanId: sourceVersion.trainingPlanId,
+        sourcePlanVersionId: sourceVersion.id,
+        resultPlanVersionId: createdVersion.id,
+        sourcePlanJson: sourceVersion.planJson,
+        resultPlanJson: generated.updatedPlanJson
       });
 
       await tx.trainingPlan.update({

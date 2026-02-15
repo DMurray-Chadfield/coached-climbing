@@ -39,11 +39,11 @@ MVP vertical slice implementation for:
   - web logs: `docker compose logs -f web`
 
 ## Testing
-- Required gate:
-  - `pnpm lint`
-  - `pnpm typecheck`
-  - `pnpm test:unit`
-- Non-blocking integration lane (for now):
+- Required CI gate:
+  - `pnpm test:required-gate`
+- Full launch preflight gate (manual deploy requirement):
+  - `pnpm test:release-check`
+- Integration remains a non-blocking CI lane for now:
   - `pnpm test:integration`
 
 ## Key Requirements Implemented

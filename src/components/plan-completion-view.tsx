@@ -580,7 +580,7 @@ export function PlanCompletionView({ planId }: Props) {
 
       <details>
         <summary>Plan JSON</summary>
-        <pre>{JSON.stringify(plan.current_plan_version.planJson, null, 2)}</pre>
+        <pre className="plan-json-pre">{JSON.stringify(plan.current_plan_version.planJson, null, 2)}</pre>
       </details>
     </section>
   );

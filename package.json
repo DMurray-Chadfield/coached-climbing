@@ -12,11 +12,15 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "pnpm test:unit",
+    "test:required-gate": "pnpm lint && pnpm typecheck && pnpm test:unit",
+    "test:release-check": "pnpm test:required-gate && pnpm test:integration",
     "test:unit": "vitest run --config vitest.config.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
-    "prisma:migrate:deploy": "prisma migrate deploy"
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:status": "prisma migrate status",
+    "release:verify:migrations": "sh scripts/verify-migrations.sh"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",

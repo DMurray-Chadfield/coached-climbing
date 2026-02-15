@@ -44,6 +44,10 @@ vi.mock("@/lib/services/plan-tweak", () => ({
   generateTweakedPlan: vi.fn()
 }));
 
+vi.mock("@/lib/services/plan-version-rollover", () => ({
+  carryForwardPlanVersionState: vi.fn()
+}));
+
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     planChatThread: {
@@ -78,6 +82,7 @@ import { generatePlanChatReply } from "@/lib/services/plan-chat";
 import { getCompletionSnapshot } from "@/lib/services/plan-completion";
 import { getNotesSnapshot } from "@/lib/services/plan-notes";
 import { generateTweakedPlan } from "@/lib/services/plan-tweak";
+import { carryForwardPlanVersionState } from "@/lib/services/plan-version-rollover";
 import { POST as POST_MESSAGES } from "@/app/api/plans/[planId]/chat/threads/[threadId]/messages/route";
 import { POST as POST_TWEAKS } from "@/app/api/plans/[planId]/tweaks/route";
 
@@ -228,5 +233,12 @@ describe("chat apply tweak flow", () => {
     expect(tweakBody.tweakRequestId).toBe("tweak_1");
     expect(tweakBody.resultPlanVersionId).toBe(nextVersionId);
     expect(tweakBody.changeSummary).toContain("Reduced intensity");
+    expect(carryForwardPlanVersionState).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        sourcePlanVersionId: sourceVersionId,
+        resultPlanVersionId: nextVersionId
+      })
+    );
   });
 });

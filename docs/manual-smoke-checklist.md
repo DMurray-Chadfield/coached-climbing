@@ -3,6 +3,10 @@
 Run this checklist with Docker runtime:
 - `docker compose -f docker-compose.dev.yml up --build`
 
+Before running the checklist for release:
+- `pnpm test:release-check`
+- `pnpm prisma:migrate:status`
+
 ## Auth
 - Sign up with new email succeeds.
 - Login with created account succeeds.

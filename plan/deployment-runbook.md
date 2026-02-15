@@ -1,7 +1,7 @@
 # Deployment Runbook
 
 ## Goal
-Ship safely with a predictable staging -> production workflow.
+Ship safely with a predictable manual production workflow on GCP Compute.
 
 ## Recommended Deployment Topology
 - Cloud target: GCP VM (target profile: `e2-micro` for MVP)
@@ -12,21 +12,27 @@ Ship safely with a predictable staging -> production workflow.
 
 ## Environments
 - `local`: developer machine
-- `staging`: production-like environment for final validation
 - `production`: live environment
 
 ## Deployment Flow
 1. Merge to main.
-2. CI runs tests.
-3. Deploy to staging.
-4. Run smoke tests on staging:
+2. Run launch preflight locally:
+   - `pnpm test:release-check`
+   - `pnpm prisma:migrate:status`
+3. On VM: pull latest code and confirm `.env.local`.
+4. Take DB backup snapshot/dump before migration.
+5. Apply migrations:
+   - `pnpm prisma:migrate:deploy`
+   - `pnpm release:verify:migrations`
+6. Start/update services:
+   - `docker compose up --build -d`
+7. Run production smoke tests:
    - auth
    - plan generation
    - activity completion
    - tweak flow
    - chat flow
-5. Promote same image/tag to production.
-6. Run production smoke tests and monitor logs/errors.
+8. Monitor logs/errors and key metrics for 24h.
 
 ## Container Strategy
 - Run all services in Docker Compose:
@@ -39,12 +45,13 @@ Ship safely with a predictable staging -> production workflow.
 ## Release Checklist
 - Migrations prepared and reviewed.
 - Backup taken before production migration.
+- `_prisma_migrations` status verified before and after migration.
 - Environment secrets present and valid.
 - OpenAI key configured and reachable.
 - Rollback plan confirmed.
 
 ## Rollback Strategy
-- App rollback: deploy previous stable image tag.
+- App rollback: redeploy previous stable image tag/commit.
 - DB rollback:
   - preferred: forward-fix migration
   - emergency: restore from pre-release backup

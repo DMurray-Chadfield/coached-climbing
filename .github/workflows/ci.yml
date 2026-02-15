@@ -29,14 +29,8 @@ jobs:
       - name: Generate Prisma client
         run: pnpm prisma:generate
 
-      - name: Lint
-        run: pnpm lint
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Unit tests
-        run: pnpm test:unit
+      - name: Required gate (lint + typecheck + unit tests)
+        run: pnpm test:required-gate
 
   integration-nonblocking:
     runs-on: ubuntu-latest

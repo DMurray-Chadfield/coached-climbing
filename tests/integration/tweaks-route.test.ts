@@ -26,6 +26,10 @@ vi.mock("@/lib/services/plan-tweak", () => {
   };
 });
 
+vi.mock("@/lib/services/plan-version-rollover", () => ({
+  carryForwardPlanVersionState: vi.fn()
+}));
+
 vi.mock("@/lib/prisma", () => {
   const tx = {
     trainingPlanVersion: {
@@ -75,6 +79,7 @@ vi.mock("@/lib/prisma", () => {
 import { requireUserId } from "@/lib/server/auth-guard";
 import { prisma } from "@/lib/prisma";
 import { PlanTweakError, generateTweakedPlan } from "@/lib/services/plan-tweak";
+import { carryForwardPlanVersionState } from "@/lib/services/plan-version-rollover";
 import { GET, POST } from "@/app/api/plans/[planId]/tweaks/route";
 
 describe("tweaks route", () => {
@@ -202,6 +207,14 @@ describe("tweaks route", () => {
     expect(generateTweakedPlan).toHaveBeenCalledWith(
       expect.objectContaining({
         lockedCompletedSessions: [{ weekNumber: 2, sessionNumber: 1 }]
+      })
+    );
+    expect(carryForwardPlanVersionState).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        sourcePlanVersionId: "version_1",
+        resultPlanVersionId: "version_4",
+        trainingPlanId: "plan_1"
       })
     );
   });

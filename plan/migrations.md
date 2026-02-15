@@ -6,15 +6,23 @@ Track schema changes safely and make them reproducible across local, staging, an
 ## Tooling Choice
 - Use SQL migrations committed to git.
 - Keep each migration as an immutable file in a versioned migrations directory.
-- Maintain a migration history table in Postgres (for example: `schema_migrations`).
+- Use Prisma migration state table `_prisma_migrations` in Postgres as source of truth.
 
 ## Migration Workflow
 1. Create migration for schema change.
 2. Review migration SQL in PR.
 3. Apply migration locally.
 4. Run tests and verify app behavior.
-5. Apply migration in staging.
+5. For manual prod deploy, verify migration state before and after release.
 6. Apply migration in production during deployment window.
+
+## Verification Commands
+- Local/app-level status:
+  - `pnpm prisma:migrate:status`
+- Compose DB table verification (manual deploy):
+  - `pnpm release:verify:migrations`
+- Direct SQL fallback:
+  - `SELECT migration_name, finished_at, rolled_back_at FROM "_prisma_migrations" ORDER BY finished_at DESC;`
 
 ## Naming Convention
 - `YYYYMMDDHHMM__short_description.sql`
@@ -37,7 +45,8 @@ Track schema changes safely and make them reproducible across local, staging, an
 - Confirm full DB backup completed.
 - Estimate lock impact for each migration.
 - Avoid long blocking operations in peak traffic windows.
-- Validate migration on staging dataset size when possible.
+- Run `pnpm prisma:migrate:status` before and after `pnpm prisma:migrate:deploy`.
+- Record migration verification output in release notes.
 
 ## Rollback Policy
 - Default policy: forward-fix migration.
@@ -47,4 +56,4 @@ Track schema changes safely and make them reproducible across local, staging, an
 ## Auditing and Visibility
 - Keep a migration changelog in PR/release notes.
 - Track which app version introduced each migration.
-- Periodically verify production schema matches expected migration state.
+- Periodically verify production schema matches expected `_prisma_migrations` state.
