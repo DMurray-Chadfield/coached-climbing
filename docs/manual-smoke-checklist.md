@@ -18,6 +18,7 @@ Before running the checklist for release:
 - Clicking `Create Plan` creates a draft and routes to `/onboarding?planId=...`.
 - Questionnaire saves successfully for that specific plan and redirects to `/plans/[planId]`.
 - Questionnaire requires `Plan Type` (`Sport/Trad` or `Bouldering`).
+- Climbing age field accepts whole-number years (mobile + desktop).
 - Invalid questionnaire fields are rejected.
 
 ## Plan Generation

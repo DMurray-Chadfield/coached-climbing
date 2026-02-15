@@ -48,6 +48,7 @@ Web application that collects climber profile data, sends structured inputs to a
 5. User triggers "Generate" for that specific plan.
 6. Backend assembles prompt using:
    - user questionnaire data
+   - maps questionnaire `age` (climbing years) to prompt field `climbing_age_years`
    - climbing-coaching rules/context you provide
    - weekly session count (Session 1..N) instead of fixed weekdays
    - requirement that each session includes a short `description` (reason, goals, target effort)
@@ -73,7 +74,7 @@ Web application that collects climber profile data, sends structured inputs to a
 17. Backend validates JSON and saves as new plan version with tweak metadata.
 18. Completed sessions in source version are locked/preserved and cannot be modified by tweaks.
 19. Chat history is carried forward to the new version's default chat thread after tweak apply.
-20. System runs additional completion/log carry-forward mapping from prior version (future expansion).
+20. System runs completion/note carry-forward mapping from prior version using exact keys (`week_number`, `session_number`, `activity_id`).
 21. UI shows updated plan plus LLM change summary.
 22. In plan-chat UI, user asks questions about their plan (without auto-editing).
 23. Backend sends to LLM:

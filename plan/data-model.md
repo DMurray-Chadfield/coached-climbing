@@ -27,7 +27,7 @@
 - One `TrainingPlanVersion` can have many `ActivityNote` records
 
 ## MVP Onboarding Questions (Concise)
-1. Profile: "What is your age?"
+1. Profile: "What is your climbing age (years climbing)?"
 2. Plan discipline: "Bouldering or Sport/Trad?"
 3. Plan length: "How long do you want the plan?" (weeks, max 52)
 4. Target focus: "What are you training for, and what are your goals for this plan?" (single combined answer, optional target date)
@@ -44,7 +44,7 @@
 {
   "training_plan_id": "plan_abc123",
   "plan_discipline": "sport_trad",
-  "age": 29,
+  "age": 3,
   "plan_length_weeks": 12,
   "target_focus": {
     "summary": "Outdoor trip prep and improve power endurance",
@@ -60,6 +60,10 @@
   "notes": "Travel one weekend per month"
 }
 ```
+
+Notes:
+- `age` stores climbing age in years for compatibility with existing schema/routes.
+- Generation prompt payload maps this value to `climbing_age_years` before sending to the model.
 
 ## Questionnaire Scoping Rule
 - Onboarding is per-plan, not global.
@@ -246,13 +250,15 @@
 ## Completion/Log Carry-Forward on New Plan Versions
 - When a tweak creates a new plan version, run carry-forward mapping:
   - Match old/new activities by (`week_number`, `session_number`, `activity_id`)
-  - Copy activity/session completion only for high-confidence matches
-  - Copy recent activity logs only for high-confidence matches
-- If mapping confidence is low:
-  - leave unchecked / not copied
+  - Copy matching activity/session completion rows
+  - Copy matching session/activity note rows
+- If no exact key match exists in the new plan version:
+  - do not copy that row
 - Keep all prior completions/logs intact on old version for audit history
 - Current implemented carry-forward behavior:
   - completed sessions are preserved in tweak output (cannot be modified by tweak)
+  - matching activity/session completion state is copied to the new version
+  - matching session/activity notes are copied to the new version
   - chat history is copied from prior version thread to new version thread
 
 ## Implemented API Endpoints (Slice 2 Foundation)

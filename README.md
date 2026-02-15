@@ -49,6 +49,7 @@ MVP vertical slice implementation for:
 ## Key Requirements Implemented
 - Dashboard-first flow with primary `Create Plan` action.
 - Onboarding is plan-scoped (`/onboarding?planId=...`).
+- Onboarding `age` field is climbing age in years.
 - Onboarding includes explicit `plan_discipline` selection (`bouldering` or `sport_trad`).
 - Onboarding save redirects to the plan page.
 - Generation is plan-scoped and uses the latest questionnaire for that plan.
@@ -61,6 +62,6 @@ MVP vertical slice implementation for:
      - `/Users/Student/src/tomteece.github.io/training info/training-ideas-bouldering.md`
      - `/Users/Student/src/tomteece.github.io/training info/training-ideas-sport-trad.md`
   2. safety constraints
-  3. questionnaire payload
+  3. questionnaire payload (includes `climbing_age_years`)
 - Server-side schema validation + one retry on failure.
 - Immutable plan versions via `TrainingPlanVersion`.

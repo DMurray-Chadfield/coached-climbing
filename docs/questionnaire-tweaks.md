@@ -7,6 +7,7 @@
 4. Combine goals intent with target event into one field.
 5. Remove `Sex`.
 6. Replace `Boulder Grade`, `Route Grade`, and `Current Level Notes` with one combined field asking for all three details.
+7. Treat `age` input as climbing age (years climbing) in onboarding and prompt payload.
 
 ## New Contract
 - `plan_discipline: "bouldering" | "sport_trad"`
@@ -15,6 +16,7 @@
 - `facilities_and_equipment_available: string`
 - onboarding is plan-scoped and saved with `planId`
 - successful save redirects to `/plans/[planId]`
+- onboarding `age` represents climbing years; generation prompt sends `climbing_age_years`
 
 ## Implemented In
 - [x] `/Users/Student/src/tomteece.github.io/src/lib/schemas/questionnaire.ts`
