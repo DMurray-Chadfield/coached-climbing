@@ -18,8 +18,8 @@ function asString(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value : fallback;
 }
 
-function asNumber(value: unknown, fallback: number): number {
-  return typeof value === "number" ? value : fallback;
+function asNumberString(value: unknown, fallback: string): string {
+  return typeof value === "number" ? String(value) : fallback;
 }
 
 export function QuestionnaireForm({ planId, initialData }: Props) {
@@ -27,8 +27,8 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
   const [planDiscipline, setPlanDiscipline] = useState(
     asString(initialData?.plan_discipline, "sport_trad")
   );
-  const [age, setAge] = useState(asNumber(initialData?.age, 29));
-  const [planLengthWeeks, setPlanLengthWeeks] = useState(asNumber(initialData?.plan_length_weeks, 12));
+  const [age, setAge] = useState(asNumberString(initialData?.age, "3"));
+  const [planLengthWeeks, setPlanLengthWeeks] = useState(asNumberString(initialData?.plan_length_weeks, "12"));
   const [targetFocusSummary, setTargetFocusSummary] = useState(
     asString((initialData?.target_focus as Record<string, unknown>)?.summary)
   );
@@ -42,7 +42,9 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
   const [facilitiesAndEquipment, setFacilitiesAndEquipment] = useState(
     asString(initialData?.facilities_and_equipment_available)
   );
-  const [sessionsPerWeek, setSessionsPerWeek] = useState(asNumber(initialData?.sessions_per_week, 3));
+  const [sessionsPerWeek, setSessionsPerWeek] = useState(
+    asNumberString(initialData?.sessions_per_week, "3")
+  );
   const [injuries, setInjuries] = useState(asString(initialData?.injuries_and_constraints));
   const [notes, setNotes] = useState(asString(initialData?.notes));
   const [status, setStatus] = useState<string | null>(null);
@@ -55,11 +57,28 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
     setError(null);
     setIsLoading(true);
 
+    const parsedAge = Number(age);
+    const parsedPlanLengthWeeks = Number(planLengthWeeks);
+    const parsedSessionsPerWeek = Number(sessionsPerWeek);
+
+    if (
+      age.trim().length === 0 ||
+      planLengthWeeks.trim().length === 0 ||
+      sessionsPerWeek.trim().length === 0 ||
+      !Number.isInteger(parsedAge) ||
+      !Number.isInteger(parsedPlanLengthWeeks) ||
+      !Number.isInteger(parsedSessionsPerWeek)
+    ) {
+      setIsLoading(false);
+      setError("Please enter whole numbers for climbing age, plan length, and sessions per week.");
+      return;
+    }
+
     const payload = {
       planId,
       plan_discipline: planDiscipline,
-      age: Number(age),
-      plan_length_weeks: Number(planLengthWeeks),
+      age: parsedAge,
+      plan_length_weeks: parsedPlanLengthWeeks,
       target_focus: {
         summary: targetFocusSummary,
         ...(targetFocusDate ? { date: targetFocusDate } : {})
@@ -69,7 +88,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         recent_training_summary: recentTraining
       },
       facilities_and_equipment_available: facilitiesAndEquipment,
-      sessions_per_week: Number(sessionsPerWeek),
+      sessions_per_week: parsedSessionsPerWeek,
       injuries_and_constraints: injuries,
       notes
     };
@@ -105,17 +124,29 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         </select>
       </label>
       <label>
-        Age
-        <input type="number" min={13} max={100} value={age} onChange={(event) => setAge(Number(event.target.value))} />
+        Climbing Age (years climbing)
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={80}
+          step={1}
+          value={age}
+          onChange={(event) => setAge(event.target.value)}
+          placeholder="Example: 3"
+          required
+        />
       </label>
       <label>
         Plan Length (weeks)
         <input
           type="number"
+          inputMode="numeric"
           min={1}
           max={52}
+          step={1}
           value={planLengthWeeks}
-          onChange={(event) => setPlanLengthWeeks(Number(event.target.value))}
+          onChange={(event) => setPlanLengthWeeks(event.target.value)}
           required
         />
       </label>
@@ -165,10 +196,12 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         Sessions Per Week
         <input
           type="number"
+          inputMode="numeric"
           min={1}
           max={14}
+          step={1}
           value={sessionsPerWeek}
-          onChange={(event) => setSessionsPerWeek(Number(event.target.value))}
+          onChange={(event) => setSessionsPerWeek(event.target.value)}
           required
         />
       </label>

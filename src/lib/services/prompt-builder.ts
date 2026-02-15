@@ -17,6 +17,12 @@ export function buildGenerationMessages(params: {
   questionnaire: QuestionnaireInput;
   correctionFeedback?: string;
 }): ChatCompletionMessageParam[] {
+  const { age, ...questionnaireWithoutAge } = params.questionnaire;
+  const promptQuestionnaire = {
+    ...questionnaireWithoutAge,
+    climbing_age_years: age
+  };
+
   const baseMessages: ChatCompletionMessageParam[] = [
     {
       role: "system",
@@ -31,7 +37,7 @@ export function buildGenerationMessages(params: {
       content: JSON.stringify(
         {
           task: "Generate a personalized climbing training plan.",
-          questionnaire: params.questionnaire
+          questionnaire: promptQuestionnaire
         },
         null,
         2

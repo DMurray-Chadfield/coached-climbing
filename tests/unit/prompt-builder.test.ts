@@ -31,5 +31,11 @@ describe("buildGenerationMessages", () => {
     expect(messages[1]?.content).toContain("4x4s before sustained route-sim");
     expect(messages[1]?.content).toContain("hangboarding before climbing");
     expect(messages[2]?.role).toBe("user");
+
+    const userPayload = JSON.parse(String(messages[2]?.content)) as {
+      questionnaire: Record<string, unknown>;
+    };
+    expect(userPayload.questionnaire.climbing_age_years).toBe(29);
+    expect("age" in userPayload.questionnaire).toBe(false);
   });
 });

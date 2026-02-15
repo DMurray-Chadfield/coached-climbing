@@ -44,4 +44,25 @@ describe("questionnaireSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("rejects negative climbing age", () => {
+    const result = questionnaireSchema.safeParse({
+      plan_discipline: "bouldering",
+      age: -1,
+      plan_length_weeks: 8,
+      target_focus: {
+        summary: "Technique block"
+      },
+      current_level_summary: "V3/5.10d",
+      training_history_and_load: {
+        recent_training_summary: "2 sessions/week"
+      },
+      facilities_and_equipment_available: "Gym + hangboard",
+      sessions_per_week: 3,
+      injuries_and_constraints: "None",
+      notes: ""
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
