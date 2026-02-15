@@ -258,7 +258,9 @@ export function buildTweakOpenAIRequest(
   model: string,
   messages: ChatCompletionMessageParam[]
 ): ChatCompletionCreateParamsNonStreaming {
-  return {
+  const request: ChatCompletionCreateParamsNonStreaming & {
+    reasoning_effort?: "low";
+  } = {
     model,
     messages,
     response_format: {
@@ -270,6 +272,12 @@ export function buildTweakOpenAIRequest(
       }
     }
   };
+
+  if (model === "gpt-5.2") {
+    request.reasoning_effort = "low";
+  }
+
+  return request;
 }
 
 function parseModelResponse(content: string | null | undefined): Record<string, unknown> {

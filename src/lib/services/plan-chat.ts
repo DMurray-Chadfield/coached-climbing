@@ -146,10 +146,18 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
   });
 
   try {
-    const completion = await client.chat.completions.create({
+    const request: Parameters<typeof client.chat.completions.create>[0] & {
+      reasoning_effort?: "low";
+    } = {
       model: env.OPENAI_MODEL_PRIMARY,
       messages
-    });
+    };
+
+    if (env.OPENAI_MODEL_PRIMARY === "gpt-5.2") {
+      request.reasoning_effort = "low";
+    }
+
+    const completion = await client.chat.completions.create(request);
 
     const content = completion.choices[0]?.message?.content;
 

@@ -18,4 +18,26 @@ describe("buildOpenAIRequest", () => {
     expect(request.response_format.json_schema.strict).toBe(true);
     expect(request.response_format.json_schema.name).toBe("training_plan");
   });
+
+  it("sets low reasoning effort for gpt-5.2", () => {
+    const request = buildOpenAIRequest("gpt-5.2", [
+      {
+        role: "system",
+        content: "context"
+      }
+    ]);
+
+    expect((request as { reasoning_effort?: string }).reasoning_effort).toBe("low");
+  });
+
+  it("does not set reasoning effort for other models", () => {
+    const request = buildOpenAIRequest("gpt-5-mini", [
+      {
+        role: "system",
+        content: "context"
+      }
+    ]);
+
+    expect((request as { reasoning_effort?: string }).reasoning_effort).toBeUndefined();
+  });
 });

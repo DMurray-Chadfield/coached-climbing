@@ -55,7 +55,9 @@ export function buildOpenAIRequest(
   model: string,
   messages: ChatCompletionMessageParam[]
 ): ChatCompletionCreateParamsNonStreaming {
-  return {
+  const request: ChatCompletionCreateParamsNonStreaming & {
+    reasoning_effort?: "low";
+  } = {
     model,
     messages,
     response_format: {
@@ -67,6 +69,12 @@ export function buildOpenAIRequest(
       }
     }
   };
+
+  if (model === "gpt-5.2") {
+    request.reasoning_effort = "low";
+  }
+
+  return request;
 }
 
 function parseModelResponse(content: string | null | undefined): unknown {

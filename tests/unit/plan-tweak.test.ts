@@ -48,6 +48,17 @@ describe("plan-tweak service", () => {
     expect(responseFormat.json_schema.name).toBe("training_plan_tweak");
   });
 
+  it("sets low reasoning effort for gpt-5.2 tweak requests", () => {
+    const request = buildTweakOpenAIRequest("gpt-5.2", [
+      {
+        role: "system",
+        content: "context"
+      }
+    ]);
+
+    expect((request as { reasoning_effort?: string }).reasoning_effort).toBe("low");
+  });
+
   it("includes locked completed sessions in tweak payload", () => {
     const messages = buildTweakMessages({
       trainingContext: "TRAINING_CONTEXT",
