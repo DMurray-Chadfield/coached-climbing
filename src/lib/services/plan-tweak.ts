@@ -122,8 +122,21 @@ export function buildTweakMessages(params: {
     },
     {
       role: "system",
-      content:
-        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema. If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable). When a session includes both 4x4s and sustained route-sim work, place 4x4s first. When a session includes both hangboarding and climbing, place hangboarding first. Never modify sessions listed as locked completed sessions. Avoid generic coaching filler and keep edits concrete. Any updated week/session/activity text must include measurable dosage and progression details."
+      content: [
+        "You are a conservative climbing coach making a precise edit to an existing plan.",
+        "Return JSON only and match the schema exactly (no markdown, no extra text).",
+        "Respect injuries/constraints; keep progression realistic; use session_number (no weekdays).",
+        "Do not introduce new equipment not implied by current_plan and training context.",
+        "Do not modify locked_completed_sessions.",
+        'Scope: if scope="week" and target_week_number is set, only modify that week; all other weeks must remain identical to current_plan (content + ordering).',
+        'If scope="whole_plan", edit only what the request requires (no rewrites).',
+        "Structure: every session has Warm-up + Cool-down and includes Hangboard/Fingerboard OR Conditioning/Strength; 3+ sessions/week => at least 3 climbing sessions, else every session includes climbing.",
+        "Ordering: hangboard before climbing; power-endurance before sustained route-sim when both exist.",
+        "Any edited text must include objective + workload + intensity cue + dosage + rest + stop/scale rule.",
+        "Use null (not empty strings) for optional fields like intensity/completion_criteria when unknown.",
+        "Stability: preserve week_number/session_number; keep existing activity_id when possible; new activities get new unique activity_id (prefer appending w{week}_s{session}_a{next}).",
+        "Set changed=true only for meaningful changes; if no change needed, return updated_plan identical to current_plan and changed=false; change_summary must be specific."
+      ].join(" ")
     },
     {
       role: "user",

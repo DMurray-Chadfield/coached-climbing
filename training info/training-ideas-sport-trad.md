@@ -4,12 +4,18 @@ Purpose: compact coaching context for sport/trad plan generation, tweaks, and ch
 
 ## Universal Coaching Rules
 - Prioritize climbing specificity. Supplemental work supports, not replaces, climbing.
-- Individualize by goal, style, level, recovery, time, and constraints.
-- Solve the biggest bottleneck first (skill, strength, endurance, fear/confidence, recovery).
-- Progress one variable at a time: difficulty, volume, density (rest), or load.
-- Keep quality high. Avoid junk fatigue and repeated form breakdown.
-- Track sessions and adjust weekly based on response.
-- Program at least 3 climbing sessions per week outside warm-up/cool-down unless the user explicitly reports fewer available climbing days or constraints that prevent 3 sessions/week.
+- Individualize by goal, route style, level, recovery, time, and constraints.
+- Solve the biggest bottleneck first (skill, strength, endurance, confidence, recovery).
+- Progress one variable at a time; protect quality and avoid junk fatigue.
+- Track response and adjust weekly.
+- Default to at least 3 climbing sessions per week unless constraints prevent it.
+
+High-leverage coaching upgrades:
+- Repeatability: plan and assess around attempts-per-day on the goal route (warm-up + working burns + redpoint attempts); build repeat quality, not just peak output.
+- Anchor: identify the most reliable weekly climbing session and place the main progression there; keep other sessions supportive and flexible.
+- Deload/ramp rules: use deloads and ramps as performance tools; never "catch up" missed training and always smooth the ramp back in after disruptions.
+- Decision effects: favor high-success submax volume and circuits; justify aerobic + power-endurance emphasis; avoid over-prioritizing limit strength late in a cycle.
+- Core ramp rules: missed week -> reduce next week's intensity; illness mid-cycle -> insert ramp/deload before rebuilding; better slightly undertrained than fatigued.
 
 ## Safety and Load Guardrails
 - Respect injury/pain constraints. Remove or scale conflicting exercises.
@@ -19,81 +25,74 @@ Purpose: compact coaching context for sport/trad plan generation, tweaks, and ch
 - For beginners, avoid high-intensity finger protocols and max testing.
 
 ## Core Sport/Trad Model
-Energy systems and components:
-- Aero Cap: sustainable effort and recovery at rests.
-- An Cap: longer hard sequences.
-- Aero Pow: hard sustained pump performance.
-- An Pow: short intense power-endurance bursts.
+Training needs to be specific:
+- Specific does not mean it must look like the climb; it must target the adaptation you want.
+- Endurance training should target the intended energy system, not just chase "pump".
+
+Energy systems (simple):
+- Anaerobic: high-intensity bursts; fast energy; limited duration; higher fatigue cost.
+- Aerobic: slower energy; large capacity; supports sustained climbing and recovery at rests.
+
+Why "just getting pumped" isn't enough:
+- Aerobic adaptations respond best to volume at controlled intensity.
+- Anaerobic adaptations respond best to high intensity with sufficient rest.
+- Random middle-ground pump often hits neither well and creates lots of fatigue.
+
+Components (sport/trad):
+- Aerobic capacity (includes ARC): sustainable effort and recovery at rests.
+- Anaerobic capacity: longer hard sequences; "powered-out" more than terminal pump.
+- Aerobic power: hard sustained pump performance (pumpy by design).
+- Anaerobic power: short intense power-endurance bursts.
 - Strength: supports all route demands.
 
-Capacity vs power:
-- Capacity = how much work can be sustained.
-- Power = how hard output can be.
-- Good plans train both, with emphasis based on objective demands.
+Pick the system based on the route:
+- Long route with many rests: bias aerobic capacity and tactics at rests.
+- Long sustained sections with limited rests: bias aerobic power and pacing.
+- Short cruxy route or boulder-style crux: bias anaerobic power + strength.
+- Repeated long hard sequences: bias anaerobic capacity (powered-out tolerance).
+- Always include skill/tactics practice that matches the objective (rests, clips, pacing).
 
-Periodization (default):
-- Base phase: Strength + An Cap + Aero Cap; maintain power.
-- Specialization phase: Aero Pow + An Pow; maintain strength; increase specificity.
-- Taper 1 week: reduce volume about 50%, keep intensity/specificity.
+Default phase logic:
+- Base: strength + anaerobic capacity + aerobic capacity; maintain power.
+- Specific: aerobic power + anaerobic power; maintain strength; increase specificity.
+- Taper (1-2 weeks): reduce volume about 50% while keeping intensity/specificity; drop high-volume base work late.
 
-Approx adaptation windows:
-- Aero Cap: 8+ weeks
-- An Cap: 16+ weeks
-- Aero Pow / An Pow: 6-8 weeks
-
-Example cycle logic:
-- Longer base and shorter peak when time allows (for example, ~16 weeks base + ~8 weeks peak).
-- If short on time, compress phases based on the biggest bottleneck and objective demands.
-
-Session ordering when combining work (high to low intensity):
-- Bouldering -> An Cap/An Pow -> Aero Pow -> Aero Cap -> ARC
-- If both 4x4s and sustained route-sim sets are in one session, do 4x4s first, then sustained route-sim work.
-- If both hangboarding and climbing are in one session, do hangboarding first (after warm-up), then climbing.
+Session ordering (high to low intensity):
+- Bouldering/strength -> anaerobic capacity/anaerobic power -> aerobic power -> aerobic capacity -> ARC.
+- If both 4x4s and sustained route-sim work are in one session, place 4x4s first.
+- If both hangboarding and climbing are in one session, do hangboarding first (after warm-up).
 
 Typical weekly loading:
 - Hard system work usually up to 2-3 sessions/week total (tolerance-dependent).
-- Preserve enough aerobic base while building higher-intensity work.
-- Aero Cap guardrails:
-  - Max 15 minutes per continuous climbing block.
-  - Max 45 minutes total climbing work per session (rests allowed between blocks).
+- Aerobic capacity guardrails: ARC 10-40 min continuous; keep interval aerobic work controllable; keep total climbing work <= 45 min/session (rests allowed).
 
-Taper guidance (pre-trip / pre-performance):
-- Use a 1-2 week taper.
-- Reduce volume to about half while keeping intensity high.
-- Drop high-volume base work (An Cap, Aero Cap, ARC) late in taper.
-- Keep hard, high-quality climbing efforts and specificity work.
+## System Prescriptions (Concise)
+- Aerobic capacity / ARC:
+  - Short intervals (1 ON / 1 OFF): 1 min climb / 1 min rest x 10; effort ~6-7/10; recover enough to start the next rep in control (if not, use 1:2 or reduce intensity); progress +1 rep or slightly harder before reducing rest.
+  - Long intervals (5 ON / 3 OFF): 5 min climb / 3 min rest x 3; light/manageable pump, can shake; effort ~5-6/10; progress by adding time-on (or slightly harder) before reducing rest.
+  - Continuous (ARC): 10-40 min continuous at very low intensity; no pump, last minute feels like first; effort ~3-4/10; progress by adding ~5 min before increasing intensity.
+  - Route 4x4s: lead one route 4 times, add sets as tolerated; stay aerobic (no terminal failure); progress by adding 1 rep/set before increasing route difficulty.
+- Anaerobic capacity:
+  - Long boulder circuits: ~12-15 moves (30-50s). Rest 2-4x climb time. Use 8-10 reps or sets of 3-5 reps with 10-20 min between sets. Target ~25% failures; feel "powered out," not maximally pumped.
+  - Fingerboard circuit (fallback): 4 x (7s hang / 3s rest). Less specific than wall work, but acceptable when options are limited.
+- Aerobic power (very pumpy by design):
+  - Circuits: ~30 moves (45-120s). No shake-outs. Rest ~1-2x climb time. Use ~8 reps or multiple sets; effort ~8-9/10; avoid repeated total failure.
+  - On-the-minute sets: 6-8 moves starting each minute (often ~20s on / ~40s off). Target ~8 reps/set; multiple sets as tolerated.
+  - Boulder 4x4s: 4 boulders back-to-back, repeat for rounds; use short rests (often 1-3 min) and scale total rounds for volume.
+  - Foot-on campusing (optional): choose ~1 min sequence; start rest 1-2x work and reduce over time; guardrails: avoid with elbow/shoulder irritation; keep volume low; stop on tendon warning signs.
+- Anaerobic power:
+  - Boulders with short rests: 4 reps of 5-7 moves; rest <= climb time; 4 sets with ~10 min between sets. Progress toward less rest; target true max power output.
+  - Broken circuit / redpoint circuit: ~25 moves split into 3-4 sections (or sustained 20-30 moves). Link sections, then full circuit; if you fall, pull back on and finish; progressively add moves and/or difficulty.
+- Strength:
+  - Primary methods: limit bouldering + fingerboard; maintain strength emphasis across all phases.
 
-Training methods by component (quick):
-- Aero Cap: sustained controllable pump; no terminal failure.
-  - Keep total climbing work <= 45 minutes/session (rests allowed between blocks).
-- An Cap: 12-15 move hard circuits/boulders with longer rests.
-- Aero Pow: sustained hard pump circuits with shorter rests.
-- An Pow: short hard boulders with very short rests.
-
-System/component prescriptions (detailed):
-- Aero Cap / ARC:
-  - Continuous climbing: 20-40 min continuous (or ~10 min as warm-down). Cue: stay in control; no terminal pump. Start off plan with blocs of 10 mins and build up. Don't go above 40 mins total on for a session.
-  - General x-on / x-off: e.g., 10 min on / 10 min off x 4. Cue: off blocks can be replaced with low-intensity ARC for continuous 30-40 min.
-  - Route 4x4s: lead one route 4 times, then repeat with more sets as tolerated. Cue: adjust route grade to stay in Aero Cap intensity.
-- An Cap:
-  - Long boulder circuits: ~12-15 moves (30-50s). Rest 2-4x climb time. Use either 8-10 reps or sets of 3-5 reps with 10-20 min between sets. Target ~25% failures; feel "powered out," not maximally pumped.
-  - Fingerboard circuit (limited-equipment fallback): 4 x (7s hang / 3s rest). Cue: less specific/effective than wall or campus options, but acceptable when options are limited.
-- Aero Pow:
-  - Circuits: ~30 moves (45-120s). No shake-outs. Rest ~1-2x climb time. Use ~8 reps or multiple sets (e.g., 6x4 reps) with long set breaks. Target: very high pump.
-  - On-the-minute sets: 6-8 moves starting each minute (often ~20s on / ~40s off). Target ~8 reps/set, multiple sets as tolerated.
-  - Boulder 4x4s: 4 boulders back-to-back, repeat for rounds. Use short rests (often 1-3 min) and scale total rounds for volume.
-  - Foot-on campusing (power-endurance style): choose ~1 min sequence; start with rest 1-2x work and reduce rest over sessions. Homogenous difficulty works best; target failure near the end of a block of ~8 reps.
-- An Pow:
-  - Boulders with short rests: 4 reps of 5-7 moves; rest <= climb time; 4 sets with ~10 min between sets. Progress toward no rest between reps. Target true max-intensity power output.
-  - Broken circuit / redpoint circuit: ~25 moves split into 3-4 sections (or sustained 20-30 move circuit). Goal is to link sections, then full circuit; if you fall, pull back on and finish; progressively add moves and/or difficulty.
-- Strength (general):
-  - Primary methods: limit bouldering, fingerboard, and campus strength work.
-  - Programming note: maintain strength emphasis across all phases even when endurance/power-endurance is prioritized.
-
-Key implementation notes:
-- Match training to objective demands (length, rests, intensity profile, crux placement).
-- Progress by adjusting difficulty/volume/rest while protecting quality.
-- Keep records and review response weekly.
+## Sport Tactics/Skills (Keep In The Plan)
+- Route reading: identify rests, cruxes, and clipping stances before you pull on.
+- Pacing: practice relaxing grip and breathing under load; avoid sprinting early.
+- Rests: practice efficient shake strategy (which hand, when, and for how long).
+- Clipping: rehearse clipping from stable positions; minimize overgripping at bolts.
+- Redpoint tactics: link sections, set mini-goals, and practice crux-entry pacing.
+- Mental: include optional fall practice when appropriate and safe.
 
 ## Hangboarding (Supplemental)
 - Keep climbing as priority.
@@ -101,13 +100,6 @@ Key implementation notes:
 - Warm up thoroughly; hangboard before heavy fatigue.
 - Primary grips: open crimp and half crimp.
 - Use full crimp conservatively and only when goal-relevant.
-
-## Foundations for Plan Decisions
-- Climbing is variable and style-specific.
-- Skill is primary; physical work supports skill expression.
-- Performance efforts are also stress and must be counted in recovery planning.
-- Practice and performance require different session intent.
-- Reassess constraints often and adapt the plan.
 
 ## Plan/Tweak Heuristics for LLM Use
 - Keep recommendations realistic for available sessions per week and time budget.

@@ -1,20 +1,19 @@
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import type { QuestionnaireInput } from "@/lib/schemas/questionnaire";
 
-const SAFETY_CONSTRAINTS = [
-  "Never produce impossible or unsafe training loads.",
-  "Respect injuries and constraints exactly.",
-  "Output must match JSON schema exactly.",
-  "Use session_number based plans; do not assume weekdays.",
-  "Keep volumes realistic for the user profile.",
-  "If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable).",
-  "When a session includes both 4x4s and sustained route-sim work, schedule 4x4s before sustained route-sim sets.",
-  "When a session includes both hangboarding and climbing, schedule hangboarding before climbing.",
-  "Avoid generic coaching filler; write concrete and discipline-specific prescriptions.",
-  "Every week focus must include a clear adaptation target and progression intent.",
-  "Every session description must include objective, intensity cue, and workload target.",
-  "Every activity description must include measurable dosage (sets/reps/rest/duration/attempt count as applicable).",
-  "Do not use vague words like optimize, robust, or maximize unless paired with a measurable target."
+const COACHING_CONSTRAINTS = [
+  "You are a conservative climbing coach.",
+  "Return JSON only and match the schema exactly (no markdown, no extra text).",
+  "Use session_number plans; do not assume weekdays.",
+  "Respect injuries/constraints; keep loads realistic; use only the user's stated facilities/equipment.",
+  "Every session includes Warm-up and Cool-down.",
+  "Every session includes Hangboard/Fingerboard OR Conditioning/Strength (if needed, use a 5-10 min minimal-dose accessory).",
+  "Each week includes climbing in at least 3 sessions when 3+ sessions exist; if <3 sessions, every session includes climbing.",
+  "Order: hangboard before climbing; power-endurance before sustained route-sim when both exist.",
+  "Week focus must state adaptation target + progression intent.",
+  "Write concrete prescriptions: objective + workload + intensity cue + dosage + rest + stop/scale rule.",
+  "Use null (not empty strings) for optional fields like intensity/completion_criteria when unknown.",
+  "Use unique, stable activity_id values (prefer w{week}_s{session}_a{index})."
 ].join(" ");
 
 export function buildGenerationMessages(params: {
@@ -35,7 +34,7 @@ export function buildGenerationMessages(params: {
     },
     {
       role: "system",
-      content: SAFETY_CONSTRAINTS
+      content: COACHING_CONSTRAINTS
     },
     {
       role: "user",

@@ -28,8 +28,9 @@ describe("buildGenerationMessages", () => {
       content: "TRAINING_CONTEXT_BLOCK"
     });
     expect(messages[1]?.role).toBe("system");
-    expect(messages[1]?.content).toContain("4x4s before sustained route-sim");
     expect(messages[1]?.content).toContain("hangboarding before climbing");
+    expect(messages[1]?.content).toContain("Warm-up activity and a Cool-down activity");
+    expect(messages[1]?.content).toContain("Hangboard/Fingerboard activity or one Conditioning/Strength activity");
     expect(messages[2]?.role).toBe("user");
 
     const userPayload = JSON.parse(String(messages[2]?.content)) as {

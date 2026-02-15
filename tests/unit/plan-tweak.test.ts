@@ -26,6 +26,8 @@ describe("plan-tweak service", () => {
     expect(messages[1]?.role).toBe("system");
     expect(messages[1]?.content).toContain("place 4x4s first");
     expect(messages[1]?.content).toContain("place hangboarding first");
+    expect(messages[1]?.content).toContain("Warm-up activity and a Cool-down activity");
+    expect(messages[1]?.content).toContain("Hangboard/Fingerboard activity or one Conditioning/Strength activity");
     expect(messages[2]?.role).toBe("user");
     expect(typeof messages[2]?.content).toBe("string");
     expect((messages[2]?.content as string).includes("target_week_number")).toBe(true);

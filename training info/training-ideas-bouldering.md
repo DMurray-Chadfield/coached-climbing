@@ -2,95 +2,106 @@
 
 Purpose: compact coaching context for bouldering plan generation, tweaks, and chat.
 
-## Universal Coaching Rules
-- Prioritize climbing specificity. Supplemental work supports, not replaces, climbing.
+## Inputs to Ask For (Fast)
+- Goal layers: long-term (health/fun), medium-term (trip/comp/projects), short-term (specific weakness).
+- Objective: grade target is fine, but also define style and skill goals.
+- Style emphasis: steep/board, vert/slab, compression, coordination, crimps/slopey.
+- Resources: wall/board angle, outdoors access, fingerboard, weights.
+- Time budget: sessions/week and minutes/session.
+- Readiness: sleep, stress, fatigue, skin, and any pain signals.
+
+## Coach Rules (Prompt Context)
+- Prioritize climbing specificity. Supplemental work supports climbing; it does not replace climbing.
 - Individualize by goal, style, level, recovery, time, and constraints.
-- Solve the biggest bottleneck first (skill, strength, endurance, fear/confidence, recovery).
-- Progress one variable at a time: difficulty, volume, density (rest), or load.
-- Keep quality high. Avoid junk fatigue and repeated form breakdown.
-- Track sessions and adjust weekly based on response.
-- Program at least 3 climbing sessions per week outside warm-up/cool-down unless the user explicitly reports fewer available climbing days or constraints that prevent 3 sessions/week.
+- Solve the biggest bottleneck first (skill, strength, endurance, confidence, recovery).
+- Guiding rule: train hard when fresh, train easy when tired; stop when quality drops.
+- Rest is a training input (sleep/stress/rest days/spacing hard sessions), not downtime.
+- Progress one variable at a time: difficulty, quality volume, density (rest), or load.
+- Protect movement quality; avoid junk fatigue and repeated form breakdown.
+- Track weekly: quality of attempts, recovery between sessions, and pain/tweak signals; adjust based on response (when unsure, reduce load before adding more).
+- Default to at least 3 climbing sessions per week unless availability/constraints prevent it.
+- Every session prescription should include: objective, intensity cue, workload target, rest, and a stop/scale rule.
+- Stop & scale rules: end a session if power/precision/coordination degrade or you start yanking/over-gripping. Scale in order: increase rest -> reduce difficulty -> reduce volume -> end session.
+- Separate training sessions (practice + measurable stimulus) from performance sessions (sending); avoid adding new stressors during performance focus.
+- Minimum effective dose by default; keep climbing quality as the main KPI.
 
 ## Safety and Load Guardrails
 - Respect injury/pain constraints. Remove or scale conflicting exercises.
 - Hands and shoulders are high-risk tissues. Progress load gradually.
 - Keep at least one rest or very easy day between high finger-load sessions when possible.
-- If quality drops repeatedly, reduce load or increase recovery.
+- If quality drops repeatedly, reduce load and/or increase recovery.
 - For beginners, avoid high-intensity finger protocols and max testing.
 - Never prescribe campus board protocols.
-- If power work is needed, use campus boulders (feet-on, wall-based) rather than campus board drills.
+- If power work is needed, use campus-style boulders rather than campus board drills.
 - Never prescribe dynos, double-clutch moves, or jump-catch style movement.
 
 ## Bouldering Programming Essentials
-Main weekly buckets:
-- Hands (hangboard/campus boulders)
-- Climbing
-- Strength/Power pulling
-- Basic conditioning
+- Weekly buckets: climbing (limit/board/volume/PE), finger stimulus (hangboard/campus-style boulders), pulling strength, basic conditioning/prehab.
+- High/Low structure: 2 High days (limit/board/finger strength/power) + 1 Low day (volume/technique/easy recovery) when 3+ sessions exist.
+- Avoid back-to-back High finger-load days when possible.
+- Block defaults: 6-12 weeks with a primary quality (strength -> power -> performance/transfer). Include 1-2 transition weeks (fun climbing, reduced structure). Deload or reduced-load week every ~4-6 hard weeks.
+- Performance window: after a hard block, plan ~3-4 weeks of performance focus (more sending/specificity, less structure) and avoid adding new training stressors.
+- Balance heuristic: default to ~4x more time bouldering than supplemental strength work (adjust if injured/limited access).
+- Use the wall intelligently: climb on all angles, bias extra volume toward weaknesses; steep/board terrain is efficient for tension and whole-body strength.
+- Session ordering: limit/board -> power-endurance -> volume/technique. If hangboard + climb same day: hangboard first (after warm-up).
+- Warm-ups must have movement intent (not just easy climbing): rotate emphasis (static control, momentum/hip-driven movement, tension through feet/core).
 
-Cycle ideas:
-- 6-12 week blocks are practical.
-- Consider a deload after about 5 hard weeks.
-- Periodically run a mostly-climbing phase to reduce overuse and improve transfer.
+Session selection guide (quick):
+- Can't generate (raw power/recruitment): limit/board limit with full rests.
+- Can generate but can't apply (feet/hips/timing): volume/technique with constraints and high attention.
+- Fall off late / repeated tries fall apart: power-endurance (triples, UDU, on-the-minute, or link-ups).
+- Heavy/fatigued but pain-free: volume/technique; keep intensity submax.
+- Fingers/shoulders feel tweaky: reduce finger-load and intensity; prioritize technique and recovery.
 
-Climbing session priorities:
-- Limit bouldering with full rest and high-quality attempts.
-- Board climbing for repeatable, style-specific limit work.
-- Volume day near flash level with style/angle variety.
+Climbing session priorities + technique loop:
+- Limit bouldering: full rest, high intent (2-5 boulders, 3-6 attempts each, 3-5+ min rest); focus on 1-3 move cruxes; success = improved execution (not necessarily topping).
+- Board climbing: repeatable, style-specific limit work; track attempts/links/quality; avoid sequence gaming.
+- Volume/technique: near flash with style/angle variety; use constraints; practice both static and dynamic solutions.
+- Technique loop: test hypotheses (feet/hips/timing/grip), identify why you fell, retest quickly.
+- Avoid unnecessary over-crimping; keep one long-term hard project in rotation for confidence and adaptation.
 
-Technique rules:
-- Use intended holds and movement.
-- Practice both static and dynamic solutions.
-- Avoid unnecessary over-crimping.
-- Use constraints to force adaptation (when safe).
-- Practice mode and performance mode are different; coach accordingly.
+### Power Philosophy
+- Power = strength expressed with coordination. Prefer hard movement boulders over isolated drills.
+- Power work is low volume and done fresh; do not chase fatigue.
 
-Climbing session rules (tight summary):
-- Climb on intended holds and avoid sequence "gaming" in training.
-- Learn key moves in multiple styles (static and dynamic).
-- Keep one long-term hard project in rotation for adaptation and confidence.
-- In practice mode prioritize learning; in performance mode prioritize sending.
+Power-endurance (bouldering):
+- Endurance still matters: maintain power through long problems and repeated tries; practice technique under fatigue (relaxation/effort modulation).
+- Options: triples (3x3), up-down-ups (UDU), on-the-minute boulders, or short-rest link-ups of easier problems.
+- Targets: high pump and rising fatigue with good form; avoid repeated total failure early.
+- Stop or scale down if power drops sharply or technique collapses (drop difficulty, add rest, or cut volume).
 
-Power-endurance options:
-- Boulder 4x4s
-- Link-ups of easier problems with short rests
+Triples (3x3) template:
+- Pick 3 boulders around flash to ~3-try level (no jump-catch style moves).
+- Do: B1, B2, B3 with ~30-90s between boulders; repeat the set 3 times (each boulder gets 3 total reps).
+- Rest 4-6 min between rounds; do 2-4 rounds.
+- Progress: add 1 round, then reduce between-boulder rest, then slightly harder boulders.
 
-4x4 template:
-- 4 problems below max, minimal rest between problems, then 4 minutes rest.
-- 4 total rounds (adjust down for lower tolerance or high fatigue blocks).
+Up-down-ups (UDU) template:
+- Best on a spray wall/board/traverse you can safely downclimb.
+- One rep = up -> down -> up without coming off (or with a very short shake if needed).
+- Do 6-12 reps with 1-3 min rest, or 3-5 sets of 3-5 reps with 6-10 min between sets.
+- Intensity: steady, controlled pump; avoid repeated failure or messy downclimbing.
+- Progress: add 1 rep per set, then reduce rest, then slightly harder terrain.
 
-Session ordering when combining work (high to low intensity):
-- Limit/board bouldering -> power-endurance -> volume/technique
-- If both 4x4s and sustained route-sim sets are in one session, do 4x4s first, then sustained route-sim work.
-- If both hangboarding and climbing are in one session, do hangboarding first (after warm-up), then climbing.
+On-the-minute boulders (10 min):
+- For 10 minutes: start a boulder at the top of each minute (10 total reps).
+- Pick a boulder you can reliably complete with good form when moderately pumped (avoid repeated failure).
+- Scale by adjusting boulder difficulty and/or extending to 12-15 minutes.
+
+Link-ups template:
+- Link 2-4 easier boulders (or sections) back-to-back with short rests.
+- Start with 6-10 link-ups with 1-3 min rest; keep completion rate high.
+- Progress by adding moves/sections before reducing rest.
 
 ## Hangboarding (Supplemental)
-- Keep climbing as priority.
+- Default frequency (intermediate+): 1-2x/week; keep volume low enough to preserve high-quality climbing.
+- Warm up thoroughly; hangboard before heavy fatigue. Same day as climbing is fine if quality and recovery are managed.
+- Primary grips: open hand and half crimp; use full crimp sparingly and only when goal-relevant.
 - Stick to one protocol long enough to adapt; avoid protocol-hopping.
-- Warm up thoroughly; hangboard before heavy fatigue.
-- Primary grips: open crimp and half crimp.
-- Use full crimp conservatively and only when goal-relevant.
-
-Practical scheduling notes:
-- You can hangboard and climb on the same day if quality and recovery are managed.
-- Keep hangboard volume low enough to preserve high-quality climbing output.
+- Fingerboard progression: change one variable only (load OR edge depth OR density). Use fixed hang times and long rests.
+- Stop rule: stop the finger stimulus for the day if pain/tweaks appear or hang quality drops sharply.
 
 ## Beginner-First Guidance
-- First year focus: movement skill, route reading, tactics, and consistency.
-- Spend most session time climbing across varied terrain/styles.
-- Repeat climbs to improve efficiency and decision-making.
+- First year focus: movement skill and consistency; climb varied terrain and repeat climbs for efficiency.
 - Add S&C simply and only as recovery allows.
 - If supplemental work hurts climbing quality, reduce supplemental load first.
-
-## Plan/Tweak Heuristics for LLM Use
-- Keep recommendations realistic for available sessions per week and time budget.
-- Prefer clear session intent: reason, goals, target effort.
-- If you prescribe sets and reps, explicitly include rest timing (between reps/sets/rounds as relevant).
-- Avoid conflicting stress stacking on consecutive days when possible.
-- Keep progression conservative when injury history, low recovery, or novice status is present.
-- When uncertain, choose safer/moderate loading and explain tradeoffs.
-
-Progression ideas:
-- Progress one variable at a time: difficulty, density (rest), total quality volume, or external load.
-- For power/max-strength work, keep quality high and avoid grinding fatigue.
-- For endurance-focused blocks, increase repeat quality/consistency before major intensity jumps.
