@@ -1,3 +1,7 @@
-:80 {
+coachedclimbing.com, www.coachedclimbing.com {
+  reverse_proxy web:3000
+}
+
+http://localhost, http://127.0.0.1 {
   reverse_proxy web:3000
 }
