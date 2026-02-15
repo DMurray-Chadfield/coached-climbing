@@ -9,7 +9,12 @@ const SAFETY_CONSTRAINTS = [
   "Keep volumes realistic for the user profile.",
   "If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable).",
   "When a session includes both 4x4s and sustained route-sim work, schedule 4x4s before sustained route-sim sets.",
-  "When a session includes both hangboarding and climbing, schedule hangboarding before climbing."
+  "When a session includes both hangboarding and climbing, schedule hangboarding before climbing.",
+  "Avoid generic coaching filler; write concrete and discipline-specific prescriptions.",
+  "Every week focus must include a clear adaptation target and progression intent.",
+  "Every session description must include objective, intensity cue, and workload target.",
+  "Every activity description must include measurable dosage (sets/reps/rest/duration/attempt count as applicable).",
+  "Do not use vague words like optimize, robust, or maximize unless paired with a measurable target."
 ].join(" ");
 
 export function buildGenerationMessages(params: {

@@ -123,7 +123,7 @@ export function buildTweakMessages(params: {
     {
       role: "system",
       content:
-        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema. If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable). When a session includes both 4x4s and sustained route-sim work, place 4x4s first. When a session includes both hangboarding and climbing, place hangboarding first. Never modify sessions listed as locked completed sessions."
+        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema. If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable). When a session includes both 4x4s and sustained route-sim work, place 4x4s first. When a session includes both hangboarding and climbing, place hangboarding first. Never modify sessions listed as locked completed sessions. Avoid generic coaching filler and keep edits concrete. Any updated week/session/activity text must include measurable dosage and progression details."
     },
     {
       role: "user",

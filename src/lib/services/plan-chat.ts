@@ -91,7 +91,7 @@ export function buildPlanChatMessages(params: {
     {
       role: "system",
       content:
-        "Response format: 1) Brief assessment 2) Next session adjustments 3) Safety/constraint callouts (if relevant). Keep it concise and actionable."
+        "Response format: 1) Brief assessment (1-2 sentences anchored to current plan/adherence facts) 2) Next session adjustments (numbered, concrete prescriptions with dosage/intensity/rest details and explicit week/session references when available) 3) Safety/constraint callouts (if relevant). Keep it concise and actionable. Avoid generic motivational filler."
     },
     {
       role: "system",
