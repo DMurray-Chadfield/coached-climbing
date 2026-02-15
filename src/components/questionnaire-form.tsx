@@ -115,16 +115,16 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="questionnaire-form">
       <label>
-        Plan Type
+        <span>Plan Type</span>
         <select value={planDiscipline} onChange={(event) => setPlanDiscipline(event.target.value)} required>
           <option value="sport_trad">Sport/Trad</option>
           <option value="bouldering">Bouldering</option>
         </select>
       </label>
       <label>
-        Climbing Age (years climbing)
+        <span>Climbing Age (years climbing)</span>
         <input
           type="number"
           inputMode="numeric"
@@ -138,7 +138,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Plan Length (weeks)
+        <span>Plan Length (weeks)</span>
         <input
           type="number"
           inputMode="numeric"
@@ -151,7 +151,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Target Focus (event + goals in one answer)
+        <span>Target Focus (event + goals in one answer)</span>
         <textarea
           value={targetFocusSummary}
           onChange={(event) => setTargetFocusSummary(event.target.value)}
@@ -160,11 +160,11 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Target Date (optional)
+        <span>Target Date (optional)</span>
         <input type="date" value={targetFocusDate} onChange={(event) => setTargetFocusDate(event.target.value)} />
       </label>
       <label>
-        Current Level Summary
+        <span>Current Level Summary</span>
         <textarea
           value={currentLevelSummary}
           onChange={(event) => setCurrentLevelSummary(event.target.value)}
@@ -174,7 +174,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Recent Training Summary
+        <span>Recent Training Summary</span>
         <textarea
           value={recentTraining}
           onChange={(event) => setRecentTraining(event.target.value)}
@@ -183,7 +183,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Facilities and Equipment Available
+        <span>Facilities and Equipment Available</span>
         <textarea
           value={facilitiesAndEquipment}
           onChange={(event) => setFacilitiesAndEquipment(event.target.value)}
@@ -193,7 +193,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Sessions Per Week
+        <span>Sessions Per Week</span>
         <input
           type="number"
           inputMode="numeric"
@@ -206,11 +206,11 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
         />
       </label>
       <label>
-        Injuries / Constraints
+        <span>Injuries / Constraints</span>
         <textarea value={injuries} onChange={(event) => setInjuries(event.target.value)} rows={2} required />
       </label>
       <label>
-        Notes
+        <span>Notes</span>
         <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} />
       </label>
       <button type="submit" disabled={isLoading}>

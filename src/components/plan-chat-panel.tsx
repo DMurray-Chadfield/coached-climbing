@@ -307,7 +307,12 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
     <section className="card plan-chat-card">
       <div className="plan-chat-header">
         <h2>Plan Chat</h2>
-        <button type="button" onClick={onReset} disabled={isLoading || isSending || isResetting || isApplying || !threadId}>
+        <button
+          className="button-secondary"
+          type="button"
+          onClick={onReset}
+          disabled={isLoading || isSending || isResetting || isApplying || !threadId}
+        >
           {isResetting ? "Resetting..." : "Reset chat"}
         </button>
       </div>
@@ -320,7 +325,12 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
       {lastFailedDraft ? (
         <p className="plan-chat-inline-actions">
           <span>Message failed to send.</span>
-          <button type="button" onClick={onRetry} disabled={isLoading || isSending || isResetting || isApplying}>
+          <button
+            className="button-secondary"
+            type="button"
+            onClick={onRetry}
+            disabled={isLoading || isSending || isResetting || isApplying}
+          >
             Retry
           </button>
         </p>
@@ -343,6 +353,7 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
               {message.role === "assistant" ? (
                 <div className="plan-chat-message-actions">
                   <button
+                    className="button-secondary"
                     type="button"
                     onClick={() => onApplyAsTweak(message)}
                     disabled={isSending || isResetting || isApplying}

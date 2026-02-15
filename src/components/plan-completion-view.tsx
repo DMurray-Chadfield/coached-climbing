@@ -415,13 +415,21 @@ export function PlanCompletionView({ planId }: Props) {
   return (
     <section className="card plan-progress-card">
       <h2>Progress</h2>
-      <p>
-        Plan completion: <strong>{plan.completion.plan_completion_percent}%</strong> ({plan.completion.completed_activities}/
-        {plan.completion.total_activities} activities)
-      </p>
-      <p>
-        Sessions completed: <strong>{plan.completion.completed_sessions}</strong>/{plan.completion.total_sessions}
-      </p>
+      <div className="progress-metrics">
+        <article className="metric-card">
+          <h3>Plan Completion</h3>
+          <p>
+            <strong>{plan.completion.plan_completion_percent}%</strong> ({plan.completion.completed_activities}/
+            {plan.completion.total_activities} activities)
+          </p>
+        </article>
+        <article className="metric-card">
+          <h3>Sessions Completed</h3>
+          <p>
+            <strong>{plan.completion.completed_sessions}</strong>/{plan.completion.total_sessions}
+          </p>
+        </article>
+      </div>
       <div className="progress-bar" aria-hidden="true">
         <span style={{ width: `${plan.completion.plan_completion_percent}%` }} />
       </div>
@@ -442,7 +450,7 @@ export function PlanCompletionView({ planId }: Props) {
 
       {selectedWeek ? (
         <article key={selectedWeek.weekNumber} className="week-block">
-          <h3>
+          <h3 className="week-heading">
             Week {selectedWeek.weekNumber}
             {selectedWeek.focus ? ` · ${selectedWeek.focus}` : ""}
           </h3>
@@ -503,7 +511,7 @@ export function PlanCompletionView({ planId }: Props) {
                     {isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}` ? "Saving..." : "Save Session Note"}
                   </button>
                 </div>
-                <ul>
+                <ul className="session-activity-list">
                   {session.activities.map((activity) => {
                     const key = `${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`;
                     const checked = activityMap.get(key) ?? false;
@@ -578,7 +586,7 @@ export function PlanCompletionView({ planId }: Props) {
         </article>
       ) : null}
 
-      <details>
+      <details className="plan-json-details">
         <summary>Plan JSON</summary>
         <pre className="plan-json-pre">{JSON.stringify(plan.current_plan_version.planJson, null, 2)}</pre>
       </details>

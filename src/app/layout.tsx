@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Manrope, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -10,35 +11,59 @@ export const metadata: Metadata = {
   description: "Generate personalized climbing plans"
 };
 
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700"]
+});
+
+const headingFont = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["500", "600", "700"]
+});
+
 export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
+  const homeHref = session?.user ? "/dashboard" : "/login";
 
   return (
     <html lang="en">
-      <body>
+      <body className={`${bodyFont.variable} ${headingFont.variable}`}>
         <header className="topbar">
           <div className="topbar-inner">
-            <strong>AI Climbing Coach</strong>
-            <nav className="link-row">
+            <Link href={homeHref} className="brand-mark">
+              <span className="brand-mark-badge" aria-hidden="true">
+                AC
+              </span>
+              <span className="brand-mark-label">AI Climbing Coach</span>
+            </Link>
+            <nav className="link-row topbar-nav">
               {session?.user ? (
                 <>
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link className="topbar-link" href="/dashboard">
+                    Dashboard
+                  </Link>
                   <SignOutButton />
                 </>
               ) : (
                 <>
-                  <Link href="/login">Login</Link>
-                  <Link href="/signup">Sign up</Link>
+                  <Link className="topbar-link" href="/login">
+                    Login
+                  </Link>
+                  <Link className="topbar-link topbar-link-accent" href="/signup">
+                    Sign up
+                  </Link>
                 </>
               )}
             </nav>
           </div>
         </header>
-        <main>{children}</main>
+        <main className="page-shell">{children}</main>
       </body>
     </html>
   );

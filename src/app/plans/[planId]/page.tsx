@@ -40,9 +40,9 @@ export default async function PlanDetailPage({
 
   if (!plan.currentPlanVersion) {
     return (
-      <section className="card">
+      <section className="card plan-header-card">
         <h1>{plan.name}</h1>
-        <p>This is a draft plan. Complete onboarding and generate it.</p>
+        <p className="plan-header-meta">This is a draft plan. Complete onboarding and generate your first version.</p>
         <div className="link-row">
           <Link href={`/onboarding?planId=${plan.id}`}>Complete onboarding</Link>
           <Link href="/dashboard">Back to dashboard</Link>
@@ -54,9 +54,9 @@ export default async function PlanDetailPage({
 
   return (
     <>
-      <section className="card">
+      <section className="card plan-header-card">
         <h1>{plan.name}</h1>
-        <p>Version created at {dateTimeFormatter.format(plan.currentPlanVersion.createdAt)}</p>
+        <p className="plan-header-meta">Version created at {dateTimeFormatter.format(plan.currentPlanVersion.createdAt)}</p>
         <div className="link-row">
           <Link href="/dashboard">Back to dashboard</Link>
           <Link href={`/onboarding?planId=${plan.id}`}>Update onboarding for this plan</Link>

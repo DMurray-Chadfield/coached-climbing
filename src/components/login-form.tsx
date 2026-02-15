@@ -34,22 +34,25 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="auth-form">
       <label>
-        Email
+        <span>Email</span>
         <input
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          placeholder="you@example.com"
+          autoComplete="email"
           required
         />
       </label>
       <label>
-        Password
+        <span>Password</span>
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
+          autoComplete="current-password"
           required
         />
       </label>

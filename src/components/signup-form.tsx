@@ -53,26 +53,29 @@ export function SignupForm() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="auth-form">
       <label>
-        Name
-        <input value={name} onChange={(event) => setName(event.target.value)} />
+        <span>Name</span>
+        <input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" />
       </label>
       <label>
-        Email
+        <span>Email</span>
         <input
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          placeholder="you@example.com"
+          autoComplete="email"
           required
         />
       </label>
       <label>
-        Password
+        <span>Password</span>
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
+          autoComplete="new-password"
           minLength={8}
           required
         />

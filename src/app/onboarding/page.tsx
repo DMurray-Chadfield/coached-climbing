@@ -49,13 +49,22 @@ export default async function OnboardingPage({
   });
 
   return (
-    <section className="card">
-      <h1>Plan Onboarding</h1>
-      <p>Fill this out for this specific plan, then generate it from your dashboard.</p>
-      <div className="link-row">
-        <Link href="/dashboard">Back to dashboard</Link>
-      </div>
-      <QuestionnaireForm planId={planId} initialData={(latest?.data as Record<string, unknown> | null) ?? null} />
+    <section className="onboarding-shell">
+      <article className="card">
+        <div className="onboarding-header">
+          <h1>Plan Onboarding</h1>
+          <p>
+            Complete this once for the selected plan, then generate your first version. You can return later and update it
+            before regenerating.
+          </p>
+          <div className="link-row">
+            <Link href="/dashboard">Back to dashboard</Link>
+          </div>
+        </div>
+        <div className="onboarding-form">
+          <QuestionnaireForm planId={planId} initialData={(latest?.data as Record<string, unknown> | null) ?? null} />
+        </div>
+      </article>
     </section>
   );
 }

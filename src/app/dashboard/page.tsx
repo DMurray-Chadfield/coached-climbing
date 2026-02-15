@@ -34,23 +34,36 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <section className="card">
+      <section className="card dashboard-hero">
         <h1>Dashboard</h1>
-        <p>Start here. Create a plan, complete onboarding for that plan, then generate it.</p>
-        <CreatePlanButton />
+        <p>Build your next block, track completion, and tune sessions with coach chat feedback.</p>
+        <div className="dashboard-actions">
+          <CreatePlanButton />
+        </div>
       </section>
 
-      <section className="card">
+      <section className="card dashboard-list-card">
         <h2>Your Plans</h2>
         {plans.length === 0 ? (
           <p>No plans yet. Create your first plan to begin.</p>
         ) : (
-          <ul>
+          <ul className="plan-list">
             {plans.map((plan) => (
-              <li key={plan.id}>
-                <strong>{plan.name}</strong> · Updated {dateTimeFormatter.format(plan.updatedAt)} ·{" "}
-                {plan.currentPlanVersionId ? "Generated" : "Draft"}
-                <div className="link-row" style={{ marginTop: "0.4rem" }}>
+              <li key={plan.id} className="plan-list-item">
+                <div className="plan-list-header">
+                  <div>
+                    <p className="plan-list-name">{plan.name}</p>
+                    <p className="plan-meta">Updated {dateTimeFormatter.format(plan.updatedAt)}</p>
+                  </div>
+                  <span
+                    className={`plan-status ${
+                      plan.currentPlanVersionId ? "plan-status-generated" : "plan-status-draft"
+                    }`}
+                  >
+                    {plan.currentPlanVersionId ? "Generated" : "Draft"}
+                  </span>
+                </div>
+                <div className="link-row">
                   {plan.currentPlanVersionId ? (
                     <Link className="plan-open-cta" href={`/plans/${plan.id}`}>
                       Open plan
