@@ -32,8 +32,8 @@ Purpose: compact coaching context for bouldering plan generation, tweaks, and ch
 - If quality drops repeatedly, reduce load and/or increase recovery.
 - For beginners, avoid high-intensity finger protocols and max testing.
 - Never prescribe campus board protocols.
-- If power work is needed, use campus-style boulders rather than campus board drills.
-- Never prescribe dynos, double-clutch moves, or jump-catch style movement.
+- If power work is needed, use campusing boulders rather than campus board drills.
+- Don't prescribe dynos, double-clutch moves, or jump-catch style movement unless the goal is compition climbing based.
 
 ## Bouldering Programming Essentials
 - Weekly buckets: climbing (limit/board/volume/PE), finger stimulus (hangboard/campus-style boulders), pulling strength, basic conditioning/prehab.
@@ -73,7 +73,7 @@ Power-endurance (bouldering):
 - Stop or scale down if power drops sharply or technique collapses (drop difficulty, add rest, or cut volume).
 
 Triples (3x3) template:
-- Pick 3 boulders around flash to ~3-try level (no jump-catch style moves).
+- Pick 3 boulders around flash to ~3-try level.
 - Do: B1, B2, B3 with ~30-90s between boulders; repeat the set 3 times (each boulder gets 3 total reps).
 - Rest 4-6 min between rounds; do 2-4 rounds.
 - Progress: add 1 round, then reduce between-boulder rest, then slightly harder boulders.
