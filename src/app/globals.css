@@ -649,6 +649,18 @@ button[disabled] {
   margin-bottom: 0.85rem;
 }
 
+.week-title {
+  display: block;
+}
+
+.week-focus {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
 .week-tabs {
   display: flex;
   gap: 0.5rem;

@@ -443,8 +443,8 @@ export function PlanCompletionView({ planId }: Props) {
       {selectedWeek ? (
         <article key={selectedWeek.weekNumber} className="week-block">
           <h3 className="week-heading">
-            Week {selectedWeek.weekNumber}
-            {selectedWeek.focus ? ` · ${selectedWeek.focus}` : ""}
+            <span className="week-title">Week {selectedWeek.weekNumber}</span>
+            {selectedWeek.focus ? <span className="week-focus">{selectedWeek.focus}</span> : null}
           </h3>
 
           {selectedWeek.sessions.map((session) => {
