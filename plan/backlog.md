@@ -19,7 +19,7 @@
 | T-015 | P0 | Implement activity + session completion models and toggle APIs | Team | Done | Added `ActivityCompletion`/`SessionCompletion` models + idempotent toggle APIs with ownership checks |
 | T-016 | P1 | Add session/activity completion checkboxes in plan UI and progress indicators | Team | Done | `/plans/[planId]` now renders completion checkboxes and plan/session progress percentages backed by API state |
 | T-031 | P1 | Add activity logging UI for stats + feelings and persist activity log entries | Team | Todo | Enables richer AI plan discussions |
-| T-032 | P0 | Implement completion/log carry-forward mapping between plan versions | Team | Done | Deterministic carry-forward now copies matching completion/note state into new tweak-created versions |
+| T-032 | P0 | Implement completion/log carry-forward mapping between plan versions | Team | Done | Deterministic carry-forward copies matching completion + session-note state into new tweak-created versions |
 | T-014 | P1 | Build weekly/session plan viewer UI | Team | Done | Plan detail page renders stored current version JSON |
 | T-017 | P0 | Build plan tweak API (week or whole plan) with LLM + schema validation | Team | Done | Added tweak API with strict structured output, validation, retry, and versioned persistence |
 | T-033 | P0 | Enforce OpenAI structured output (`response_format: json_schema`, `strict: true`) for generation/tweak endpoints | Team | Done | Generation and tweak endpoints now both enforce `json_schema` + `strict: true` |

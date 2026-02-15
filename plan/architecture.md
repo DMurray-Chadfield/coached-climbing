@@ -13,7 +13,7 @@ Web application that collects climber profile data, sends structured inputs to a
   - API routes/server actions for auth-protected operations
   - Plan generation service (prompt assembly, LLM call, schema validation, retry)
   - Activity/session completion endpoints (toggle complete/incomplete, list completion state)
-  - Session/activity notes endpoints (persist note context for coaching and tweaks)
+  - Session notes endpoint (persist note context for coaching and tweaks)
   - Plan tweak endpoints (week-specific or whole-plan tweak requests)
   - Plan chat endpoints (Q&A about a selected plan/version, optional "apply as tweak")
 - Data:
@@ -59,7 +59,7 @@ Web application that collects climber profile data, sends structured inputs to a
 10. Valid plan is saved as a new version on the selected plan, and current pointer is updated.
 11. Homepage refresh shows all user plans, newest first, with onboarding/generate/open actions.
 12. User marks sessions/activities complete; completion state is persisted and reflected in plan progress.
-13. User saves session/activity notes and completion state outside immutable plan JSON.
+13. User saves session notes and completion state outside immutable plan JSON.
 14. User submits tweak request (target week or whole plan + requested change).
 15. Backend sends to LLM:
    - discipline-specific coaching context file
@@ -74,7 +74,9 @@ Web application that collects climber profile data, sends structured inputs to a
 17. Backend validates JSON and saves as new plan version with tweak metadata.
 18. Completed sessions in source version are locked/preserved and cannot be modified by tweaks.
 19. Chat history is carried forward to the new version's default chat thread after tweak apply.
-20. System runs completion/note carry-forward mapping from prior version using exact keys (`week_number`, `session_number`, `activity_id`).
+20. System runs carry-forward from prior version:
+   - completion rows by exact keys (`week_number`, `session_number`, `activity_id`)
+   - session-note rows by (`week_number`, `session_number`)
 21. UI shows updated plan plus LLM change summary.
 22. In plan-chat UI, user asks questions about their plan (without auto-editing).
 23. Backend sends to LLM:

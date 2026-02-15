@@ -41,6 +41,11 @@ Before running the checklist for release:
 - Plan completion percent and per-session completion percent update after each toggle.
 - Attempting completion updates for a non-owned plan/version returns not found.
 
+## Notes
+- Session notes save and persist after page reload.
+- Session notes can be cleared and remain cleared after reload.
+- Activity notes UI is not shown in plan detail.
+
 ## Tweak + Chat Foundations (Backend)
 - Tweak API accepts valid payloads and returns a new plan version + change summary.
 - Invalid tweak payloads are rejected with a readable validation error.
@@ -49,7 +54,7 @@ Before running the checklist for release:
 - Chat message create/list endpoints are owner-scoped.
 - Chat reset endpoint clears thread messages without deleting thread metadata.
 - Chat requests do not mutate existing plan JSON versions.
-- Chat replies reference onboarding + completion + notes context for the selected plan version.
+- Chat replies reference onboarding + completion + session-notes context for the selected plan version.
 
 ## Plan Chat UI
 - Plan detail shows chat panel above the plan content.

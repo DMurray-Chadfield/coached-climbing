@@ -74,7 +74,7 @@
   - latest plan-scoped onboarding response
   - current plan JSON
   - completion snapshot
-  - session/activity notes snapshot
+  - session notes snapshot
 - Added actionable coach response framing in prompt instructions.
 
 ## Subagent-B (Thread Lifecycle + Reset)
@@ -102,3 +102,18 @@
 - Updated docs to reflect chat UI + reset + notes endpoints.
 - Updated training context terminology from `Peak phase` to `Specialization phase`.
 - Added explicit rest-time instruction when sets/reps are prescribed in prompt/context guidance.
+
+# Subagent Lane Execution (Post-Slice Cleanup: Activity Notes De-Scoped)
+
+## Subagent-A (Backend Cleanup)
+- Removed activity-notes API route and service persistence logic.
+- Kept notes response compatibility shape with `activities: []`.
+- Updated version-rollover carry-forward to keep completion + session-note mapping.
+
+## Subagent-B (Schema + Migration)
+- Removed `ActivityNote` model from Prisma schema.
+- Added migration `202602151958__drop_activity_note` to drop legacy table.
+
+## Subagent-C (UI + Tests)
+- Removed activity-notes editor UI from plan completion view.
+- Deleted activity-notes route integration tests and updated rollover unit tests.

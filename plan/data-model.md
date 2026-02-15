@@ -11,7 +11,6 @@
 - PlanChatThread
 - PlanChatMessage
 - SessionNote
-- ActivityNote
 
 ## Relationships
 - One `User` can have many `TrainingPlan` records
@@ -24,7 +23,6 @@
 - One `TrainingPlan` can have many `PlanChatThread` records
 - One `PlanChatThread` can have many `PlanChatMessage` records
 - One `TrainingPlanVersion` can have many `SessionNote` records
-- One `TrainingPlanVersion` can have many `ActivityNote` records
 
 ## MVP Onboarding Questions (Concise)
 1. Profile: "What is your climbing age (years climbing)?"
@@ -232,33 +230,22 @@ Notes:
 - Uniqueness:
   - unique on (`user_id`, `plan_version_id`, `week_number`, `session_number`)
 
-## Activity Notes Model
-- Activity notes are stored outside immutable plan JSON
-- Suggested `ActivityNote` fields:
-  - `id`
-  - `user_id`
-  - `training_plan_id`
-  - `plan_version_id`
-  - `week_number`
-  - `session_number`
-  - `activity_id`
-  - `note_text`
-  - `created_at`, `updated_at`
-- Uniqueness:
-  - unique on (`user_id`, `plan_version_id`, `week_number`, `session_number`, `activity_id`)
+## Activity Notes Status
+- Activity notes were removed from the active MVP backend/UI scope.
+- Existing notes response shape keeps `activities: []` for compatibility where needed.
 
 ## Completion/Log Carry-Forward on New Plan Versions
 - When a tweak creates a new plan version, run carry-forward mapping:
   - Match old/new activities by (`week_number`, `session_number`, `activity_id`)
   - Copy matching activity/session completion rows
-  - Copy matching session/activity note rows
+  - Copy matching session note rows by (`week_number`, `session_number`)
 - If no exact key match exists in the new plan version:
   - do not copy that row
 - Keep all prior completions/logs intact on old version for audit history
 - Current implemented carry-forward behavior:
   - completed sessions are preserved in tweak output (cannot be modified by tweak)
   - matching activity/session completion state is copied to the new version
-  - matching session/activity notes are copied to the new version
+  - matching session notes are copied to the new version
   - chat history is copied from prior version thread to new version thread
 
 ## Implemented API Endpoints (Slice 2 Foundation)
@@ -283,8 +270,7 @@ Notes:
 - `DELETE /api/plans/[planId]`
   - Soft-deletes plan by setting `deletedAt`; deleted plans are hidden from app list/detail and plan-bound APIs
 - `PATCH /api/plans/[planId]/sessions/notes`
-- `PATCH /api/plans/[planId]/activities/notes`
-  - Owner-scoped note persistence by plan version/session/activity keys
+  - Owner-scoped session-note persistence by plan version/session keys
 - Chat thread behavior:
   - one default thread per plan version (idempotent create/reuse)
   - manual reset supported via reset endpoint

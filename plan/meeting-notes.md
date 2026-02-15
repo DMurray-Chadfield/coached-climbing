@@ -32,7 +32,7 @@
 
 ### Notes
 - Implemented activity/session completion persistence and progress UI.
-- Added session/activity notes persistence and plan UI note editors.
+- Added session/activity notes persistence and plan UI note editors (later simplified to session notes only).
 - Added context-rich chat prompts that include latest onboarding, plan, completion, and notes.
 - Implemented default-thread-per-plan-version behavior and manual chat reset endpoint.
 - Added plan-page chat panel with optimistic sends and `Enter` submit (`Shift+Enter` newline).
@@ -93,3 +93,18 @@
 | Action | Owner | Due |
 |---|---|---|
 | Run full manual smoke pass including delete-plan and chat-history carry-forward flows | Team | 2026-02-16 |
+
+## 2026-02-15 - Post-Launch Cleanup (Activity Notes De-Scoped)
+
+### Agenda
+- Simplify MVP surface area by removing activity-note persistence/UI while keeping core completion + session-note workflows.
+
+### Notes
+- Removed activity notes UI from plan completion screen.
+- Removed activity-notes API route and service persistence path.
+- Removed `ActivityNote` Prisma model and added migration `202602151958__drop_activity_note`.
+- Preserved notes response compatibility shape with `activities: []` to avoid downstream breakage.
+
+### Decisions
+- Keep session notes only for MVP.
+- Preserve completion and session-note carry-forward across plan-version rollovers.

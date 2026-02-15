@@ -57,3 +57,11 @@ Track schema changes safely and make them reproducible across local, staging, an
 - Keep a migration changelog in PR/release notes.
 - Track which app version introduced each migration.
 - Periodically verify production schema matches expected `_prisma_migrations` state.
+
+## Current Migration Sequence
+- `202602151400__init`
+- `202602151430__questionnaire_per_plan`
+- `202602151600__completion_tweak_chat_foundations`
+- `202602151630__session_activity_notes`
+- `202602151700__soft_delete_training_plan`
+- `202602151958__drop_activity_note` (removes deprecated `ActivityNote` table)
