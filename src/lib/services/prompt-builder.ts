@@ -7,7 +7,7 @@ const COACHING_CONSTRAINTS = [
   "Use session_number plans; do not assume weekdays.",
   "Respect injuries/constraints; keep loads realistic; use only the user's stated facilities/equipment.",
   "Every session includes Warm-up and Cool-down.",
-  "Every session includes Hangboard/Fingerboard OR Conditioning/Strength (if needed, use a 5-10 min minimal-dose accessory).",
+  "Every session includes Conditioning/Strength (if needed, use a 5-10 min minimal-dose accessory).",
   "Each week includes climbing in at least 3 sessions when 3+ sessions exist; if <3 sessions, every session includes climbing.",
   "Order: hangboard before climbing; power-endurance before sustained route-sim when both exist.",
   "Week focus must state adaptation target + progression intent.",

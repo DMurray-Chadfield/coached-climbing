@@ -130,7 +130,7 @@ export function buildTweakMessages(params: {
         "Do not modify locked_completed_sessions.",
         'Scope: if scope="week" and target_week_number is set, only modify that week; all other weeks must remain identical to current_plan (content + ordering).',
         'If scope="whole_plan", edit only what the request requires (no rewrites).',
-        "Structure: every session has Warm-up + Cool-down and includes Hangboard/Fingerboard OR Conditioning/Strength; 3+ sessions/week => at least 3 climbing sessions, else every session includes climbing.",
+        "Structure: every session has Warm-up + Cool-down and includes Conditioning/Strength (if needed, use a 5-10 min minimal-dose accessory); 3+ sessions/week => at least 3 climbing sessions, else every session includes climbing.",
         "Ordering: hangboard before climbing; power-endurance before sustained route-sim when both exist.",
         "Any edited text must include objective + workload + intensity cue + dosage + rest + stop/scale rule.",
         "Use null (not empty strings) for optional fields like intensity/completion_criteria when unknown.",

@@ -37,14 +37,16 @@ Purpose: compact coaching context for bouldering plan generation, tweaks, and ch
 
 ## Bouldering Programming Essentials
 - Weekly buckets: climbing (limit/board/volume/PE), finger stimulus (hangboard/campus-style boulders), pulling strength, basic conditioning/prehab.
-- High/Low structure: 2 High days (limit/board/finger strength/power) + 1 Low day (volume/technique/easy recovery) when 3+ sessions exist.
-- Avoid back-to-back High finger-load days when possible.
+- Strength/conditioning (minimal dose): include deadlifting and weighted pull-ups plus trunk/antagonists; keep volume low and avoid grinding reps so climbing quality stays high.
+- Avoid back-to-back high finger-load days when possible.
 - Block defaults: 6-12 weeks with a primary quality (strength -> power -> performance/transfer). Include 1-2 transition weeks (fun climbing, reduced structure). Deload or reduced-load week every ~4-6 hard weeks.
 - Performance window: after a hard block, plan ~3-4 weeks of performance focus (more sending/specificity, less structure) and avoid adding new training stressors.
 - Balance heuristic: default to ~4x more time bouldering than supplemental strength work (adjust if injured/limited access).
 - Use the wall intelligently: climb on all angles, bias extra volume toward weaknesses; steep/board terrain is efficient for tension and whole-body strength.
 - Session ordering: limit/board -> power-endurance -> volume/technique. If hangboard + climb same day: hangboard first (after warm-up).
+- You can pair limit + PE in one session: do limit first (full rests, high quality), then add a small PE dose if quality is still high.
 - Warm-ups must have movement intent (not just easy climbing): rotate emphasis (static control, momentum/hip-driven movement, tension through feet/core).
+- Default weekly baseline (when possible): 2 limit/board limit sessions/week, spaced apart; add 1 volume/technique session and 1 PE session as recovery allows.
 
 Session selection guide (quick):
 - Can't generate (raw power/recruitment): limit/board limit with full rests.
