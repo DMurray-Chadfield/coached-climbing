@@ -17,10 +17,13 @@ Purpose: compact coaching context for bouldering plan generation, tweaks, and ch
 - Keep at least one rest or very easy day between high finger-load sessions when possible.
 - If quality drops repeatedly, reduce load or increase recovery.
 - For beginners, avoid high-intensity finger protocols and max testing.
+- Never prescribe campus board protocols.
+- If power work is needed, use campus boulders (feet-on, wall-based) rather than campus board drills.
+- Never prescribe dynos, double-clutch moves, or jump-catch style movement.
 
 ## Bouldering Programming Essentials
 Main weekly buckets:
-- Hands (hangboard/campus)
+- Hands (hangboard/campus boulders)
 - Climbing
 - Strength/Power pulling
 - Basic conditioning
