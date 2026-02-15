@@ -7,14 +7,13 @@ describe("buildGenerationMessages", () => {
       trainingContext: "TRAINING_CONTEXT_BLOCK",
       questionnaire: {
         age: 29,
-        sex: "Male",
         plan_length_weeks: 12,
-        current_level: {},
-        goals: ["Improve technique"],
+        target_focus: {
+          summary: "Trip prep and strength goals"
+        },
+        current_level_summary: "Boulder V4, route 5.11a, mostly indoor",
         training_history_and_load: {
-          recent_training_summary: "Some training",
-          past_exercises: [],
-          load_tolerance: "Moderate"
+          recent_training_summary: "Some training"
         },
         sessions_per_week: 3,
         injuries_and_constraints: "None",

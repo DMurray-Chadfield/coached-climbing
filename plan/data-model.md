@@ -17,6 +17,7 @@
 - One `User` can have many `TrainingPlan` records
 - One `TrainingPlan` can have many `TrainingPlanVersion` records
 - One `User` can have many `QuestionnaireResponse` records (history allowed)
+- One `TrainingPlan` can have many `QuestionnaireResponse` records (plan-scoped onboarding history)
 - One `TrainingPlanVersion` can have many `ActivityCompletion` records
 - One `TrainingPlanVersion` can have many `SessionCompletion` records
 - One `TrainingPlanVersion` can have many `ActivityLogEntry` records
@@ -25,11 +26,11 @@
 - One `PlanChatThread` can have many `PlanChatMessage` records
 
 ## MVP Onboarding Questions (Concise)
-1. Profile: "What is your age and sex?"
-2. Plan length + target: "How long do you want the plan, and do you have a target date/event?" (weeks, max 52; e.g., trip/season/competition/outdoor project)
-3. Current level: "What is your current climbing level?" (boulder/sport grade + indoor/outdoor optional)
-4. Goals: "What are your main goals for this plan?" (multi-select + short text)
-5. Training history + load tolerance: "What training have you done recently and how much load can you handle?" (include hangboarding/strength history)
+1. Profile: "What is your age?"
+2. Plan length: "How long do you want the plan?" (weeks, max 52)
+3. Target focus: "What are you training for, and what are your goals for this plan?" (single combined answer, optional target date)
+4. Current level summary: "Include your boulder grade, route grade, and any context notes."
+5. Training history: "What training have you done recently?"
 6. Weekly training frequency: "How many sessions per week can you train?" (store as session count, not fixed weekdays)
 7. Injuries + constraints: "Any injuries, pain, or constraints we should plan around?" (merged safety/constraints question)
 8. Notes: final free-text box for anything else the coach should know
@@ -38,30 +39,27 @@
 
 ```json
 {
+  "training_plan_id": "plan_abc123",
   "age": 29,
-  "sex": "Male",
   "plan_length_weeks": 12,
-  "target_event": {
-    "type": "Outdoor trip",
-    "date": "2026-06-15",
-    "details": "Red River Gorge spring trip"
+  "target_focus": {
+    "summary": "Outdoor trip prep and improve power endurance",
+    "date": "2026-06-15"
   },
-  "current_level": {
-    "boulder_grade": "V4",
-    "route_grade": "5.11a",
-    "context_notes": "Mostly indoor"
-  },
-  "goals": ["Improve finger strength", "Send first V6"],
+  "current_level_summary": "Boulder V4, route 5.11a, mostly indoor",
   "training_history_and_load": {
-    "recent_training_summary": "3 sessions/week for 2 months",
-    "past_exercises": ["Hangboarding", "Limit bouldering"],
-    "load_tolerance": "Moderate"
+    "recent_training_summary": "3 sessions/week for 2 months"
   },
   "sessions_per_week": 3,
   "injuries_and_constraints": "Mild left ring finger pain, avoid max hangs",
   "notes": "Travel one weekend per month"
 }
 ```
+
+## Questionnaire Scoping Rule
+- Onboarding is per-plan, not global.
+- Every questionnaire save/load call must include a `planId`.
+- Generation must use the most recent questionnaire tied to the selected plan.
 
 ## Training Plan JSON Shape (MVP)
 
@@ -153,6 +151,8 @@
 
 ## LLM Context Source Requirement
 - For every LLM call, prepend base coaching context from:
+  - `/Users/Student/src/tomteece.github.io/training info/training-ideas-condensed.md`
+- If condensed context is unavailable, fallback to:
   - `/Users/Student/src/tomteece.github.io/training info/training-ideas.md`
 - Store source metadata per request for debugging:
   - `context_source_path`

@@ -36,3 +36,27 @@ export async function GET() {
     return jsonError(500, "INTERNAL_ERROR", "Unable to list plans.");
   }
 }
+
+export async function POST() {
+  try {
+    const userId = await requireUserId();
+
+    const plan = await prisma.trainingPlan.create({
+      data: {
+        userId,
+        name: "Untitled Plan"
+      },
+      select: {
+        id: true
+      }
+    });
+
+    return NextResponse.json({ planId: plan.id }, { status: 201 });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return jsonError(401, "UNAUTHORIZED", "You must be signed in.");
+    }
+
+    return jsonError(500, "INTERNAL_ERROR", "Unable to create plan.");
+  }
+}

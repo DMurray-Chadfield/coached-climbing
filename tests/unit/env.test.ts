@@ -7,11 +7,11 @@ describe("getEnv", () => {
     process.env.NEXTAUTH_URL = "http://localhost:3000";
     process.env.NEXTAUTH_SECRET = "super-secret-for-tests";
     process.env.OPENAI_API_KEY = "test-key";
-    process.env.OPENAI_MODEL_PRIMARY = "gpt-4.1";
+    process.env.OPENAI_MODEL_PRIMARY = "gpt-5-mini";
 
     resetEnvCacheForTests();
 
     const env = getEnv();
-    expect(env.OPENAI_MODEL_PRIMARY).toBe("gpt-4.1");
+    expect(env.OPENAI_MODEL_PRIMARY).toBe("gpt-5-mini");
   });
 });

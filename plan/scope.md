@@ -3,7 +3,7 @@
 ## In Scope
 - Marketing site + app shell
 - Email/password authentication
-- Onboarding questionnaire (goals, grade level, time/week, injury constraints, equipment, climbing style)
+- Onboarding questionnaire (target focus, current level summary, time/week, injury constraints, equipment, climbing style)
 - AI-generated training plan output in JSON format
 - Plan viewer for week/session/activity structure
 - Save and load plans per user

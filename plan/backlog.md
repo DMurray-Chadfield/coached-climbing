@@ -11,11 +11,11 @@
 |---|---|---|---|---|---|
 | T-001 | P0 | Set up app scaffold, DB, and environment config | Team | Done | Next.js app, Prisma schema/migration, env schema, and base configs added |
 | T-002 | P0 | Implement auth (signup/login/logout) | Team | Done | Signup API + NextAuth credentials login + logout button |
-| T-003 | P0 | Design questionnaire schema and UI form | Team | Done | Server-validated questionnaire schema and onboarding form/API complete |
+| T-003 | P0 | Design questionnaire schema and UI form | Team | Done | Simplified questionnaire shipped (merged target+goals, combined current-level field, removed sex/past exercises/load tolerance) |
 | T-004 | P0 | Define JSON plan schema (`week/session/activities`) | Team | Done | JSON schema added and validated server-side before persistence |
 | T-005 | P0 | Build LLM generation endpoint with schema validation + retry | Team | Done | Generate API uses structured output with one retry on validation failure |
 | T-006 | P0 | Save versioned plans per user | Team | Done | Immutable `TrainingPlanVersion` records with current pointer set on create |
-| T-007 | P0 | Build authenticated homepage listing user plans + "Create Plan" CTA | Team | Done | Dashboard lists plans and exposes generate action |
+| T-007 | P0 | Build authenticated homepage listing user plans + "Create Plan" CTA | Team | Done | Dashboard is start point with Create Plan, per-plan onboarding link, and generate/regenerate actions |
 | T-015 | P0 | Implement activity + session completion models and toggle APIs | Team | Todo | Track checked sessions and activities |
 | T-016 | P1 | Add session/activity completion checkboxes in plan UI and progress indicators | Team | Todo | Improve adherence tracking |
 | T-031 | P1 | Add activity logging UI for stats + feelings and persist activity log entries | Team | Todo | Enables richer AI plan discussions |
@@ -25,7 +25,7 @@
 | T-033 | P0 | Enforce OpenAI structured output (`response_format: json_schema`, `strict: true`) for generation/tweak endpoints | Team | In Progress | Generation endpoint enforced; tweak endpoint pending |
 | T-018 | P1 | Add tweak UI in plan view (request box + scope selector + summary display) | Team | Todo | User-facing tweak flow |
 | T-019 | P1 | Persist tweak request history and resulting plan versions | Team | Todo | Auditability + rollback confidence |
-| T-020 | P0 | Enforce LLM base context loading from `training info/training-ideas.md` for all LLM endpoints | Team | In Progress | Generation endpoint prepends base context; tweak/chat pending |
+| T-020 | P0 | Enforce LLM base context loading from `training info/training-ideas-condensed.md` (fallback `training-ideas.md`) for all LLM endpoints | Team | In Progress | Generation endpoint prepends condensed context with fallback; tweak/chat pending |
 | T-021 | P1 | Build plan chat API + thread/message persistence | Team | Todo | Plan discussion without auto-edit |
 | T-022 | P1 | Add separate plan chat UI with "Apply as tweak" action | Team | Todo | Convert chat suggestions into tweak flow |
 | T-023 | P0 | Implement and QA responsive UI for mobile + desktop across all core flows | Team | In Progress | Basic responsive layout for auth/onboarding/dashboard/plan detail implemented |

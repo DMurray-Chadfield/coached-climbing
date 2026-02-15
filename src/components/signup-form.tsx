@@ -48,7 +48,7 @@ export function SignupForm() {
     });
 
     setIsLoading(false);
-    router.push("/onboarding");
+    router.push("/dashboard");
     router.refresh();
   }
 

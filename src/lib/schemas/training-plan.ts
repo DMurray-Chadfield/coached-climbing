@@ -41,19 +41,22 @@ export const trainingPlanJsonSchema = {
                   items: {
                     type: "object",
                     additionalProperties: false,
-                    required: ["activity_id", "name", "description"],
+                    required: [
+                      "activity_id",
+                      "name",
+                      "description",
+                      "duration_minutes",
+                      "completion_criteria",
+                      "intensity"
+                    ],
                     properties: {
                       activity_id: { type: "string", minLength: 1 },
                       name: { type: "string", minLength: 1 },
                       description: { type: "string", minLength: 1 },
-                      duration_minutes: { type: "integer", minimum: 1 },
-                      intensity: { type: "string" },
-                      completion_criteria: { type: "string" }
-                    },
-                    anyOf: [
-                      { required: ["duration_minutes"] },
-                      { required: ["completion_criteria"] }
-                    ]
+                      duration_minutes: { type: ["integer", "null"], minimum: 1 },
+                      completion_criteria: { type: ["string", "null"], minLength: 1 },
+                      intensity: { type: ["string", "null"] }
+                    }
                   }
                 }
               }

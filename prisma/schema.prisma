@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -59,15 +60,17 @@ model VerificationToken {
 }
 
 model QuestionnaireResponse {
-  id        String   @id @default(cuid())
-  userId    String
-  data      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String       @id @default(cuid())
+  userId         String
+  trainingPlanId String?
+  data           Json
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan TrainingPlan? @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
 
-  @@index([userId, createdAt])
+  @@index([userId, trainingPlanId, createdAt])
 }
 
 model TrainingPlan {
@@ -80,6 +83,7 @@ model TrainingPlan {
   updatedAt            DateTime              @updatedAt
   versions             TrainingPlanVersion[] @relation("PlanVersions")
   currentPlanVersion   TrainingPlanVersion?  @relation("CurrentPlanVersion", fields: [currentPlanVersionId], references: [id], onDelete: SetNull)
+  questionnaireResponses QuestionnaireResponse[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

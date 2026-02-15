@@ -25,7 +25,7 @@ describe("generateTrainingPlan", () => {
     process.env.NEXTAUTH_URL = "http://localhost:3000";
     process.env.NEXTAUTH_SECRET = "super-secret-for-tests";
     process.env.OPENAI_API_KEY = "test-key";
-    process.env.OPENAI_MODEL_PRIMARY = "gpt-4.1";
+    process.env.OPENAI_MODEL_PRIMARY = "gpt-5-mini";
 
     const envModule = await import("@/lib/env");
     envModule.resetEnvCacheForTests();
@@ -66,7 +66,9 @@ describe("generateTrainingPlan", () => {
                             activity_id: "w1s1a1",
                             name: "Warmup",
                             description: "Easy movement",
-                            duration_minutes: 20
+                            duration_minutes: 20,
+                            completion_criteria: null,
+                            intensity: null
                           }
                         ]
                       }
@@ -83,14 +85,13 @@ describe("generateTrainingPlan", () => {
 
     const result = await generateTrainingPlan({
       age: 29,
-      sex: "Male",
       plan_length_weeks: 12,
-      current_level: {},
-      goals: ["Improve technique"],
+      target_focus: {
+        summary: "Trip prep and strength goals"
+      },
+      current_level_summary: "Boulder V4, route 5.11a, mostly indoor",
       training_history_and_load: {
-        recent_training_summary: "Some training",
-        past_exercises: [],
-        load_tolerance: "Moderate"
+        recent_training_summary: "Some training"
       },
       sessions_per_week: 3,
       injuries_and_constraints: "None",

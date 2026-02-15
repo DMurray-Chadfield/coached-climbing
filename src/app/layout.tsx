@@ -27,7 +27,6 @@ export default async function RootLayout({
               {session?.user ? (
                 <>
                   <Link href="/dashboard">Dashboard</Link>
-                  <Link href="/onboarding">Onboarding</Link>
                   <SignOutButton />
                 </>
               ) : (

@@ -1,21 +1,28 @@
 # Manual Smoke Checklist (Slice 1)
 
+Run this checklist with Docker runtime:
+- `docker compose -f docker-compose.dev.yml up --build`
+
 ## Auth
 - Sign up with new email succeeds.
 - Login with created account succeeds.
 - Logout returns user to login.
-- Unauthenticated user cannot open dashboard/onboarding/plan pages.
+- Unauthenticated user cannot open dashboard/onboarding(planId)/plan pages.
 
-## Onboarding
-- Questionnaire saves successfully.
+## Plan Creation + Onboarding
+- Dashboard shows primary `Create Plan` action.
+- Clicking `Create Plan` creates a draft and routes to `/onboarding?planId=...`.
+- Questionnaire saves successfully for that specific plan.
 - Invalid questionnaire fields are rejected.
 
 ## Plan Generation
-- Generate plan succeeds after onboarding.
+- Generate plan succeeds for a plan that has completed onboarding.
+- Generating a plan without onboarding for that plan shows an error.
 - Generation failure returns readable error.
 
 ## Plans
-- Dashboard lists generated plans newest-first.
+- Dashboard lists draft and generated plans newest-first.
+- Draft plan row shows onboarding + generate actions.
 - Plan detail only available to owner.
 - Current plan JSON displays without rendering errors.
 

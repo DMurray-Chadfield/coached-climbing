@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { GeneratePlanButton } from "@/components/generate-plan-button";
 
 export default async function PlanDetailPage({
   params
@@ -26,8 +27,22 @@ export default async function PlanDetailPage({
     }
   });
 
-  if (!plan || !plan.currentPlanVersion) {
+  if (!plan) {
     notFound();
+  }
+
+  if (!plan.currentPlanVersion) {
+    return (
+      <section className="card">
+        <h1>{plan.name}</h1>
+        <p>This is a draft plan. Complete onboarding and generate it.</p>
+        <div className="link-row">
+          <Link href={`/onboarding?planId=${plan.id}`}>Complete onboarding</Link>
+          <Link href="/dashboard">Back to dashboard</Link>
+          <GeneratePlanButton planId={plan.id} />
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -37,7 +52,8 @@ export default async function PlanDetailPage({
         <p>Version created at {plan.currentPlanVersion.createdAt.toISOString()}</p>
         <div className="link-row">
           <Link href="/dashboard">Back to dashboard</Link>
-          <Link href="/onboarding">Update questionnaire</Link>
+          <Link href={`/onboarding?planId=${plan.id}`}>Update onboarding for this plan</Link>
+          <GeneratePlanButton planId={plan.id} label="Regenerate" />
         </div>
       </section>
       <section className="card">

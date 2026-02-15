@@ -5,22 +5,14 @@ describe("questionnaireSchema", () => {
   it("accepts a valid questionnaire", () => {
     const result = questionnaireSchema.safeParse({
       age: 29,
-      sex: "Male",
       plan_length_weeks: 12,
-      target_event: {
-        type: "Outdoor trip",
+      target_focus: {
+        summary: "Outdoor trip prep and improve power endurance",
         date: "2026-06-15"
       },
-      current_level: {
-        boulder_grade: "V4",
-        route_grade: "5.11a",
-        context_notes: "Mostly indoor"
-      },
-      goals: ["Improve finger strength"],
+      current_level_summary: "Boulder V4, route 5.11a, mostly indoor",
       training_history_and_load: {
-        recent_training_summary: "3 sessions/week for 2 months",
-        past_exercises: ["Hangboarding"],
-        load_tolerance: "Moderate"
+        recent_training_summary: "3 sessions/week for 2 months"
       },
       sessions_per_week: 3,
       injuries_and_constraints: "Avoid max hangs",
@@ -33,14 +25,13 @@ describe("questionnaireSchema", () => {
   it("rejects out-of-range plan length", () => {
     const result = questionnaireSchema.safeParse({
       age: 29,
-      sex: "Male",
       plan_length_weeks: 99,
-      current_level: {},
-      goals: ["Goal"],
+      target_focus: {
+        summary: "Performance push"
+      },
+      current_level_summary: "V4/5.11a",
       training_history_and_load: {
-        recent_training_summary: "summary",
-        past_exercises: [],
-        load_tolerance: "Moderate"
+        recent_training_summary: "summary"
       },
       sessions_per_week: 3,
       injuries_and_constraints: "None",

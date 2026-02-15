@@ -10,5 +10,5 @@ Track major decisions and why they were made.
 | 2026-02-15 | Defer Stripe to post-MVP | Add billing in MVP | Prioritize validating core coaching value before monetization complexity | Team |
 | 2026-02-15 | Require OpenAI structured output for generation/tweaks | Prompt-only JSON compliance | `response_format: json_schema` with strict mode reduces malformed outputs | Team |
 | 2026-02-15 | Testing strategy: unit + integration + manual mobile/desktop smoke tests | Add full E2E automation in MVP | Faster MVP while preserving core quality gates and CI reliability | Team |
-| 2026-02-15 | Always prepend `training info/training-ideas.md` in LLM context | Partial/optional context loading | Ensures consistent coaching behavior across generation, tweaks, and plan chat | Team |
+| 2026-02-15 | Prepend `training info/training-ideas-condensed.md` with fallback to `training-ideas.md` in LLM context | Full context only, partial/optional context loading | Keeps generation context concise while preserving reliability with a fallback path | Team |
 | 2026-02-15 | Keep plan versions immutable; store completion/logs separately | Mutate plan JSON in place | Preserves audit history and prevents completion corruption across plan tweaks | Team |

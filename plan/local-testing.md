@@ -10,11 +10,23 @@ Enable fast, repeatable local development with confidence before deployment.
 - AI: OpenAI API (dev key via `.env.local`)
 
 ## Local Environment Setup
-1. Start full stack locally with Docker Compose.
-2. Create `.env.local` from `.env.example`.
-3. Run database migrations.
-4. Seed minimal dev data (optional).
+1. Create `.env.local` from `.env.example`.
+2. Install dependencies with `pnpm install`.
+3. Load env and run migrations from host shell:
+   - `set -a && source .env.local && set +a`
+   - `pnpm exec prisma migrate deploy`
+   - `pnpm prisma:generate`
+4. Start full stack locally with Docker Compose dev mode (default runtime):
+   - `docker compose -f docker-compose.dev.yml up --build`
 5. Run tests and manual smoke checks.
+
+## Runtime Default
+- Local runtime should use Docker Compose dev mode instead of host `pnpm dev`.
+- Standard commands:
+  - start: `docker compose -f docker-compose.dev.yml up --build`
+  - restart without rebuild: `docker compose -f docker-compose.dev.yml up`
+  - stop: `docker compose -f docker-compose.dev.yml down`
+  - reset DB volume: `docker compose -f docker-compose.dev.yml down -v`
 
 ## Docker Compose Services (Default)
 - `web`: Next.js app container
@@ -52,7 +64,7 @@ Enable fast, repeatable local development with confidence before deployment.
 - Desktop and mobile layout checks.
 - Core flow smoke tests:
   - signup/login
-  - onboarding -> generate plan -> view plan
+  - dashboard -> create plan -> onboarding for that plan -> generate plan -> view plan
   - tick off activities and see progress update
   - submit tweak and see summary + updated version
   - chat about plan and optionally apply as tweak

@@ -6,6 +6,9 @@ vi.mock("@/lib/server/auth-guard", () => ({
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
+    trainingPlan: {
+      findFirst: vi.fn()
+    },
     questionnaireResponse: {
       create: vi.fn(),
       findFirst: vi.fn()
@@ -25,12 +28,15 @@ describe("questionnaire route", () => {
   it("returns 401 when unauthenticated", async () => {
     vi.mocked(requireUserId).mockRejectedValue(new Error("UNAUTHORIZED"));
 
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/questionnaire?planId=ckzv3m9ub0000n8p7h9grq2la"));
     expect(response.status).toBe(401);
   });
 
   it("saves a valid questionnaire", async () => {
     vi.mocked(requireUserId).mockResolvedValue("user_1");
+    vi.mocked(prisma.trainingPlan.findFirst).mockResolvedValue({
+      id: "plan_1"
+    } as never);
     vi.mocked(prisma.questionnaireResponse.create).mockResolvedValue({
       id: "q_1",
       createdAt: new Date("2026-02-15T00:00:00.000Z")
@@ -41,15 +47,15 @@ describe("questionnaire route", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          planId: "ckzv3m9ub0000n8p7h9grq2la",
           age: 29,
-          sex: "Male",
           plan_length_weeks: 12,
-          current_level: {},
-          goals: ["Improve technique"],
+          target_focus: {
+            summary: "Trip prep and strength goals"
+          },
+          current_level_summary: "Boulder V4, route 5.11a, mostly indoor",
           training_history_and_load: {
-            recent_training_summary: "Some training",
-            past_exercises: [],
-            load_tolerance: "Moderate"
+            recent_training_summary: "Some training"
           },
           sessions_per_week: 3,
           injuries_and_constraints: "None",

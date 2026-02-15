@@ -3,7 +3,7 @@ import { buildOpenAIRequest } from "@/lib/services/plan-generator";
 
 describe("buildOpenAIRequest", () => {
   it("enforces structured output with strict json schema", () => {
-    const request = buildOpenAIRequest("gpt-4.1", [
+    const request = buildOpenAIRequest("gpt-5-mini", [
       {
         role: "system",
         content: "context"

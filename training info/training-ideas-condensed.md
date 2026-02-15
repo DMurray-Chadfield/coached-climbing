@@ -9,6 +9,7 @@ Purpose: compact coaching context for LLM chat and plan tweaks.
 - Progress one variable at a time: difficulty, volume, density (rest), or load.
 - Keep quality high. Avoid junk fatigue and repeated form breakdown.
 - Track sessions and adjust weekly based on response.
+- Program at least 3 climbing sessions per week outside warm-up/cool-down unless the user explicitly reports fewer available climbing days or constraints that prevent 3 sessions/week.
 
 ## Safety and Load Guardrails
 - Respect injury/pain constraints. Remove or scale conflicting exercises.
@@ -46,6 +47,9 @@ Session ordering when combining work (high to low intensity):
 Typical weekly loading:
 - Hard system work usually up to 2-3 sessions/week total (tolerance-dependent).
 - Preserve enough aerobic base while building higher-intensity work.
+- Aero Cap guardrails:
+  - Max 15 minutes per continuous climbing block.
+  - Max 45 minutes total climbing work per session (rests allowed between blocks).
 
 ## Bouldering Programming Essentials
 Main weekly buckets:

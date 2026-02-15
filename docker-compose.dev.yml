@@ -1,6 +1,7 @@
 services:
   web:
-    build: .
+    image: node:20-alpine
+    working_dir: /app
     depends_on:
       db:
         condition: service_healthy
@@ -8,8 +9,22 @@ services:
       - .env.local
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/climbing_coach?schema=public
+      CHOKIDAR_USEPOLLING: "1"
+      WATCHPACK_POLLING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+      - web_node_modules:/app/node_modules
+      - pnpm_store:/pnpm/store
+    command: >-
+      sh -c "corepack enable
+      && apk add --no-cache openssl
+      && pnpm config set store-dir /pnpm/store
+      && pnpm install --no-frozen-lockfile
+      && pnpm prisma generate
+      && pnpm dev -H 0.0.0.0 -p 3000"
 
   db:
     image: postgres:16-alpine
@@ -38,3 +53,5 @@ services:
 
 volumes:
   postgres_data:
+  web_node_modules:
+  pnpm_store:

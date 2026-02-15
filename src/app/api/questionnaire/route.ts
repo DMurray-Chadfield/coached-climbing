@@ -1,15 +1,43 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { questionnaireSchema } from "@/lib/schemas/questionnaire";
 import { jsonError } from "@/lib/api";
 import { requireUserId } from "@/lib/server/auth-guard";
 
-export async function GET() {
+const postSchema = questionnaireSchema.extend({
+  planId: z.string().cuid()
+});
+
+export async function GET(request: Request) {
   try {
     const userId = await requireUserId();
+    const url = new URL(request.url);
+    const planId = url.searchParams.get("planId");
+
+    if (!planId) {
+      return jsonError(400, "PLAN_ID_REQUIRED", "A planId query parameter is required.");
+    }
+
+    const plan = await prisma.trainingPlan.findFirst({
+      where: {
+        id: planId,
+        userId
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (!plan) {
+      return jsonError(404, "NOT_FOUND", "Plan not found.");
+    }
 
     const latest = await prisma.questionnaireResponse.findFirst({
-      where: { userId },
+      where: {
+        userId,
+        trainingPlanId: planId
+      } as never,
       orderBy: { createdAt: "desc" }
     });
 
@@ -27,17 +55,34 @@ export async function POST(request: Request) {
   try {
     const userId = await requireUserId();
     const payload = await request.json().catch(() => null);
-    const parsed = questionnaireSchema.safeParse(payload);
+    const parsed = postSchema.safeParse(payload);
 
     if (!parsed.success) {
       return jsonError(400, "INVALID_PAYLOAD", "Invalid questionnaire payload", parsed.error.flatten());
     }
 
+    const plan = await prisma.trainingPlan.findFirst({
+      where: {
+        id: parsed.data.planId,
+        userId
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (!plan) {
+      return jsonError(404, "NOT_FOUND", "Plan not found.");
+    }
+
+    const { planId, ...questionnaireData } = parsed.data;
+
     const saved = await prisma.questionnaireResponse.create({
       data: {
         userId,
-        data: parsed.data
-      },
+        trainingPlanId: planId,
+        data: questionnaireData
+      } as never,
       select: {
         id: true,
         createdAt: true

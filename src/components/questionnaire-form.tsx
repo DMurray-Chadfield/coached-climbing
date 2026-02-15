@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 type Props = {
+  planId: string;
   initialData?: Record<string, unknown> | null;
 };
 
@@ -20,37 +21,18 @@ function asNumber(value: unknown, fallback: number): number {
   return typeof value === "number" ? value : fallback;
 }
 
-export function QuestionnaireForm({ initialData }: Props) {
+export function QuestionnaireForm({ planId, initialData }: Props) {
   const [age, setAge] = useState(asNumber(initialData?.age, 29));
-  const [sex, setSex] = useState(asString(initialData?.sex));
   const [planLengthWeeks, setPlanLengthWeeks] = useState(asNumber(initialData?.plan_length_weeks, 12));
-  const [targetType, setTargetType] = useState(asString((initialData?.target_event as Record<string, unknown>)?.type));
-  const [targetDate, setTargetDate] = useState(asString((initialData?.target_event as Record<string, unknown>)?.date));
-  const [targetDetails, setTargetDetails] = useState(
-    asString((initialData?.target_event as Record<string, unknown>)?.details)
+  const [targetFocusSummary, setTargetFocusSummary] = useState(
+    asString((initialData?.target_focus as Record<string, unknown>)?.summary)
   );
-  const [boulderGrade, setBoulderGrade] = useState(
-    asString((initialData?.current_level as Record<string, unknown>)?.boulder_grade)
+  const [targetFocusDate, setTargetFocusDate] = useState(
+    asString((initialData?.target_focus as Record<string, unknown>)?.date)
   );
-  const [routeGrade, setRouteGrade] = useState(
-    asString((initialData?.current_level as Record<string, unknown>)?.route_grade)
-  );
-  const [contextNotes, setContextNotes] = useState(
-    asString((initialData?.current_level as Record<string, unknown>)?.context_notes)
-  );
-  const [goals, setGoals] = useState(
-    Array.isArray(initialData?.goals) ? (initialData?.goals as string[]).join(", ") : "Improve technique"
-  );
+  const [currentLevelSummary, setCurrentLevelSummary] = useState(asString(initialData?.current_level_summary));
   const [recentTraining, setRecentTraining] = useState(
     asString((initialData?.training_history_and_load as Record<string, unknown>)?.recent_training_summary)
-  );
-  const [pastExercises, setPastExercises] = useState(
-    Array.isArray((initialData?.training_history_and_load as Record<string, unknown>)?.past_exercises)
-      ? ((initialData?.training_history_and_load as Record<string, unknown>)?.past_exercises as string[]).join(", ")
-      : ""
-  );
-  const [loadTolerance, setLoadTolerance] = useState(
-    asString((initialData?.training_history_and_load as Record<string, unknown>)?.load_tolerance)
   );
   const [sessionsPerWeek, setSessionsPerWeek] = useState(asNumber(initialData?.sessions_per_week, 3));
   const [injuries, setInjuries] = useState(asString(initialData?.injuries_and_constraints));
@@ -66,32 +48,16 @@ export function QuestionnaireForm({ initialData }: Props) {
     setIsLoading(true);
 
     const payload = {
+      planId,
       age: Number(age),
-      sex,
       plan_length_weeks: Number(planLengthWeeks),
-      target_event: targetType
-        ? {
-            type: targetType,
-            ...(targetDate ? { date: targetDate } : {}),
-            ...(targetDetails ? { details: targetDetails } : {})
-          }
-        : undefined,
-      current_level: {
-        boulder_grade: boulderGrade,
-        route_grade: routeGrade,
-        context_notes: contextNotes
+      target_focus: {
+        summary: targetFocusSummary,
+        ...(targetFocusDate ? { date: targetFocusDate } : {})
       },
-      goals: goals
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      current_level_summary: currentLevelSummary,
       training_history_and_load: {
-        recent_training_summary: recentTraining,
-        past_exercises: pastExercises
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
-        load_tolerance: loadTolerance
+        recent_training_summary: recentTraining
       },
       sessions_per_week: Number(sessionsPerWeek),
       injuries_and_constraints: injuries,
@@ -114,7 +80,7 @@ export function QuestionnaireForm({ initialData }: Props) {
       return;
     }
 
-    setStatus("Saved. You can now generate a plan from the dashboard.");
+    setStatus("Saved. Return to dashboard and generate this plan.");
   }
 
   return (
@@ -122,10 +88,6 @@ export function QuestionnaireForm({ initialData }: Props) {
       <label>
         Age
         <input type="number" min={13} max={100} value={age} onChange={(event) => setAge(Number(event.target.value))} />
-      </label>
-      <label>
-        Sex
-        <input value={sex} onChange={(event) => setSex(event.target.value)} required />
       </label>
       <label>
         Plan Length (weeks)
@@ -139,32 +101,27 @@ export function QuestionnaireForm({ initialData }: Props) {
         />
       </label>
       <label>
-        Target Event Type
-        <input value={targetType} onChange={(event) => setTargetType(event.target.value)} />
+        Target Focus (event + goals in one answer)
+        <textarea
+          value={targetFocusSummary}
+          onChange={(event) => setTargetFocusSummary(event.target.value)}
+          rows={2}
+          required
+        />
       </label>
       <label>
-        Target Event Date
-        <input type="date" value={targetDate} onChange={(event) => setTargetDate(event.target.value)} />
+        Target Date (optional)
+        <input type="date" value={targetFocusDate} onChange={(event) => setTargetFocusDate(event.target.value)} />
       </label>
       <label>
-        Target Event Details
-        <textarea value={targetDetails} onChange={(event) => setTargetDetails(event.target.value)} rows={2} />
-      </label>
-      <label>
-        Boulder Grade
-        <input value={boulderGrade} onChange={(event) => setBoulderGrade(event.target.value)} />
-      </label>
-      <label>
-        Route Grade
-        <input value={routeGrade} onChange={(event) => setRouteGrade(event.target.value)} />
-      </label>
-      <label>
-        Current Level Notes
-        <textarea value={contextNotes} onChange={(event) => setContextNotes(event.target.value)} rows={2} />
-      </label>
-      <label>
-        Goals (comma separated)
-        <textarea value={goals} onChange={(event) => setGoals(event.target.value)} rows={2} required />
+        Current Level Summary
+        <textarea
+          value={currentLevelSummary}
+          onChange={(event) => setCurrentLevelSummary(event.target.value)}
+          rows={3}
+          placeholder="Include your boulder grade, route grade, and any context notes."
+          required
+        />
       </label>
       <label>
         Recent Training Summary
@@ -174,14 +131,6 @@ export function QuestionnaireForm({ initialData }: Props) {
           rows={2}
           required
         />
-      </label>
-      <label>
-        Past Exercises (comma separated)
-        <input value={pastExercises} onChange={(event) => setPastExercises(event.target.value)} />
-      </label>
-      <label>
-        Load Tolerance
-        <input value={loadTolerance} onChange={(event) => setLoadTolerance(event.target.value)} required />
       </label>
       <label>
         Sessions Per Week

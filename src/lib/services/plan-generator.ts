@@ -27,9 +27,48 @@ export class PlanGenerationError extends Error {
   }
 }
 
+function normalizeOpenAIError(error: unknown): Record<string, unknown> {
+  if (!error || typeof error !== "object") {
+    return {
+      message: "Unknown OpenAI error"
+    };
+  }
+
+  const candidate = error as {
+    name?: string;
+    message?: string;
+    status?: number;
+    code?: string;
+    type?: string;
+    error?: { message?: string; type?: string; code?: string };
+  };
+
+  return {
+    name: candidate.name,
+    message: candidate.message ?? candidate.error?.message,
+    status: candidate.status,
+    code: candidate.code ?? candidate.error?.code,
+    type: candidate.type ?? candidate.error?.type
+  };
+}
+
 async function loadTrainingContext(): Promise<string> {
-  const contextPath = path.join(process.cwd(), "training info", "training-ideas.md");
-  return readFile(contextPath, "utf8");
+  const condensedContextPath = path.join(process.cwd(), "training info", "training-ideas-condensed.md");
+  const fullContextPath = path.join(process.cwd(), "training info", "training-ideas.md");
+
+  try {
+    return await readFile(condensedContextPath, "utf8");
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "ENOENT"
+    ) {
+      return readFile(fullContextPath, "utf8");
+    }
+    throw error;
+  }
 }
 
 export function buildOpenAIRequest(
@@ -38,7 +77,6 @@ export function buildOpenAIRequest(
 ): ChatCompletionCreateParamsNonStreaming {
   return {
     model,
-    temperature: 0.3,
     messages,
     response_format: {
       type: "json_schema",
@@ -115,7 +153,7 @@ export async function generateTrainingPlan(
       if (error instanceof PlanGenerationError) {
         throw error;
       }
-      throw new PlanGenerationError("OpenAI request failed", "LLM_FAILURE", error);
+      throw new PlanGenerationError("OpenAI request failed", "LLM_FAILURE", normalizeOpenAIError(error));
     }
   }
 

@@ -4,6 +4,7 @@
 - Most training should be climbing-specific (wall/rock), with supplemental directed work as needed.
 - Variety matters: change venues, structures, and exercises across cycles.
 - Individual response varies, so use trial-and-error and a training log.
+- Weekly frequency rule: program at least 3 climbing sessions per week outside warm-up/cool-down unless the user explicitly says they can climb fewer than 3 days/week or cannot climb 3 days/week due to constraints.
 
 ## Energy System Model
 - Anaerobic alactic: very high output, very short duration.
@@ -48,6 +49,8 @@ Training components used in this framework:
 - `An Cap`: commonly 1-2 sessions/week.
 - `Aero Pow`: commonly ~2 sessions/week when prioritized.
 - Keep enough `Aero Cap` while building `An Cap` to handle lactate load.
+- `Aero Cap` duration guardrail: maximum 15 minutes per continuous climbing block.
+- `Aero Cap` session guardrail: maximum 45 minutes of total climbing work per session (excluding rests between blocks).
 
 ## Taper Guidance (Pre-Trip / Pre-Performance)
 - 1-2 weeks taper.
@@ -61,6 +64,8 @@ Use highest intensity first:
 
 ## Training Methods by Component (Quick)
 - `Aero Cap`: sustained controllable pump, longer work intervals, no terminal failure.
+  - Keep each continuous climbing interval <= 15 minutes.
+  - Keep total climbing work <= 45 minutes in the session, with rests between intervals.
 - `An Cap`: 12-15 move hard circuits/boulders with longer rests.
 - `Aero Pow`: sustained hard pump circuits with shorter rests.
 - `An Pow`: short hard boulders with very short rests.
