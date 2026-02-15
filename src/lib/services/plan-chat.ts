@@ -1,5 +1,8 @@
 import OpenAI from "openai";
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import type {
+  ChatCompletionCreateParamsNonStreaming,
+  ChatCompletionMessageParam
+} from "openai/resources/chat/completions";
 import { getEnv } from "@/lib/env";
 import type { CompletionSnapshot } from "@/lib/services/plan-completion";
 import type { NotesSnapshot } from "@/lib/services/plan-notes";
@@ -146,7 +149,7 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
   });
 
   try {
-    const request: Parameters<typeof client.chat.completions.create>[0] & {
+    const request: ChatCompletionCreateParamsNonStreaming & {
       reasoning_effort?: "low";
     } = {
       model: env.OPENAI_MODEL_PRIMARY,
