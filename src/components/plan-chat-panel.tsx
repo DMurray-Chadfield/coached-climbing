@@ -34,7 +34,10 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const previousPlanIdRef = useRef(planId);
+  const pendingAskRef = useRef<string | null>(null);
+  const sendMessageRef = useRef<(content: string) => void>(() => {});
 
   const [threadId, setThreadId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -200,6 +203,51 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
     ]);
   }
 
+  useEffect(() => {
+    sendMessageRef.current = (content: string) => {
+      void sendMessage(content);
+    };
+  });
+
+  useEffect(() => {
+    function onAsk(event: Event) {
+      const custom = event as CustomEvent<{ content?: string }>;
+      const content = custom.detail?.content?.trim() ?? "";
+      if (!content) {
+        return;
+      }
+
+      composerRef.current?.focus();
+      composerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      // If the thread isn't ready yet, queue the ask and show it in the composer.
+      if (!threadId || isLoading) {
+        pendingAskRef.current = content;
+        setDraft(content);
+        return;
+      }
+
+      sendMessageRef.current(content);
+    }
+
+    window.addEventListener("plan-chat:ask", onAsk);
+    return () => window.removeEventListener("plan-chat:ask", onAsk);
+  }, [threadId, isLoading]);
+
+  useEffect(() => {
+    if (!threadId || isLoading) {
+      return;
+    }
+
+    const pending = pendingAskRef.current;
+    if (!pending) {
+      return;
+    }
+
+    pendingAskRef.current = null;
+    sendMessageRef.current(pending);
+  }, [threadId, isLoading]);
+
   async function onSend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     void sendMessage(draft);
@@ -304,7 +352,7 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
   }
 
   return (
-    <section className="card plan-chat-card">
+    <section className="card plan-chat-card" id="plan-chat">
       <div className="plan-chat-header">
         <h2>Plan Chat</h2>
         <button
@@ -378,6 +426,7 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
         <label htmlFor="chat-input">Ask your coach</label>
         <textarea
           id="chat-input"
+          ref={composerRef}
           rows={3}
           value={draft}
           onChange={(event) => setDraft(event.currentTarget.value)}

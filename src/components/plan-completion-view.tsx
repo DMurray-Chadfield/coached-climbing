@@ -510,27 +510,61 @@ export function PlanCompletionView({ planId }: Props) {
                   {session.activities.map((activity) => {
                     const activityKey = `${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`;
                     const checked = activityMap.get(activityKey) ?? false;
+                    const activityName = activity.name || activity.activityId;
+                    const helpMessage = [
+                      `How do I do this activity?`,
+                      `Week ${selectedWeek.weekNumber}, Session ${session.sessionNumber}: ${activityName}`,
+                      activity.durationMinutes ? `Planned duration: ${activity.durationMinutes} min` : null,
+                      activity.description ? `Plan notes: ${activity.description}` : null,
+                      "Please explain setup, key cues, common mistakes, how to scale it, and how to judge completion."
+                    ]
+                      .filter((line): line is string => Boolean(line))
+                      .join("\n");
                     return (
                       <li key={activity.activityId}>
-                        <label className="completion-row">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            disabled={isUpdating === `a:${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`}
-                            onChange={(event) =>
-                              onToggleActivity(
-                                selectedWeek.weekNumber,
-                                session.sessionNumber,
-                                activity.activityId,
-                                event.currentTarget.checked
-                              )
-                            }
-                          />
-                          <span>
-                            <strong>{activity.name || activity.activityId}</strong>
-                            {activity.durationMinutes ? ` (${activity.durationMinutes} min)` : ""}
-                          </span>
-                        </label>
+                        <div className="completion-row">
+                          <label className="completion-row-label">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              disabled={isUpdating === `a:${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`}
+                              onChange={(event) =>
+                                onToggleActivity(
+                                  selectedWeek.weekNumber,
+                                  session.sessionNumber,
+                                  activity.activityId,
+                                  event.currentTarget.checked
+                                )
+                              }
+                            />
+                            <span>
+                              <strong>{activityName}</strong>
+                              {activity.durationMinutes ? ` (${activity.durationMinutes} min)` : ""}
+                            </span>
+                          </label>
+                          <button
+                            type="button"
+                            className="activity-help-btn"
+                            aria-label={`Ask coach how to do ${activityName}`}
+                            title="Ask coach how to do this"
+                            disabled={isLoading}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              window.dispatchEvent(
+                                new CustomEvent("plan-chat:ask", {
+                                  detail: { content: helpMessage }
+                                })
+                              );
+                              document.getElementById("plan-chat")?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                              });
+                            }}
+                          >
+                            ?
+                          </button>
+                        </div>
                         {activity.description ? <p className="activity-description">{activity.description}</p> : null}
                       </li>
                     );
