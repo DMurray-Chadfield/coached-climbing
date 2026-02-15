@@ -200,6 +200,7 @@
 - Behavior:
   - Session can auto-complete when all activities are complete
   - User can manually toggle session complete/incomplete
+  - Derived completion takes precedence when all activities are complete (`derived_all_activities` overrides manual incomplete)
   - Session completion remains plan-version-specific
 
 ## Activity Log Entry Model (Stats + Feelings)
@@ -228,6 +229,23 @@
 - If mapping confidence is low:
   - leave unchecked / not copied
 - Keep all prior completions/logs intact on old version for audit history
+
+## Implemented API Endpoints (Slice 2 Foundation)
+- `PATCH /api/plans/[planId]/activities/completion`
+  - Toggles activity completion by `planVersionId` + (`week_number`, `session_number`, `activity_id`)
+  - Idempotent upsert with strict owner + plan-version scoping
+- `PATCH /api/plans/[planId]/sessions/completion`
+  - Toggles manual session completion by `planVersionId` + (`week_number`, `session_number`)
+  - Derived rule enforced when all activities in a session are complete
+- `GET /api/plans/[planId]`
+  - Returns current plan version plus completion snapshot (plan/session/activity progress)
+- `POST /api/plans/[planId]/tweaks`, `GET /api/plans/[planId]/tweaks`
+  - Structured-output tweak generation with schema validation + retry
+  - Persists tweak requests and creates immutable new plan versions on success
+- `POST /api/plans/[planId]/chat/threads`, `GET /api/plans/[planId]/chat/threads`
+- `POST /api/plans/[planId]/chat/threads/[threadId]/messages`, `GET /api/plans/[planId]/chat/threads/[threadId]/messages`
+  - Owner-scoped plan chat persistence with assistant responses
+  - Chat flow does not mutate plan JSON
 
 ## Homepage Query Requirements
 - List plans for the authenticated user only

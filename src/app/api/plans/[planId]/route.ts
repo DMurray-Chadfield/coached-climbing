@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api";
 import { requireUserId } from "@/lib/server/auth-guard";
+import { getCompletionSnapshot } from "@/lib/services/plan-completion";
+import { getNotesSnapshot } from "@/lib/services/plan-notes";
 
 export async function GET(
   _request: Request,
@@ -33,6 +35,18 @@ export async function GET(
       return jsonError(404, "NOT_FOUND", "Plan not found.");
     }
 
+    const completion = await getCompletionSnapshot({
+      userId,
+      trainingPlanId: plan.id,
+      planVersionId: plan.currentPlanVersion.id,
+      planJson: plan.currentPlanVersion.planJson
+    });
+    const notes = await getNotesSnapshot({
+      userId,
+      trainingPlanId: plan.id,
+      planVersionId: plan.currentPlanVersion.id
+    });
+
     return NextResponse.json({
       id: plan.id,
       name: plan.name,
@@ -42,6 +56,8 @@ export async function GET(
         ...plan.currentPlanVersion,
         createdAt: plan.currentPlanVersion.createdAt.toISOString()
       },
+      completion,
+      notes,
       createdAt: plan.createdAt.toISOString(),
       updatedAt: plan.updatedAt.toISOString()
     });

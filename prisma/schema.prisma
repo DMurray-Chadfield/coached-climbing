@@ -8,6 +8,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SessionCompletionSource {
+  manual
+  derived_all_activities
+}
+
+enum PlanTweakScope {
+  week
+  whole_plan
+}
+
+enum PlanTweakStatus {
+  pending
+  accepted
+  rejected
+  failed
+}
+
+enum PlanChatRole {
+  user
+  assistant
+}
+
 model User {
   id                     String                  @id @default(cuid())
   email                  String                  @unique
@@ -21,6 +43,12 @@ model User {
   sessions               Session[]
   questionnaireResponses QuestionnaireResponse[]
   trainingPlans          TrainingPlan[]
+  activityCompletions    ActivityCompletion[]
+  sessionCompletions     SessionCompletion[]
+  planTweakRequests      PlanTweakRequest[]
+  planChatThreads        PlanChatThread[]
+  sessionNotes           SessionNote[]
+  activityNotes          ActivityNote[]
 }
 
 model Account {
@@ -84,6 +112,12 @@ model TrainingPlan {
   versions             TrainingPlanVersion[] @relation("PlanVersions")
   currentPlanVersion   TrainingPlanVersion?  @relation("CurrentPlanVersion", fields: [currentPlanVersionId], references: [id], onDelete: SetNull)
   questionnaireResponses QuestionnaireResponse[]
+  activityCompletions  ActivityCompletion[]
+  sessionCompletions   SessionCompletion[]
+  planTweakRequests    PlanTweakRequest[]
+  planChatThreads      PlanChatThread[]
+  sessionNotes         SessionNote[]
+  activityNotes        ActivityNote[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -98,7 +132,141 @@ model TrainingPlanVersion {
   createdAt      DateTime     @default(now())
   trainingPlan   TrainingPlan @relation("PlanVersions", fields: [trainingPlanId], references: [id], onDelete: Cascade)
   currentForPlan TrainingPlan? @relation("CurrentPlanVersion")
+  activityCompletions ActivityCompletion[]
+  sessionCompletions SessionCompletion[]
+  sourceTweakRequests PlanTweakRequest[] @relation("SourcePlanVersion")
+  resultTweakRequests PlanTweakRequest[] @relation("ResultPlanVersion")
+  planChatThreads PlanChatThread[]
+  sessionNotes SessionNote[]
+  activityNotes ActivityNote[]
 
   @@unique([trainingPlanId, versionNumber])
   @@index([trainingPlanId, createdAt])
+}
+
+model ActivityCompletion {
+  id             String              @id @default(cuid())
+  userId         String
+  trainingPlanId String
+  planVersionId  String
+  weekNumber     Int
+  sessionNumber  Int
+  activityId     String
+  completedAt    DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan   TrainingPlan        @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  planVersion    TrainingPlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planVersionId, weekNumber, sessionNumber, activityId])
+  @@index([trainingPlanId, planVersionId])
+}
+
+model SessionCompletion {
+  id               String                  @id @default(cuid())
+  userId           String
+  trainingPlanId   String
+  planVersionId    String
+  weekNumber       Int
+  sessionNumber    Int
+  completedAt      DateTime?
+  completionSource SessionCompletionSource
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan     TrainingPlan            @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  planVersion      TrainingPlanVersion     @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planVersionId, weekNumber, sessionNumber])
+  @@index([trainingPlanId, planVersionId])
+}
+
+model PlanTweakRequest {
+  id                  String              @id @default(cuid())
+  userId              String
+  trainingPlanId      String
+  sourcePlanVersionId String
+  resultPlanVersionId String?
+  scope               PlanTweakScope
+  targetWeekNumber    Int?
+  requestText         String
+  llmSummaryText      String?
+  status              PlanTweakStatus
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan        TrainingPlan        @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  sourcePlanVersion   TrainingPlanVersion @relation("SourcePlanVersion", fields: [sourcePlanVersionId], references: [id], onDelete: Cascade)
+  resultPlanVersion   TrainingPlanVersion? @relation("ResultPlanVersion", fields: [resultPlanVersionId], references: [id], onDelete: SetNull)
+  planChatMessages    PlanChatMessage[]
+
+  @@index([trainingPlanId, createdAt])
+  @@index([trainingPlanId, status, createdAt])
+}
+
+model PlanChatThread {
+  id             String              @id @default(cuid())
+  userId         String
+  trainingPlanId String
+  planVersionId  String
+  title          String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan   TrainingPlan        @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  planVersion    TrainingPlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+  messages       PlanChatMessage[]
+
+  @@index([trainingPlanId, updatedAt])
+}
+
+model PlanChatMessage {
+  id                   String           @id @default(cuid())
+  threadId             String
+  role                 PlanChatRole
+  content              String
+  sourceTweakRequestId String?
+  createdAt            DateTime         @default(now())
+  thread               PlanChatThread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sourceTweakRequest   PlanTweakRequest? @relation(fields: [sourceTweakRequestId], references: [id], onDelete: SetNull)
+
+  @@index([threadId, createdAt])
+}
+
+model SessionNote {
+  id             String              @id @default(cuid())
+  userId         String
+  trainingPlanId String
+  planVersionId  String
+  weekNumber     Int
+  sessionNumber  Int
+  noteText       String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan   TrainingPlan        @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  planVersion    TrainingPlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planVersionId, weekNumber, sessionNumber])
+  @@index([trainingPlanId, planVersionId])
+}
+
+model ActivityNote {
+  id             String              @id @default(cuid())
+  userId         String
+  trainingPlanId String
+  planVersionId  String
+  weekNumber     Int
+  sessionNumber  Int
+  activityId     String
+  noteText       String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan   TrainingPlan        @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  planVersion    TrainingPlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planVersionId, weekNumber, sessionNumber, activityId])
+  @@index([trainingPlanId, planVersionId])
 }

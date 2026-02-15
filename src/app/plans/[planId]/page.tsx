@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { GeneratePlanButton } from "@/components/generate-plan-button";
+import { PlanCompletionView } from "@/components/plan-completion-view";
 
 export default async function PlanDetailPage({
   params
@@ -56,10 +57,7 @@ export default async function PlanDetailPage({
           <GeneratePlanButton planId={plan.id} label="Regenerate" />
         </div>
       </section>
-      <section className="card">
-        <h2>Plan JSON</h2>
-        <pre>{JSON.stringify(plan.currentPlanVersion.planJson, null, 2)}</pre>
-      </section>
+      <PlanCompletionView planId={plan.id} />
     </>
   );
 }

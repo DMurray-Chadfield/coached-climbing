@@ -160,3 +160,110 @@ a:hover {
     width: 380px;
   }
 }
+
+.plan-progress-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.progress-bar {
+  height: 10px;
+  width: 100%;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: #0f4c81;
+}
+
+.week-block {
+  border-top: 1px solid #dbe3ef;
+  padding-top: 0.85rem;
+}
+
+.week-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.week-tab {
+  background: #e8eef8;
+  color: #0f3760;
+  border: 1px solid #c7d6ea;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.week-tab.is-active {
+  background: #0f4c81;
+  color: #ffffff;
+  border-color: #0f4c81;
+}
+
+.session-block {
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.completion-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 500;
+}
+
+.completion-row input {
+  width: auto;
+}
+
+.session-row {
+  margin-bottom: 0.45rem;
+}
+
+.session-description,
+.activity-description {
+  margin: 0.35rem 0 0.5rem 1.65rem;
+  color: #334155;
+}
+
+.note-card {
+  margin: 0.5rem 0 0.75rem 1.65rem;
+  padding: 0.65rem;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.note-card label {
+  font-size: 0.86rem;
+  color: #334155;
+  margin-bottom: 0.3rem;
+}
+
+.note-card textarea {
+  min-height: 70px;
+  border-color: #b8c7dc;
+}
+
+.note-save-btn {
+  margin-top: 0.45rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.86rem;
+}
+
+.note-card-collapsible summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #0f3760;
+  margin-bottom: 0.45rem;
+}
