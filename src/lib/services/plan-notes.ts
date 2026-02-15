@@ -28,14 +28,6 @@ type SetSessionNoteInput = GetNotesSnapshotInput & {
   planJson: unknown;
 };
 
-type SetActivityNoteInput = GetNotesSnapshotInput & {
-  weekNumber: number;
-  sessionNumber: number;
-  activityId: string;
-  noteText: string;
-  planJson: unknown;
-};
-
 function sessionKey(weekNumber: number, sessionNumber: number): string {
   return `${weekNumber}:${sessionNumber}`;
 }
@@ -59,33 +51,18 @@ function assertSessionAndActivity(input: {
 }
 
 export async function getNotesSnapshot(input: GetNotesSnapshotInput): Promise<NotesSnapshot> {
-  const [sessionNotes, activityNotes] = await Promise.all([
-    prisma.sessionNote.findMany({
-      where: {
-        userId: input.userId,
-        trainingPlanId: input.trainingPlanId,
-        planVersionId: input.planVersionId
-      },
-      select: {
-        weekNumber: true,
-        sessionNumber: true,
-        noteText: true
-      }
-    }),
-    prisma.activityNote.findMany({
-      where: {
-        userId: input.userId,
-        trainingPlanId: input.trainingPlanId,
-        planVersionId: input.planVersionId
-      },
-      select: {
-        weekNumber: true,
-        sessionNumber: true,
-        activityId: true,
-        noteText: true
-      }
-    })
-  ]);
+  const sessionNotes = await prisma.sessionNote.findMany({
+    where: {
+      userId: input.userId,
+      trainingPlanId: input.trainingPlanId,
+      planVersionId: input.planVersionId
+    },
+    select: {
+      weekNumber: true,
+      sessionNumber: true,
+      noteText: true
+    }
+  });
 
   return {
     sessions: sessionNotes.map((note) => ({
@@ -93,12 +70,7 @@ export async function getNotesSnapshot(input: GetNotesSnapshotInput): Promise<No
       session_number: note.sessionNumber,
       note_text: note.noteText
     })),
-    activities: activityNotes.map((note) => ({
-      week_number: note.weekNumber,
-      session_number: note.sessionNumber,
-      activity_id: note.activityId,
-      note_text: note.noteText
-    }))
+    activities: []
   };
 }
 
@@ -137,56 +109,6 @@ export async function setSessionNote(input: SetSessionNoteInput): Promise<NotesS
         planVersionId: input.planVersionId,
         weekNumber: input.weekNumber,
         sessionNumber: input.sessionNumber,
-        noteText: text
-      },
-      update: {
-        noteText: text
-      }
-    });
-  }
-
-  return getNotesSnapshot(input);
-}
-
-export async function setActivityNote(input: SetActivityNoteInput): Promise<NotesSnapshot> {
-  assertSessionAndActivity({
-    planJson: input.planJson,
-    weekNumber: input.weekNumber,
-    sessionNumber: input.sessionNumber,
-    activityId: input.activityId
-  });
-
-  const text = input.noteText.trim();
-
-  if (text.length === 0) {
-    await prisma.activityNote.deleteMany({
-      where: {
-        userId: input.userId,
-        trainingPlanId: input.trainingPlanId,
-        planVersionId: input.planVersionId,
-        weekNumber: input.weekNumber,
-        sessionNumber: input.sessionNumber,
-        activityId: input.activityId
-      }
-    });
-  } else {
-    await prisma.activityNote.upsert({
-      where: {
-        userId_planVersionId_weekNumber_sessionNumber_activityId: {
-          userId: input.userId,
-          planVersionId: input.planVersionId,
-          weekNumber: input.weekNumber,
-          sessionNumber: input.sessionNumber,
-          activityId: input.activityId
-        }
-      },
-      create: {
-        userId: input.userId,
-        trainingPlanId: input.trainingPlanId,
-        planVersionId: input.planVersionId,
-        weekNumber: input.weekNumber,
-        sessionNumber: input.sessionNumber,
-        activityId: input.activityId,
         noteText: text
       },
       update: {

@@ -162,7 +162,6 @@ export function PlanCompletionView({ planId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [selectedWeekNumber, setSelectedWeekNumber] = useState<number | null>(null);
   const [sessionNoteDrafts, setSessionNoteDrafts] = useState<Record<string, string>>({});
-  const [activityNoteDrafts, setActivityNoteDrafts] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let ignore = false;
@@ -251,18 +250,11 @@ export function PlanCompletionView({ planId }: Props) {
     }
 
     const sessionDrafts: Record<string, string> = {};
-    const activityDrafts: Record<string, string> = {};
-
     for (const note of plan.notes.sessions) {
       sessionDrafts[`${note.week_number}:${note.session_number}`] = note.note_text;
     }
 
-    for (const note of plan.notes.activities) {
-      activityDrafts[`${note.week_number}:${note.session_number}:${note.activity_id}`] = note.note_text;
-    }
-
     setSessionNoteDrafts(sessionDrafts);
-    setActivityNoteDrafts(activityDrafts);
   }, [plan]);
 
   async function patchCompletion(url: string, body: Record<string, unknown>, key: string) {
@@ -470,18 +462,19 @@ export function PlanCompletionView({ planId }: Props) {
                     }
                   />
                   <span>
-                    Session {session.sessionNumber}: {session.sessionType || "Session"} ({sessionCompletion?.completion_percent ?? 0}%
-                    activities complete)
+                    Session {session.sessionNumber}: {session.sessionType || "Session"}
                   </span>
                 </label>
 
                 {session.description ? <p className="session-description">{session.description}</p> : null}
                 <div className="note-card">
-                  <label htmlFor={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}>Session Notes</label>
+                  <label htmlFor={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}>
+                    Session Notes
+                  </label>
                   <textarea
                     id={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}
                     rows={3}
-                    placeholder="Add notes for this session..."
+                    placeholder="Notes for coach"
                     value={sessionNoteDrafts[`${selectedWeek.weekNumber}:${session.sessionNumber}`] ?? ""}
                     onChange={(event) => {
                       const nextValue = event.currentTarget.value;
@@ -508,13 +501,15 @@ export function PlanCompletionView({ planId }: Props) {
                       )
                     }
                   >
-                    {isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}` ? "Saving..." : "Save Session Note"}
+                    {isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`
+                      ? "Saving..."
+                      : "Save Coach Session Note"}
                   </button>
                 </div>
                 <ul className="session-activity-list">
                   {session.activities.map((activity) => {
-                    const key = `${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`;
-                    const checked = activityMap.get(key) ?? false;
+                    const activityKey = `${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`;
+                    const checked = activityMap.get(activityKey) ?? false;
                     return (
                       <li key={activity.activityId}>
                         <label className="completion-row">
@@ -537,45 +532,6 @@ export function PlanCompletionView({ planId }: Props) {
                           </span>
                         </label>
                         {activity.description ? <p className="activity-description">{activity.description}</p> : null}
-                        <details className="note-card note-card-collapsible">
-                          <summary>Activity Notes</summary>
-                          <label htmlFor={`activity-note-${selectedWeek.weekNumber}-${session.sessionNumber}-${activity.activityId}`}>
-                            Activity Notes
-                          </label>
-                          <textarea
-                            id={`activity-note-${selectedWeek.weekNumber}-${session.sessionNumber}-${activity.activityId}`}
-                            rows={2}
-                            placeholder="Add notes for this activity..."
-                            value={activityNoteDrafts[key] ?? ""}
-                            onChange={(event) => {
-                              const nextValue = event.currentTarget.value;
-                              setActivityNoteDrafts((current) => ({
-                                ...current,
-                                [key]: nextValue
-                              }));
-                            }}
-                          />
-                          <button
-                            type="button"
-                            className="note-save-btn"
-                            disabled={isUpdating === `an:${key}`}
-                            onClick={() =>
-                              patchNotes(
-                                `/api/plans/${plan.id}/activities/notes`,
-                                {
-                                  planVersionId: plan.current_plan_version.id,
-                                  weekNumber: selectedWeek.weekNumber,
-                                  sessionNumber: session.sessionNumber,
-                                  activityId: activity.activityId,
-                                  noteText: activityNoteDrafts[key] ?? ""
-                                },
-                                `an:${key}`
-                              )
-                            }
-                          >
-                            {isUpdating === `an:${key}` ? "Saving..." : "Save Activity Note"}
-                          </button>
-                        </details>
                       </li>
                     );
                   })}

@@ -54,17 +54,6 @@ describe("plan-version-rollover service", () => {
         ]),
         createMany: vi.fn().mockResolvedValue({ count: 1 })
       },
-      activityNote: {
-        findMany: vi.fn().mockResolvedValue([
-          {
-            weekNumber: 1,
-            sessionNumber: 1,
-            activityId: "a1",
-            noteText: "Felt good"
-          }
-        ]),
-        createMany: vi.fn().mockResolvedValue({ count: 1 })
-      },
       sessionNote: {
         findMany: vi.fn().mockResolvedValue([
           {
@@ -89,12 +78,10 @@ describe("plan-version-rollover service", () => {
     expect(result).toEqual({
       copiedActivityCompletions: 1,
       copiedSessionCompletions: 1,
-      copiedActivityNotes: 1,
       copiedSessionNotes: 1
     });
     expect(tx.activityCompletion.createMany).toHaveBeenCalledTimes(1);
     expect(tx.sessionCompletion.createMany).toHaveBeenCalledTimes(1);
-    expect(tx.activityNote.createMany).toHaveBeenCalledTimes(1);
     expect(tx.sessionNote.createMany).toHaveBeenCalledTimes(1);
   });
 
@@ -112,10 +99,6 @@ describe("plan-version-rollover service", () => {
         createMany: vi.fn().mockResolvedValue({ count: 0 })
       },
       sessionCompletion: {
-        findMany: vi.fn().mockResolvedValue([]),
-        createMany: vi.fn().mockResolvedValue({ count: 0 })
-      },
-      activityNote: {
         findMany: vi.fn().mockResolvedValue([]),
         createMany: vi.fn().mockResolvedValue({ count: 0 })
       },
@@ -137,7 +120,6 @@ describe("plan-version-rollover service", () => {
     expect(result).toEqual({
       copiedActivityCompletions: 0,
       copiedSessionCompletions: 0,
-      copiedActivityNotes: 0,
       copiedSessionNotes: 0
     });
     expect(tx.activityCompletion.createMany).not.toHaveBeenCalled();
@@ -157,10 +139,6 @@ describe("plan-version-rollover service", () => {
         createMany: vi.fn()
       },
       sessionCompletion: {
-        findMany: vi.fn().mockResolvedValue([]),
-        createMany: vi.fn()
-      },
-      activityNote: {
         findMany: vi.fn().mockResolvedValue([]),
         createMany: vi.fn()
       },

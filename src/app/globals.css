@@ -687,13 +687,19 @@ button[disabled] {
 .session-activity-list {
   display: grid;
   gap: var(--space-3);
-  margin: 0;
-  padding-left: 1.25rem;
+  margin: 0.45rem 0 0 1.65rem;
+  padding: 0 0 0 0.85rem;
+  list-style: none;
+  border-left: 2px solid var(--border-soft);
+}
+
+.session-activity-list li {
+  list-style: none;
 }
 
 .completion-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.55rem;
   font-weight: 600;
   line-height: 1.35;
@@ -703,7 +709,7 @@ button[disabled] {
 .completion-row input {
   width: auto;
   min-height: auto;
-  margin-top: 0.1rem;
+  margin-top: 0;
   box-shadow: none;
 }
 
@@ -927,8 +933,9 @@ a:focus-visible {
     padding: 0.65rem;
   }
 
-  .session-block ul {
-    padding-left: 1rem;
+  .session-block .session-activity-list {
+    margin-left: 0;
+    padding-left: 0.65rem;
   }
 
   .note-card,

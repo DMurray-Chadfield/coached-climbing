@@ -15,7 +15,6 @@ type CarryForwardInput = {
 type CarryForwardResult = {
   copiedActivityCompletions: number;
   copiedSessionCompletions: number;
-  copiedActivityNotes: number;
   copiedSessionNotes: number;
 };
 
@@ -64,7 +63,7 @@ export async function carryForwardPlanVersionState(
   const sourceKeys = derivePlanKeySets(input.sourcePlanJson);
   const resultKeys = derivePlanKeySets(input.resultPlanJson);
 
-  const [sourceActivityCompletions, sourceSessionCompletions, sourceActivityNotes, sourceSessionNotes] =
+  const [sourceActivityCompletions, sourceSessionCompletions, sourceSessionNotes] =
     await Promise.all([
       tx.activityCompletion.findMany({
         where: {
@@ -98,19 +97,6 @@ export async function carryForwardPlanVersionState(
           completionSource: true
         }
       }),
-      tx.activityNote.findMany({
-        where: {
-          userId: input.userId,
-          trainingPlanId: input.trainingPlanId,
-          planVersionId: input.sourcePlanVersionId
-        },
-        select: {
-          weekNumber: true,
-          sessionNumber: true,
-          activityId: true,
-          noteText: true
-        }
-      }),
       tx.sessionNote.findMany({
         where: {
           userId: input.userId,
@@ -127,7 +113,6 @@ export async function carryForwardPlanVersionState(
 
   const activityCompletionData: Prisma.ActivityCompletionCreateManyInput[] = [];
   const sessionCompletionData: Prisma.SessionCompletionCreateManyInput[] = [];
-  const activityNoteData: Prisma.ActivityNoteCreateManyInput[] = [];
   const sessionNoteData: Prisma.SessionNoteCreateManyInput[] = [];
 
   for (const row of sourceActivityCompletions) {
@@ -178,28 +163,6 @@ export async function carryForwardPlanVersionState(
     });
   }
 
-  for (const row of sourceActivityNotes) {
-    const aKey = activityKey(row.weekNumber, row.sessionNumber, row.activityId);
-
-    if (!sourceKeys.activityKeys.has(aKey)) {
-      throw new PlanVersionCarryForwardError(`Source activity note does not match source plan structure: ${aKey}`);
-    }
-
-    if (!resultKeys.activityKeys.has(aKey)) {
-      continue;
-    }
-
-    activityNoteData.push({
-      userId: input.userId,
-      trainingPlanId: input.trainingPlanId,
-      planVersionId: input.resultPlanVersionId,
-      weekNumber: row.weekNumber,
-      sessionNumber: row.sessionNumber,
-      activityId: row.activityId,
-      noteText: row.noteText
-    });
-  }
-
   for (const row of sourceSessionNotes) {
     const sKey = sessionKey(row.weekNumber, row.sessionNumber);
 
@@ -221,7 +184,7 @@ export async function carryForwardPlanVersionState(
     });
   }
 
-  const [activityCompletionsInsert, sessionCompletionsInsert, activityNotesInsert, sessionNotesInsert] =
+  const [activityCompletionsInsert, sessionCompletionsInsert, sessionNotesInsert] =
     await Promise.all([
       activityCompletionData.length > 0
         ? tx.activityCompletion.createMany({
@@ -232,12 +195,6 @@ export async function carryForwardPlanVersionState(
       sessionCompletionData.length > 0
         ? tx.sessionCompletion.createMany({
             data: sessionCompletionData,
-            skipDuplicates: true
-          })
-        : Promise.resolve({ count: 0 }),
-      activityNoteData.length > 0
-        ? tx.activityNote.createMany({
-            data: activityNoteData,
             skipDuplicates: true
           })
         : Promise.resolve({ count: 0 }),
@@ -252,7 +209,6 @@ export async function carryForwardPlanVersionState(
   return {
     copiedActivityCompletions: activityCompletionsInsert.count,
     copiedSessionCompletions: sessionCompletionsInsert.count,
-    copiedActivityNotes: activityNotesInsert.count,
     copiedSessionNotes: sessionNotesInsert.count
   };
 }
