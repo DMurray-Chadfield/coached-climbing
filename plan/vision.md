@@ -25,11 +25,12 @@ Provide personalized climbing training plans in minutes using AI, then let users
 - User can complete onboarding questionnaire
 - System can generate and store a structured weekly plan as JSON (`week -> session -> activities`)
 - User can create multiple plans over time
+- User can soft-delete plans (hidden from active UI while retained for audit/history)
 - Authenticated homepage lists a user's plans with a clear "Create Plan" action
 - User can view plan in web UI
 - User can tick off completed sessions and completed session activities
 - User can request plan tweaks for a specific week or whole plan and receive an updated plan + change summary
-- User can chat with AI about a plan in a separate chat area without auto-modifying the plan
+- User can chat with AI about a plan in a dedicated plan-page chat panel without auto-modifying the plan
 - Core app experience works on both mobile and desktop
 - Automated unit + integration tests pass in CI, and manual mobile/desktop smoke tests pass before release
 - Core product is stable for early-access users without billing

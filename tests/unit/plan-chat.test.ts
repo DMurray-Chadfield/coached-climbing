@@ -62,6 +62,21 @@ describe("plan-chat service", () => {
       content: "What if my finger feels sore?"
     });
 
+    const onboardingContext = messages[3]?.content;
+    expect(typeof onboardingContext).toBe("string");
+    expect(onboardingContext as string).toContain("target_focus_summary");
+    expect(onboardingContext as string).not.toContain("age");
+
+    const completionContext = messages[4]?.content;
+    expect(typeof completionContext).toBe("string");
+    expect(completionContext as string).toContain("current_focus");
+    expect(completionContext as string).not.toContain("\"sessions\":");
+
+    const notesContext = messages[5]?.content;
+    expect(typeof notesContext).toBe("string");
+    expect(notesContext as string).toContain("\"sessions\":");
+    expect(notesContext as string).not.toContain("session_notes");
+
     const coachingGuidance = messages[2]?.content;
     expect(typeof coachingGuidance).toBe("string");
     expect((coachingGuidance as string).toLowerCase()).toContain("brief assessment");

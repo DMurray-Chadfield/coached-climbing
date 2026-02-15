@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
@@ -22,6 +23,10 @@ function asNumber(value: unknown, fallback: number): number {
 }
 
 export function QuestionnaireForm({ planId, initialData }: Props) {
+  const router = useRouter();
+  const [planDiscipline, setPlanDiscipline] = useState(
+    asString(initialData?.plan_discipline, "sport_trad")
+  );
   const [age, setAge] = useState(asNumber(initialData?.age, 29));
   const [planLengthWeeks, setPlanLengthWeeks] = useState(asNumber(initialData?.plan_length_weeks, 12));
   const [targetFocusSummary, setTargetFocusSummary] = useState(
@@ -33,6 +38,9 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
   const [currentLevelSummary, setCurrentLevelSummary] = useState(asString(initialData?.current_level_summary));
   const [recentTraining, setRecentTraining] = useState(
     asString((initialData?.training_history_and_load as Record<string, unknown>)?.recent_training_summary)
+  );
+  const [facilitiesAndEquipment, setFacilitiesAndEquipment] = useState(
+    asString(initialData?.facilities_and_equipment_available)
   );
   const [sessionsPerWeek, setSessionsPerWeek] = useState(asNumber(initialData?.sessions_per_week, 3));
   const [injuries, setInjuries] = useState(asString(initialData?.injuries_and_constraints));
@@ -49,6 +57,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
 
     const payload = {
       planId,
+      plan_discipline: planDiscipline,
       age: Number(age),
       plan_length_weeks: Number(planLengthWeeks),
       target_focus: {
@@ -59,6 +68,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
       training_history_and_load: {
         recent_training_summary: recentTraining
       },
+      facilities_and_equipment_available: facilitiesAndEquipment,
       sessions_per_week: Number(sessionsPerWeek),
       injuries_and_constraints: injuries,
       notes
@@ -80,11 +90,20 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
       return;
     }
 
-    setStatus("Saved. Return to dashboard and generate this plan.");
+    setStatus("Saved. Redirecting...");
+    router.push(`/plans/${planId}`);
+    router.refresh();
   }
 
   return (
     <form onSubmit={onSubmit}>
+      <label>
+        Plan Type
+        <select value={planDiscipline} onChange={(event) => setPlanDiscipline(event.target.value)} required>
+          <option value="sport_trad">Sport/Trad</option>
+          <option value="bouldering">Bouldering</option>
+        </select>
+      </label>
       <label>
         Age
         <input type="number" min={13} max={100} value={age} onChange={(event) => setAge(Number(event.target.value))} />
@@ -129,6 +148,16 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
           value={recentTraining}
           onChange={(event) => setRecentTraining(event.target.value)}
           rows={2}
+          required
+        />
+      </label>
+      <label>
+        Facilities and Equipment Available
+        <textarea
+          value={facilitiesAndEquipment}
+          onChange={(event) => setFacilitiesAndEquipment(event.target.value)}
+          rows={2}
+          placeholder="Example: commercial gym (lead + bouldering), hangboard, pull-up bar, dumbbells, no campus board."
           required
         />
       </label>

@@ -84,6 +84,7 @@ describe("generateTrainingPlan", () => {
     const { generateTrainingPlan } = await import("@/lib/services/plan-generator");
 
     const result = await generateTrainingPlan({
+      plan_discipline: "sport_trad",
       age: 29,
       plan_length_weeks: 12,
       target_focus: {
@@ -93,6 +94,7 @@ describe("generateTrainingPlan", () => {
       training_history_and_load: {
         recent_training_summary: "Some training"
       },
+      facilities_and_equipment_available: "Commercial gym and hangboard",
       sessions_per_week: 3,
       injuries_and_constraints: "None",
       notes: ""

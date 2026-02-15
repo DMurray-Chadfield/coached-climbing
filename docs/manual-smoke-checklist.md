@@ -47,7 +47,12 @@ Run this checklist with Docker runtime:
 - Plan detail shows chat panel above the plan content.
 - Sending chat message on `Enter` works; `Shift+Enter` inserts new line.
 - Optimistic user message appears immediately, followed by assistant response.
+- While waiting for assistant response, typing indicator is visible.
+- Failed chat send offers `Retry` and resend succeeds without retyping.
 - `Reset chat` clears visible transcript after confirmation.
+- `Reset chat` is disabled while send/apply actions are in-flight.
+- Assistant messages expose `Apply as tweak`; applying succeeds and shows change summary.
+- After apply succeeds, page refreshes to the new current plan version and chat bootstraps the default thread for that version.
 
 ## Responsive
 - Login, signup, onboarding, dashboard, plan detail are usable on mobile width (~390px).

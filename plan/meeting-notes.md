@@ -48,3 +48,48 @@
 |---|---|---|
 | Add optional "Apply as tweak" action from chat messages | Team | 2026-02-18 |
 | Run full manual smoke pass for chat + notes + completion on mobile/desktop | Team | 2026-02-16 |
+
+## 2026-02-15 - Slice 3 Chat Apply + Rollover Hardening
+
+### Agenda
+- Ship apply-from-chat flow and tighten version rollover + chat reliability UX
+
+### Notes
+- Added `Apply as tweak` action on assistant chat messages using the existing tweak endpoint.
+- Chat panel now auto-refreshes plan detail after successful apply to pick up the new `currentPlanVersion`.
+- Thread bootstrap now resets transient local chat state when `planVersionId` changes, preserving single-thread-per-version UX.
+- Added auto-scroll, assistant typing indicator, and retry action for failed sends.
+- Added compact chat-context builders for onboarding/completion/notes to reduce payload size before LLM chat calls.
+- Expanded integration/unit tests for apply-flow coverage, per-version thread rollover behavior, and deterministic context compaction.
+
+### Decisions
+- Keep apply scope default as `whole_plan`.
+- Keep no-thread-picker UX; continue using one default chat thread per plan version.
+
+### Action Items
+| Action | Owner | Due |
+|---|---|---|
+| Run full release-ready manual smoke pass including chat apply + rollover flow | Team | 2026-02-16 |
+
+## 2026-02-15 - Slice 4 Stabilization (Data Integrity + UX Polish)
+
+### Agenda
+- Tighten plan lifecycle behavior and align docs/UX with shipped flows
+
+### Notes
+- Added onboarding field for facilities/equipment availability and wired it through validation + tests.
+- Updated dashboard UX: clearer Open Plan CTA and readable timestamps.
+- Removed dashboard regenerate action for generated plans (regenerate remains on plan detail page).
+- Added soft-delete flow for plans (`deletedAt`) with dashboard delete action and app-wide deleted-plan guards.
+- Enforced tweak protection so completed sessions are preserved from source plans.
+- Added chat history carry-forward when a tweak creates a new plan version.
+- Updated training context guidance to default to indoor climbing unless user explicitly requests outdoor-specific planning.
+
+### Decisions
+- Keep deleted plans hidden from normal app flows instead of exposing a recycle bin in MVP.
+- Keep tweak scope default as whole-plan for apply-from-chat flow.
+
+### Action Items
+| Action | Owner | Due |
+|---|---|---|
+| Run full manual smoke pass including delete-plan and chat-history carry-forward flows | Team | 2026-02-16 |

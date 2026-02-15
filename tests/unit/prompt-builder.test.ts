@@ -6,6 +6,7 @@ describe("buildGenerationMessages", () => {
     const messages = buildGenerationMessages({
       trainingContext: "TRAINING_CONTEXT_BLOCK",
       questionnaire: {
+        plan_discipline: "sport_trad",
         age: 29,
         plan_length_weeks: 12,
         target_focus: {
@@ -15,6 +16,7 @@ describe("buildGenerationMessages", () => {
         training_history_and_load: {
           recent_training_summary: "Some training"
         },
+        facilities_and_equipment_available: "Commercial gym and hangboard",
         sessions_per_week: 3,
         injuries_and_constraints: "None",
         notes: ""
@@ -26,6 +28,8 @@ describe("buildGenerationMessages", () => {
       content: "TRAINING_CONTEXT_BLOCK"
     });
     expect(messages[1]?.role).toBe("system");
+    expect(messages[1]?.content).toContain("4x4s before sustained route-sim");
+    expect(messages[1]?.content).toContain("hangboarding before climbing");
     expect(messages[2]?.role).toBe("user");
   });
 });

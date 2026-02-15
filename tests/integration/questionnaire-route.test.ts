@@ -48,6 +48,7 @@ describe("questionnaire route", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId: "ckzv3m9ub0000n8p7h9grq2la",
+          plan_discipline: "sport_trad",
           age: 29,
           plan_length_weeks: 12,
           target_focus: {
@@ -57,6 +58,7 @@ describe("questionnaire route", () => {
           training_history_and_load: {
             recent_training_summary: "Some training"
           },
+          facilities_and_equipment_available: "Commercial gym, hangboard",
           sessions_per_week: 3,
           injuries_and_constraints: "None",
           notes: ""

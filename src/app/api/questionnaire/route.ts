@@ -22,7 +22,8 @@ export async function GET(request: Request) {
     const plan = await prisma.trainingPlan.findFirst({
       where: {
         id: planId,
-        userId
+        userId,
+        deletedAt: null
       },
       select: {
         id: true
@@ -64,7 +65,8 @@ export async function POST(request: Request) {
     const plan = await prisma.trainingPlan.findFirst({
       where: {
         id: parsed.data.planId,
-        userId
+        userId,
+        deletedAt: null
       },
       select: {
         id: true

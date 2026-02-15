@@ -28,7 +28,8 @@ export default async function OnboardingPage({
   const plan = await prisma.trainingPlan.findFirst({
     where: {
       id: planId,
-      userId
+      userId,
+      deletedAt: null
     },
     select: {
       id: true

@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import OpenAI from "openai";
 import type {
   ChatCompletionCreateParamsNonStreaming,
@@ -7,6 +5,11 @@ import type {
 } from "openai/resources/chat/completions";
 import { getEnv } from "@/lib/env";
 import { trainingPlanJsonSchema, validateTrainingPlan } from "@/lib/schemas/training-plan";
+import type { PlanDiscipline } from "@/lib/services/training-context";
+import {
+  loadTrainingContext,
+  resolvePlanDiscipline
+} from "@/lib/services/training-context";
 
 const MAX_ATTEMPTS = 2;
 
@@ -33,6 +36,11 @@ type GenerateTweakedPlanInput = {
   requestText: string;
   scope: TweakScope;
   targetWeekNumber?: number;
+  planDiscipline?: PlanDiscipline;
+  lockedCompletedSessions?: Array<{
+    weekNumber: number;
+    sessionNumber: number;
+  }>;
 };
 
 type TweakedPlanResult = {
@@ -77,32 +85,16 @@ function normalizeOpenAIError(error: unknown): Record<string, unknown> {
   };
 }
 
-async function loadTrainingContext(): Promise<string> {
-  const condensedContextPath = path.join(process.cwd(), "training info", "training-ideas-condensed.md");
-  const fullContextPath = path.join(process.cwd(), "training info", "training-ideas.md");
-
-  try {
-    return await readFile(condensedContextPath, "utf8");
-  } catch (error) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      (error as { code?: string }).code === "ENOENT"
-    ) {
-      return readFile(fullContextPath, "utf8");
-    }
-
-    throw error;
-  }
-}
-
 export function buildTweakMessages(params: {
   trainingContext: string;
   planJson: Record<string, unknown>;
   requestText: string;
   scope: TweakScope;
   targetWeekNumber?: number;
+  lockedCompletedSessions?: Array<{
+    weekNumber: number;
+    sessionNumber: number;
+  }>;
   correctionFeedback?: string;
 }): ChatCompletionMessageParam[] {
   const basePayload: Record<string, unknown> = {
@@ -116,6 +108,13 @@ export function buildTweakMessages(params: {
     basePayload.target_week_number = params.targetWeekNumber;
   }
 
+  if (params.lockedCompletedSessions && params.lockedCompletedSessions.length > 0) {
+    basePayload.locked_completed_sessions = params.lockedCompletedSessions.map((session) => ({
+      week_number: session.weekNumber,
+      session_number: session.sessionNumber
+    }));
+  }
+
   const baseMessages: ChatCompletionMessageParam[] = [
     {
       role: "system",
@@ -124,7 +123,7 @@ export function buildTweakMessages(params: {
     {
       role: "system",
       content:
-        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema. If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable)."
+        "Respect injury constraints and realistic progression. Keep output strictly aligned to the provided schema. If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable). When a session includes both 4x4s and sustained route-sim work, place 4x4s first. When a session includes both hangboarding and climbing, place hangboarding first. Never modify sessions listed as locked completed sessions."
     },
     {
       role: "user",
@@ -143,6 +142,116 @@ export function buildTweakMessages(params: {
       content: `The previous output failed validation. Fix exactly:\n${params.correctionFeedback}`
     }
   ];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asPositiveInt(value: unknown): number | null {
+  if (!Number.isInteger(value)) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return parsed > 0 ? parsed : null;
+}
+
+function cloneJson<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+export function preserveCompletedSessions(
+  sourcePlan: Record<string, unknown>,
+  updatedPlan: Record<string, unknown>,
+  lockedCompletedSessions: Array<{ weekNumber: number; sessionNumber: number }>
+): Record<string, unknown> {
+  if (lockedCompletedSessions.length === 0) {
+    return updatedPlan;
+  }
+
+  const sourceWeeks = Array.isArray(sourcePlan.weeks) ? sourcePlan.weeks : [];
+  const updated = cloneJson(updatedPlan);
+  const updatedWeeks = Array.isArray(updated.weeks) ? updated.weeks : [];
+
+  const sourceSessionByKey = new Map<string, Record<string, unknown>>();
+  const sourceWeekByNumber = new Map<number, Record<string, unknown>>();
+
+  for (const week of sourceWeeks) {
+    if (!isRecord(week) || !Array.isArray(week.sessions)) {
+      continue;
+    }
+
+    const weekNumber = asPositiveInt(week.week_number);
+    if (!weekNumber) {
+      continue;
+    }
+
+    sourceWeekByNumber.set(weekNumber, week);
+
+    for (const session of week.sessions) {
+      if (!isRecord(session)) {
+        continue;
+      }
+
+      const sessionNumber = asPositiveInt(session.session_number);
+      if (!sessionNumber) {
+        continue;
+      }
+
+      sourceSessionByKey.set(`${weekNumber}:${sessionNumber}`, session);
+    }
+  }
+
+  for (const locked of lockedCompletedSessions) {
+    const key = `${locked.weekNumber}:${locked.sessionNumber}`;
+    const sourceSession = sourceSessionByKey.get(key);
+
+    if (!sourceSession) {
+      continue;
+    }
+
+    let targetWeek = updatedWeeks.find((week) => {
+      if (!isRecord(week)) {
+        return false;
+      }
+
+      return asPositiveInt(week.week_number) === locked.weekNumber;
+    }) as Record<string, unknown> | undefined;
+
+    if (!targetWeek) {
+      const sourceWeek = sourceWeekByNumber.get(locked.weekNumber);
+      if (!sourceWeek) {
+        continue;
+      }
+
+      targetWeek = cloneJson(sourceWeek);
+      updatedWeeks.push(targetWeek);
+    }
+
+    if (!Array.isArray(targetWeek.sessions)) {
+      targetWeek.sessions = [];
+    }
+
+    const targetSessions = targetWeek.sessions as unknown[];
+    const existingSessionIndex = targetSessions.findIndex((session) => {
+      if (!isRecord(session)) {
+        return false;
+      }
+
+      return asPositiveInt(session.session_number) === locked.sessionNumber;
+    });
+
+    if (existingSessionIndex >= 0) {
+      targetSessions[existingSessionIndex] = cloneJson(sourceSession);
+      continue;
+    }
+
+    targetSessions.push(cloneJson(sourceSession));
+  }
+
+  updated.weeks = updatedWeeks;
+  return updated;
 }
 
 export function buildTweakOpenAIRequest(
@@ -208,7 +317,11 @@ function parseTweakPayload(payload: Record<string, unknown>): {
 export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Promise<TweakedPlanResult> {
   const env = getEnv();
   const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-  const context = await loadTrainingContext();
+  const discipline = resolvePlanDiscipline({
+    explicitDiscipline: input.planDiscipline,
+    planJson: input.planJson
+  });
+  const context = await loadTrainingContext(discipline);
 
   let correctionFeedback: string | undefined;
 
@@ -219,6 +332,7 @@ export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Prom
       requestText: input.requestText,
       scope: input.scope,
       targetWeekNumber: input.targetWeekNumber,
+      lockedCompletedSessions: input.lockedCompletedSessions,
       correctionFeedback
     });
 
@@ -229,11 +343,16 @@ export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Prom
       const content = completion.choices[0]?.message?.content;
       const payload = parseModelResponse(content);
       const parsed = parseTweakPayload(payload);
-      const validation = validateTrainingPlan(parsed.updatedPlan);
+      const protectedPlan = preserveCompletedSessions(
+        input.planJson,
+        parsed.updatedPlan,
+        input.lockedCompletedSessions ?? []
+      );
+      const validation = validateTrainingPlan(protectedPlan);
 
       if (validation.valid) {
         return {
-          updatedPlanJson: parsed.updatedPlan,
+          updatedPlanJson: protectedPlan,
           changeSummary: parsed.changeSummary,
           changed: parsed.changed,
           retryCount: attempt - 1

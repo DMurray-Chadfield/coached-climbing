@@ -68,10 +68,14 @@ Enable fast, repeatable local development with confidence before deployment.
   - tick off activities and see progress update
   - submit tweak and see summary + updated version
   - chat about plan and optionally apply as tweak
+  - verify chat history is retained after tweak-created version rollover
+  - verify completed sessions are not changed by tweak output
+  - delete plan from dashboard and verify it is hidden from dashboard/detail/onboarding/chat flows
 - Empty states and loading states.
 - Retry/error states for LLM calls.
 - Invalid tweak request handling.
 - Ensure chat does not modify plans unless user explicitly applies a tweak.
+- Ensure deleted plans return not found in plan-bound API/page routes.
 
 ## Pre-Deploy Gate
 - All unit + integration tests pass.

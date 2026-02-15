@@ -35,6 +35,14 @@ vi.mock("@/lib/prisma", () => {
     trainingPlan: {
       update: vi.fn()
     },
+    planChatThread: {
+      findFirst: vi.fn(),
+      create: vi.fn()
+    },
+    planChatMessage: {
+      findMany: vi.fn(),
+      createMany: vi.fn()
+    },
     planTweakRequest: {
       update: vi.fn()
     }
@@ -43,6 +51,12 @@ vi.mock("@/lib/prisma", () => {
   return {
     prisma: {
       trainingPlan: {
+        findFirst: vi.fn()
+      },
+      sessionCompletion: {
+        findMany: vi.fn()
+      },
+      questionnaireResponse: {
         findFirst: vi.fn()
       },
       trainingPlanVersion: {
@@ -128,6 +142,12 @@ describe("tweaks route", () => {
     vi.mocked(prisma.planTweakRequest.create).mockResolvedValue({
       id: "tweak_1"
     } as never);
+    vi.mocked(prisma.sessionCompletion.findMany).mockResolvedValue([
+      {
+        weekNumber: 2,
+        sessionNumber: 1
+      }
+    ] as never);
 
     const transactionMock = vi.mocked(prisma.$transaction);
     transactionMock.mockImplementationOnce(async (callback: (client: any) => Promise<unknown>) =>
@@ -138,6 +158,14 @@ describe("tweaks route", () => {
         },
         trainingPlan: {
           update: vi.fn().mockResolvedValue({})
+        },
+        planChatThread: {
+          findFirst: vi.fn().mockResolvedValue(null),
+          create: vi.fn().mockResolvedValue({ id: "thread_new" })
+        },
+        planChatMessage: {
+          findMany: vi.fn().mockResolvedValue([]),
+          createMany: vi.fn().mockResolvedValue({ count: 0 })
         },
         planTweakRequest: {
           update: vi.fn().mockResolvedValue({})
@@ -171,6 +199,11 @@ describe("tweaks route", () => {
     const body = (await response.json()) as { tweakRequestId: string; resultPlanVersionId: string };
     expect(body.tweakRequestId).toBe("tweak_1");
     expect(body.resultPlanVersionId).toBe("version_4");
+    expect(generateTweakedPlan).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lockedCompletedSessions: [{ weekNumber: 2, sessionNumber: 1 }]
+      })
+    );
   });
 
   it("returns 502 and marks tweak as failed when model validation fails", async () => {

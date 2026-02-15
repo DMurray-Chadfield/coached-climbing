@@ -22,11 +22,16 @@ export default async function PlanDetailPage({
   const plan = await prisma.trainingPlan.findFirst({
     where: {
       id: params.planId,
-      userId
+      userId,
+      deletedAt: null
     },
     include: {
       currentPlanVersion: true
     }
+  });
+  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short"
   });
 
   if (!plan) {
@@ -51,7 +56,7 @@ export default async function PlanDetailPage({
     <>
       <section className="card">
         <h1>{plan.name}</h1>
-        <p>Version created at {plan.currentPlanVersion.createdAt.toISOString()}</p>
+        <p>Version created at {dateTimeFormatter.format(plan.currentPlanVersion.createdAt)}</p>
         <div className="link-row">
           <Link href="/dashboard">Back to dashboard</Link>
           <Link href={`/onboarding?planId=${plan.id}`}>Update onboarding for this plan</Link>

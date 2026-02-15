@@ -20,6 +20,7 @@
   - Plan storage + viewer UI
   - LLM plan tweak flow (week-level and whole-plan) with change summaries
   - Separate plan chat flow with optional "apply as tweak"
+  - Soft-delete plan flow (retain records, hide from active app UX)
 - Exit Criteria:
   - End-to-end plan generation works for test users
   - JSON plans are persisted and readable in UI

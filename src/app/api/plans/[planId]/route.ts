@@ -17,7 +17,8 @@ export async function GET(
     const plan = await prisma.trainingPlan.findFirst({
       where: {
         id: context.params.planId,
-        userId
+        userId,
+        deletedAt: null
       },
       include: {
         currentPlanVersion: {
@@ -67,5 +68,49 @@ export async function GET(
     }
 
     return jsonError(500, "INTERNAL_ERROR", "Unable to load plan.");
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  context: {
+    params: { planId: string };
+  }
+) {
+  try {
+    const userId = await requireUserId();
+
+    const plan = await prisma.trainingPlan.findFirst({
+      where: {
+        id: context.params.planId,
+        userId,
+        deletedAt: null
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (!plan) {
+      return jsonError(404, "NOT_FOUND", "Plan not found.");
+    }
+
+    await prisma.trainingPlan.update({
+      where: {
+        id: plan.id
+      },
+      data: {
+        deletedAt: new Date(),
+        currentPlanVersionId: null
+      }
+    });
+
+    return NextResponse.json({ deleted: true });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return jsonError(401, "UNAUTHORIZED", "You must be signed in.");
+    }
+
+    return jsonError(500, "INTERNAL_ERROR", "Unable to delete plan.");
   }
 }

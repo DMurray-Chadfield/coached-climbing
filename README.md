@@ -54,7 +54,9 @@ MVP vertical slice implementation for:
   - `response_format.type = json_schema`
   - `json_schema.strict = true`
 - Prompt order:
-  1. `/Users/Student/src/tomteece.github.io/training info/training-ideas-condensed.md` (fallback to `training-ideas.md`)
+  1. Discipline-specific context:
+     - `/Users/Student/src/tomteece.github.io/training info/training-ideas-bouldering.md`
+     - `/Users/Student/src/tomteece.github.io/training info/training-ideas-sport-trad.md`
   2. safety constraints
   3. questionnaire payload
 - Server-side schema validation + one retry on failure.

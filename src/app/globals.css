@@ -113,6 +113,75 @@ a:hover {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.topbar .link-row {
+  align-items: center;
+}
+
+.topbar-link-button {
+  border: none;
+  background: transparent;
+  color: #0f4c81;
+  padding: 0;
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.topbar-link-button:hover {
+  text-decoration: underline;
+}
+
+.link-row-button {
+  border: none;
+  background: transparent;
+  color: #0f4c81;
+  padding: 0;
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.link-row-button:hover {
+  text-decoration: underline;
+}
+
+.inline-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.danger-link-button {
+  border: none;
+  background: transparent;
+  color: #b42318;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.danger-link-button:hover {
+  text-decoration: underline;
+}
+
+.plan-open-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: #0f4c81;
+  color: #ffffff;
+  font-weight: 700;
+  border: 1px solid #0f4c81;
+}
+
+.plan-open-cta:hover {
+  background: #0d406d;
+  border-color: #0d406d;
+  text-decoration: none;
 }
 
 .generation-tracker {
@@ -327,7 +396,32 @@ a:hover {
   white-space: pre-wrap;
 }
 
+.plan-chat-message-actions {
+  margin-top: 0.55rem;
+}
+
+.plan-chat-message-actions button {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.85rem;
+}
+
 .plan-chat-form {
   display: grid;
   gap: 0.45rem;
+}
+
+.plan-chat-inline-actions {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plan-chat-inline-actions button {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.plan-chat-apply-result {
+  margin: 0;
 }

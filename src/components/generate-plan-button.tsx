@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 type Props = {
   planId: string;
   label?: string;
+  variant?: "solid" | "link";
 };
 
 type GenerateSuccess = {
@@ -18,7 +19,7 @@ type GenerateError = {
   };
 };
 
-export function GeneratePlanButton({ planId, label = "Generate Plan" }: Props) {
+export function GeneratePlanButton({ planId, label = "Generate Plan", variant = "solid" }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -52,8 +53,13 @@ export function GeneratePlanButton({ planId, label = "Generate Plan" }: Props) {
 
   return (
     <>
-      <div>
-        <button type="button" onClick={onGenerate} disabled={isLoading}>
+      <div className={variant === "link" ? "inline-action" : undefined}>
+        <button
+          type="button"
+          onClick={onGenerate}
+          disabled={isLoading}
+          className={variant === "link" ? "link-row-button" : undefined}
+        >
           {isLoading ? "Generating..." : label}
         </button>
         {error ? <p className="error">{error}</p> : null}

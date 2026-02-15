@@ -3,10 +3,11 @@
 ## In Scope
 - Marketing site + app shell
 - Email/password authentication
-- Onboarding questionnaire (target focus, current level summary, time/week, injury constraints, equipment, climbing style)
+- Onboarding questionnaire (target focus, current level summary, recent training, facilities/equipment available, sessions/week, injury constraints, notes)
 - AI-generated training plan output in JSON format
 - Plan viewer for week/session/activity structure
 - Save and load plans per user
+- Soft-delete plans (hide from dashboard/app while retaining records)
 - Basic admin/config for coaching prompt and plan-generation rules
 
 ## Out of Scope

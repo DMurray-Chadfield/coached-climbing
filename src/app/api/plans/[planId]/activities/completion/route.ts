@@ -33,7 +33,8 @@ export async function PATCH(
         id: parsed.data.planVersionId,
         trainingPlanId: context.params.planId,
         trainingPlan: {
-          userId
+          userId,
+          deletedAt: null
         }
       },
       select: {

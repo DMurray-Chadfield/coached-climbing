@@ -284,4 +284,81 @@ describe("chat routes", () => {
 
     expect(response.status).toBe(200);
   });
+
+  it("creates distinct default threads for different plan versions and remains idempotent per version", async () => {
+    const version1Id = "ckzv3m9ub0000n8p7h9grq2la";
+    const version2Id = "ckzv3m9ub0001n8p7h9grq2lb";
+
+    vi.mocked(requireUserId).mockResolvedValue("user_1");
+    vi.mocked(prisma.trainingPlan.findFirst).mockResolvedValue({
+      id: "plan_1",
+      currentPlanVersionId: version1Id
+    } as never);
+    vi.mocked(prisma.trainingPlanVersion.findFirst)
+      .mockResolvedValueOnce({ id: version1Id, trainingPlanId: "plan_1" } as never)
+      .mockResolvedValueOnce({ id: version2Id, trainingPlanId: "plan_1" } as never)
+      .mockResolvedValueOnce({ id: version2Id, trainingPlanId: "plan_1" } as never);
+    vi.mocked(prisma.planChatThread.findFirst)
+      .mockResolvedValueOnce(null as never)
+      .mockResolvedValueOnce(null as never)
+      .mockResolvedValueOnce({
+        id: "thread_v2",
+        planVersionId: version2Id,
+        title: "Plan chat",
+        createdAt: new Date("2026-02-15T00:05:00.000Z"),
+        updatedAt: new Date("2026-02-15T00:05:00.000Z")
+      } as never);
+    vi.mocked(prisma.planChatThread.create)
+      .mockResolvedValueOnce({
+        id: "thread_v1",
+        planVersionId: version1Id,
+        title: "Plan chat",
+        createdAt: new Date("2026-02-15T00:00:00.000Z"),
+        updatedAt: new Date("2026-02-15T00:00:00.000Z")
+      } as never)
+      .mockResolvedValueOnce({
+        id: "thread_v2",
+        planVersionId: version2Id,
+        title: "Plan chat",
+        createdAt: new Date("2026-02-15T00:05:00.000Z"),
+        updatedAt: new Date("2026-02-15T00:05:00.000Z")
+      } as never);
+
+    const v1Response = await POST_THREADS(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planVersionId: version1Id })
+      }),
+      {
+        params: { planId: "ckzv3m9ub0000n8p7h9grq2la" }
+      }
+    );
+    expect(v1Response.status).toBe(201);
+
+    const v2Response = await POST_THREADS(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planVersionId: version2Id })
+      }),
+      {
+        params: { planId: "ckzv3m9ub0000n8p7h9grq2la" }
+      }
+    );
+    expect(v2Response.status).toBe(201);
+
+    const v2RepeatResponse = await POST_THREADS(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planVersionId: version2Id })
+      }),
+      {
+        params: { planId: "ckzv3m9ub0000n8p7h9grq2la" }
+      }
+    );
+    expect(v2RepeatResponse.status).toBe(200);
+    expect(prisma.planChatThread.create).toHaveBeenCalledTimes(2);
+  });
 });

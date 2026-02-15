@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import OpenAI from "openai";
 import type {
   ChatCompletionCreateParamsNonStreaming,
@@ -9,6 +7,7 @@ import { getEnv } from "@/lib/env";
 import type { QuestionnaireInput } from "@/lib/schemas/questionnaire";
 import { trainingPlanJsonSchema, validateTrainingPlan } from "@/lib/schemas/training-plan";
 import { buildGenerationMessages } from "@/lib/services/prompt-builder";
+import { loadTrainingContext } from "@/lib/services/training-context";
 
 const MAX_ATTEMPTS = 2;
 
@@ -52,25 +51,6 @@ function normalizeOpenAIError(error: unknown): Record<string, unknown> {
   };
 }
 
-async function loadTrainingContext(): Promise<string> {
-  const condensedContextPath = path.join(process.cwd(), "training info", "training-ideas-condensed.md");
-  const fullContextPath = path.join(process.cwd(), "training info", "training-ideas.md");
-
-  try {
-    return await readFile(condensedContextPath, "utf8");
-  } catch (error) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      (error as { code?: string }).code === "ENOENT"
-    ) {
-      return readFile(fullContextPath, "utf8");
-    }
-    throw error;
-  }
-}
-
 export function buildOpenAIRequest(
   model: string,
   messages: ChatCompletionMessageParam[]
@@ -108,7 +88,7 @@ export async function generateTrainingPlan(
 ): Promise<PlanGenerationSuccess> {
   const env = getEnv();
   const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-  const context = await loadTrainingContext();
+  const context = await loadTrainingContext(questionnaire.plan_discipline);
 
   let correctionFeedback: string | undefined;
 

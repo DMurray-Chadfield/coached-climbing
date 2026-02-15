@@ -16,7 +16,10 @@ export async function POST(
       where: {
         id: context.params.threadId,
         trainingPlanId: context.params.planId,
-        userId
+        userId,
+        trainingPlan: {
+          deletedAt: null
+        }
       },
       select: {
         id: true

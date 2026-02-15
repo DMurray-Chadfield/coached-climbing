@@ -7,7 +7,9 @@ const SAFETY_CONSTRAINTS = [
   "Output must match JSON schema exactly.",
   "Use session_number based plans; do not assume weekdays.",
   "Keep volumes realistic for the user profile.",
-  "If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable)."
+  "If an activity prescribes sets and reps, include clear rest timing (between reps/sets/rounds as applicable).",
+  "When a session includes both 4x4s and sustained route-sim work, schedule 4x4s before sustained route-sim sets.",
+  "When a session includes both hangboarding and climbing, schedule hangboarding before climbing."
 ].join(" ");
 
 export function buildGenerationMessages(params: {

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api";
 import { requireUserId } from "@/lib/server/auth-guard";
 import { PlanTweakError, generateTweakedPlan } from "@/lib/services/plan-tweak";
+import { normalizePlanDiscipline } from "@/lib/services/training-context";
 
 const postSchema = z
   .object({
@@ -43,7 +44,8 @@ export async function GET(
     const plan = await prisma.trainingPlan.findFirst({
       where: {
         id: context.params.planId,
-        userId
+        userId,
+        deletedAt: null
       },
       select: {
         id: true
@@ -114,7 +116,8 @@ export async function POST(
         id: parsed.data.planVersionId,
         trainingPlanId: context.params.planId,
         trainingPlan: {
-          userId
+          userId,
+          deletedAt: null
         }
       },
       select: {
@@ -145,11 +148,44 @@ export async function POST(
 
     tweakRequestId = tweak.id;
 
+    const lockedCompletedSessions = await prisma.sessionCompletion.findMany({
+      where: {
+        userId,
+        trainingPlanId: sourceVersion.trainingPlanId,
+        planVersionId: sourceVersion.id,
+        completedAt: {
+          not: null
+        }
+      },
+      select: {
+        weekNumber: true,
+        sessionNumber: true
+      }
+    });
+
+    const latestQuestionnaire = await prisma.questionnaireResponse.findFirst({
+      where: {
+        userId,
+        trainingPlanId: sourceVersion.trainingPlanId
+      } as never,
+      orderBy: {
+        createdAt: "desc"
+      },
+      select: {
+        data: true
+      }
+    });
+    const planDiscipline = normalizePlanDiscipline(
+      (latestQuestionnaire?.data as Record<string, unknown> | null)?.plan_discipline
+    );
+
     const generated = await generateTweakedPlan({
       planJson: sourceVersion.planJson as Record<string, unknown>,
       requestText: parsed.data.requestText,
       scope: parsed.data.scope,
-      targetWeekNumber: parsed.data.targetWeekNumber
+      targetWeekNumber: parsed.data.targetWeekNumber,
+      planDiscipline: planDiscipline ?? undefined,
+      lockedCompletedSessions
     });
 
     const result = await prisma.$transaction(async (tx) => {
@@ -184,6 +220,71 @@ export async function POST(
           currentPlanVersionId: createdVersion.id
         }
       });
+
+      const sourceThread = await tx.planChatThread.findFirst({
+        where: {
+          userId,
+          trainingPlanId: sourceVersion.trainingPlanId,
+          planVersionId: sourceVersion.id
+        },
+        orderBy: {
+          updatedAt: "desc"
+        },
+        select: {
+          id: true,
+          title: true
+        }
+      });
+
+      const existingTargetThread = await tx.planChatThread.findFirst({
+        where: {
+          userId,
+          trainingPlanId: sourceVersion.trainingPlanId,
+          planVersionId: createdVersion.id
+        },
+        select: {
+          id: true
+        }
+      });
+
+      if (sourceThread && !existingTargetThread) {
+        const createdThread = await tx.planChatThread.create({
+          data: {
+            userId,
+            trainingPlanId: sourceVersion.trainingPlanId,
+            planVersionId: createdVersion.id,
+            title: sourceThread.title
+          },
+          select: {
+            id: true
+          }
+        });
+
+        const sourceMessages = await tx.planChatMessage.findMany({
+          where: {
+            threadId: sourceThread.id
+          },
+          orderBy: {
+            createdAt: "asc"
+          },
+          select: {
+            role: true,
+            content: true,
+            sourceTweakRequestId: true
+          }
+        });
+
+        if (sourceMessages.length > 0) {
+          await tx.planChatMessage.createMany({
+            data: sourceMessages.map((message) => ({
+              threadId: createdThread.id,
+              role: message.role,
+              content: message.content,
+              sourceTweakRequestId: message.sourceTweakRequestId
+            }))
+          });
+        }
+      }
 
       await tx.planTweakRequest.update({
         where: {

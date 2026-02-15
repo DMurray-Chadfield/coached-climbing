@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CreatePlanButton } from "@/components/create-plan-button";
 import { GeneratePlanButton } from "@/components/generate-plan-button";
+import { DeletePlanButton } from "@/components/delete-plan-button";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -15,7 +16,7 @@ export default async function DashboardPage() {
   }
 
   const plans = await prisma.trainingPlan.findMany({
-    where: { userId },
+    where: { userId, deletedAt: null },
     orderBy: { updatedAt: "desc" },
     include: {
       currentPlanVersion: {
@@ -25,6 +26,10 @@ export default async function DashboardPage() {
         }
       }
     }
+  });
+  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short"
   });
 
   return (
@@ -43,15 +48,17 @@ export default async function DashboardPage() {
           <ul>
             {plans.map((plan) => (
               <li key={plan.id}>
-                <strong>{plan.name}</strong> · Updated {plan.updatedAt.toISOString()} ·{" "}
+                <strong>{plan.name}</strong> · Updated {dateTimeFormatter.format(plan.updatedAt)} ·{" "}
                 {plan.currentPlanVersionId ? "Generated" : "Draft"}
                 <div className="link-row" style={{ marginTop: "0.4rem" }}>
+                  {plan.currentPlanVersionId ? (
+                    <Link className="plan-open-cta" href={`/plans/${plan.id}`}>
+                      Open plan
+                    </Link>
+                  ) : null}
                   <Link href={`/onboarding?planId=${plan.id}`}>Onboarding</Link>
-                  {plan.currentPlanVersionId ? <Link href={`/plans/${plan.id}`}>Open</Link> : null}
-                  <GeneratePlanButton
-                    planId={plan.id}
-                    label={plan.currentPlanVersionId ? "Regenerate" : "Generate"}
-                  />
+                  {!plan.currentPlanVersionId ? <GeneratePlanButton planId={plan.id} label="Generate" /> : null}
+                  <DeletePlanButton planId={plan.id} />
                 </div>
               </li>
             ))}

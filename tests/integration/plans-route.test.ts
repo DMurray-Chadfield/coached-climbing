@@ -7,7 +7,9 @@ vi.mock("@/lib/server/auth-guard", () => ({
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     trainingPlan: {
-      findMany: vi.fn()
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn()
     }
   }
 }));
@@ -15,6 +17,7 @@ vi.mock("@/lib/prisma", () => ({
 import { requireUserId } from "@/lib/server/auth-guard";
 import { prisma } from "@/lib/prisma";
 import { GET } from "@/app/api/plans/route";
+import { DELETE } from "@/app/api/plans/[planId]/route";
 
 describe("plans route", () => {
   beforeEach(() => {
@@ -45,5 +48,24 @@ describe("plans route", () => {
     expect(response.status).toBe(200);
     const body = (await response.json()) as { plans: Array<{ completion_percent: number }> };
     expect(body.plans[0]?.completion_percent).toBe(0);
+  });
+
+  it("soft deletes an owned plan", async () => {
+    vi.mocked(requireUserId).mockResolvedValue("user_1");
+    vi.mocked(prisma.trainingPlan.findFirst).mockResolvedValue({ id: "plan_1" } as never);
+    vi.mocked(prisma.trainingPlan.update).mockResolvedValue({ id: "plan_1" } as never);
+
+    const response = await DELETE(new Request("http://localhost"), {
+      params: { planId: "ckzv3m9ub0000n8p7h9grq2la" }
+    });
+
+    expect(response.status).toBe(200);
+    expect(prisma.trainingPlan.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          currentPlanVersionId: null
+        })
+      })
+    );
   });
 });

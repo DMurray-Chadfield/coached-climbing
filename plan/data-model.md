@@ -2,13 +2,11 @@
 
 ## Core Entities
 - User
-- Subscription
 - QuestionnaireResponse
 - TrainingPlan
 - TrainingPlanVersion
 - ActivityCompletion
 - SessionCompletion
-- ActivityLogEntry
 - PlanTweakRequest
 - PlanChatThread
 - PlanChatMessage
@@ -22,7 +20,6 @@
 - One `TrainingPlan` can have many `QuestionnaireResponse` records (plan-scoped onboarding history)
 - One `TrainingPlanVersion` can have many `ActivityCompletion` records
 - One `TrainingPlanVersion` can have many `SessionCompletion` records
-- One `TrainingPlanVersion` can have many `ActivityLogEntry` records
 - One `TrainingPlan` can have many `PlanTweakRequest` records
 - One `TrainingPlan` can have many `PlanChatThread` records
 - One `PlanChatThread` can have many `PlanChatMessage` records
@@ -31,19 +28,22 @@
 
 ## MVP Onboarding Questions (Concise)
 1. Profile: "What is your age?"
-2. Plan length: "How long do you want the plan?" (weeks, max 52)
-3. Target focus: "What are you training for, and what are your goals for this plan?" (single combined answer, optional target date)
-4. Current level summary: "Include your boulder grade, route grade, and any context notes."
-5. Training history: "What training have you done recently?"
-6. Weekly training frequency: "How many sessions per week can you train?" (store as session count, not fixed weekdays)
-7. Injuries + constraints: "Any injuries, pain, or constraints we should plan around?" (merged safety/constraints question)
-8. Notes: final free-text box for anything else the coach should know
+2. Plan discipline: "Bouldering or Sport/Trad?"
+3. Plan length: "How long do you want the plan?" (weeks, max 52)
+4. Target focus: "What are you training for, and what are your goals for this plan?" (single combined answer, optional target date)
+5. Current level summary: "Include your boulder grade, route grade, and any context notes."
+6. Training history: "What training have you done recently?"
+7. Weekly training frequency: "How many sessions per week can you train?" (store as session count, not fixed weekdays)
+8. Facilities/equipment available: "What facilities and equipment can you consistently access?"
+9. Injuries + constraints: "Any injuries, pain, or constraints we should plan around?" (merged safety/constraints question)
+10. Notes: final free-text box for anything else the coach should know
 
 ## Suggested QuestionnaireResponse Shape
 
 ```json
 {
   "training_plan_id": "plan_abc123",
+  "plan_discipline": "sport_trad",
   "age": 29,
   "plan_length_weeks": 12,
   "target_focus": {
@@ -54,6 +54,7 @@
   "training_history_and_load": {
     "recent_training_summary": "3 sessions/week for 2 months"
   },
+  "facilities_and_equipment_available": "Commercial gym, MoonBoard access, hangboard, pull-up bar",
   "sessions_per_week": 3,
   "injuries_and_constraints": "Mild left ring finger pain, avoid max hangs",
   "notes": "Travel one weekend per month"
@@ -110,6 +111,7 @@
 - Store each generated plan as immutable versioned JSON
 - Keep `current_plan_version_id` on each plan for fast retrieval
 - Allow regenerating new versions while preserving history
+- Support soft-delete on plans via `deletedAt` (records retained, hidden from app flows)
 
 ## Plan Tweak Model
 - Tweak requests are stored and auditable; accepted tweaks create a new plan version
@@ -152,12 +154,14 @@
   - `created_at`
 - Optional traceability:
   - `source_tweak_request_id` on a message when user applies a chat suggestion
+- Carry-forward rule:
+  - when a tweak creates a new plan version, default thread history is copied to the new version thread
 
 ## LLM Context Source Requirement
 - For every LLM call, prepend base coaching context from:
-  - `/Users/Student/src/tomteece.github.io/training info/training-ideas-condensed.md`
-- If condensed context is unavailable, fallback to:
-  - `/Users/Student/src/tomteece.github.io/training info/training-ideas.md`
+  - `/Users/Student/src/tomteece.github.io/training info/training-ideas-bouldering.md`
+  - `/Users/Student/src/tomteece.github.io/training info/training-ideas-sport-trad.md`
+- Use `plan_discipline` to select context file (fallback: infer from plan content if onboarding lacks discipline).
 - Store source metadata per request for debugging:
   - `context_source_path`
   - `context_source_hash` (recommended)
@@ -207,23 +211,8 @@
   - Derived completion takes precedence when all activities are complete (`derived_all_activities` overrides manual incomplete)
   - Session completion remains plan-version-specific
 
-## Activity Log Entry Model (Stats + Feelings)
-- User-entered stats/feelings are stored outside immutable plan JSON
-- Activity logging prompt text is static UI/backend copy (not required in LLM plan JSON)
-- Suggested `ActivityLogEntry` fields:
-  - `id`
-  - `user_id`
-  - `training_plan_id`
-  - `plan_version_id`
-  - `week_number`
-  - `session_number`
-  - `activity_id`
-  - `stats_json` (attempts, duration, RPE, etc.)
-  - `feelings_text`
-  - `created_at`, `updated_at`
-- Behavior:
-  - Multiple log entries per activity are allowed (history-friendly)
-  - Plan chat can reference these logs for coaching discussion
+## Activity Log Entry Model (Deferred)
+- Stats/feelings activity logs are planned but not yet implemented in the active schema/routes.
 
 ## Session Notes Model
 - Session notes are stored outside immutable plan JSON
@@ -262,6 +251,9 @@
 - If mapping confidence is low:
   - leave unchecked / not copied
 - Keep all prior completions/logs intact on old version for audit history
+- Current implemented carry-forward behavior:
+  - completed sessions are preserved in tweak output (cannot be modified by tweak)
+  - chat history is copied from prior version thread to new version thread
 
 ## Implemented API Endpoints (Slice 2 Foundation)
 - `PATCH /api/plans/[planId]/activities/completion`
@@ -282,6 +274,8 @@
   - Message generation uses latest plan-scoped onboarding + completion + notes + plan JSON context
 - `POST /api/plans/[planId]/chat/threads/[threadId]/reset`
   - Clears thread message history for owned thread; thread record persists
+- `DELETE /api/plans/[planId]`
+  - Soft-deletes plan by setting `deletedAt`; deleted plans are hidden from app list/detail and plan-bound APIs
 - `PATCH /api/plans/[planId]/sessions/notes`
 - `PATCH /api/plans/[planId]/activities/notes`
   - Owner-scoped note persistence by plan version/session/activity keys

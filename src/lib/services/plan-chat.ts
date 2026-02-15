@@ -1,10 +1,17 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { getEnv } from "@/lib/env";
 import type { CompletionSnapshot } from "@/lib/services/plan-completion";
 import type { NotesSnapshot } from "@/lib/services/plan-notes";
+import {
+  compactCompletionContext,
+  compactNotesContext,
+  compactOnboardingContext
+} from "@/lib/services/plan-chat-context";
+import {
+  loadTrainingContext,
+  resolvePlanDiscipline
+} from "@/lib/services/training-context";
 
 type PlanChatHistoryItem = {
   role: "user" | "assistant";
@@ -55,26 +62,6 @@ function normalizeOpenAIError(error: unknown): Record<string, unknown> {
   };
 }
 
-async function loadTrainingContext(): Promise<string> {
-  const condensedContextPath = path.join(process.cwd(), "training info", "training-ideas-condensed.md");
-  const fullContextPath = path.join(process.cwd(), "training info", "training-ideas.md");
-
-  try {
-    return await readFile(condensedContextPath, "utf8");
-  } catch (error) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      (error as { code?: string }).code === "ENOENT"
-    ) {
-      return readFile(fullContextPath, "utf8");
-    }
-
-    throw error;
-  }
-}
-
 export function buildPlanChatMessages(params: {
   trainingContext: string;
   onboarding: Record<string, unknown> | null;
@@ -84,32 +71,12 @@ export function buildPlanChatMessages(params: {
   history: PlanChatHistoryItem[];
   userMessage: string;
 }): ChatCompletionMessageParam[] {
-  const onboardingSummary = params.onboarding
-    ? JSON.stringify(params.onboarding, null, 2)
+  const onboardingContext = compactOnboardingContext(params.onboarding);
+  const onboardingSummary = onboardingContext
+    ? JSON.stringify(onboardingContext, null, 2)
     : "No onboarding response saved yet for this plan. Ask concise clarifying questions when needed.";
-
-  const completionSummary = JSON.stringify(
-    {
-      plan_completion_percent: params.completion.plan_completion_percent,
-      completed_sessions: params.completion.completed_sessions,
-      total_sessions: params.completion.total_sessions,
-      completed_activities: params.completion.completed_activities,
-      total_activities: params.completion.total_activities,
-      sessions: params.completion.sessions,
-      activities: params.completion.activities
-    },
-    null,
-    2
-  );
-
-  const notesSummary = JSON.stringify(
-    {
-      session_notes: params.notes.sessions,
-      activity_notes: params.notes.activities
-    },
-    null,
-    2
-  );
+  const completionSummary = JSON.stringify(compactCompletionContext(params.completion), null, 2);
+  const notesSummary = JSON.stringify(compactNotesContext(params.notes, params.completion), null, 2);
 
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -162,7 +129,11 @@ export function buildPlanChatMessages(params: {
 export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): Promise<string> {
   const env = getEnv();
   const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-  const context = await loadTrainingContext();
+  const discipline = resolvePlanDiscipline({
+    onboarding: input.onboarding,
+    planJson: input.planJson
+  });
+  const context = await loadTrainingContext(discipline);
 
   const messages = buildPlanChatMessages({
     trainingContext: context,

@@ -1,6 +1,6 @@
-# Training Ideas (Condensed)
+# Training Ideas (Bouldering)
 
-Purpose: compact coaching context for LLM chat and plan tweaks.
+Purpose: compact coaching context for bouldering plan generation, tweaks, and chat.
 
 ## Universal Coaching Rules
 - Prioritize climbing specificity. Supplemental work supports, not replaces, climbing.
@@ -17,39 +17,6 @@ Purpose: compact coaching context for LLM chat and plan tweaks.
 - Keep at least one rest or very easy day between high finger-load sessions when possible.
 - If quality drops repeatedly, reduce load or increase recovery.
 - For beginners, avoid high-intensity finger protocols and max testing.
-
-## Core Sport Climbing Model
-Energy systems and components:
-- Aero Cap: sustainable effort and recovery at rests.
-- An Cap: longer hard sequences.
-- Aero Pow: hard sustained pump performance.
-- An Pow: short intense power-endurance bursts.
-- Strength: supports all route demands.
-
-Capacity vs power:
-- Capacity = how much work can be sustained.
-- Power = how hard output can be.
-- Good plans train both, with emphasis based on objective demands.
-
-Periodization (default):
-- Base phase: Strength + An Cap + Aero Cap; maintain power.
-- Specialization phase: Aero Pow + An Pow; maintain strength; increase specificity.
-- Taper 1 week: reduce volume about 50%, keep intensity/specificity.
-
-Approx adaptation windows:
-- Aero Cap: 8+ weeks
-- An Cap: 16+ weeks
-- Aero Pow / An Pow: 6-8 weeks
-
-Session ordering when combining work (high to low intensity):
-- Bouldering -> An Cap/An Pow -> Aero Pow -> Aero Cap -> ARC
-
-Typical weekly loading:
-- Hard system work usually up to 2-3 sessions/week total (tolerance-dependent).
-- Preserve enough aerobic base while building higher-intensity work.
-- Aero Cap guardrails:
-  - Max 15 minutes per continuous climbing block.
-  - Max 45 minutes total climbing work per session (rests allowed between blocks).
 
 ## Bouldering Programming Essentials
 Main weekly buckets:
@@ -75,9 +42,24 @@ Technique rules:
 - Use constraints to force adaptation (when safe).
 - Practice mode and performance mode are different; coach accordingly.
 
+Climbing session rules (tight summary):
+- Climb on intended holds and avoid sequence "gaming" in training.
+- Learn key moves in multiple styles (static and dynamic).
+- Keep one long-term hard project in rotation for adaptation and confidence.
+- In practice mode prioritize learning; in performance mode prioritize sending.
+
 Power-endurance options:
 - Boulder 4x4s
 - Link-ups of easier problems with short rests
+
+4x4 template:
+- 4 problems below max, minimal rest between problems, then 4 minutes rest.
+- 4 total rounds (adjust down for lower tolerance or high fatigue blocks).
+
+Session ordering when combining work (high to low intensity):
+- Limit/board bouldering -> power-endurance -> volume/technique
+- If both 4x4s and sustained route-sim sets are in one session, do 4x4s first, then sustained route-sim work.
+- If both hangboarding and climbing are in one session, do hangboarding first (after warm-up), then climbing.
 
 ## Hangboarding (Supplemental)
 - Keep climbing as priority.
@@ -86,23 +68,9 @@ Power-endurance options:
 - Primary grips: open crimp and half crimp.
 - Use full crimp conservatively and only when goal-relevant.
 
-Who/when:
-- Beginner: minimal, low-risk loading only if needed.
-- Intermediate/advanced: typically 1-2 focused sessions every 5-10 days.
-- Advanced: precise control of load, timing, and recovery.
-
-Protocol snapshots:
-- 6:10 repeaters: 6s on / 10s off x 5 reps, 4-6 sets, 2-3 min rest.
-- 6:6x6+: 6s on / 6s off to controlled failure, 4-6 sets.
-- Single hangs: 4-8s high load, 4-8 hangs, 2-4 min rest.
-- Long hangs: 15-30s controlled failure, 3-5 hangs, 2-4 min rest.
-
-## Foundations for Plan Decisions
-- Climbing is variable and style-specific.
-- Skill is primary; physical work supports skill expression.
-- Performance efforts are also stress and must be counted in recovery planning.
-- Practice and performance require different session intent.
-- Reassess constraints often and adapt the plan.
+Practical scheduling notes:
+- You can hangboard and climb on the same day if quality and recovery are managed.
+- Keep hangboard volume low enough to preserve high-quality climbing output.
 
 ## Beginner-First Guidance
 - First year focus: movement skill, route reading, tactics, and consistency.
@@ -118,3 +86,8 @@ Protocol snapshots:
 - Avoid conflicting stress stacking on consecutive days when possible.
 - Keep progression conservative when injury history, low recovery, or novice status is present.
 - When uncertain, choose safer/moderate loading and explain tradeoffs.
+
+Progression ideas:
+- Progress one variable at a time: difficulty, density (rest), total quality volume, or external load.
+- For power/max-strength work, keep quality high and avoid grinding fatigue.
+- For endurance-focused blocks, increase repeat quality/consistency before major intensity jumps.

@@ -107,6 +107,7 @@ model TrainingPlan {
   name                 String
   goal                 String?
   currentPlanVersionId String?               @unique
+  deletedAt            DateTime?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   versions             TrainingPlanVersion[] @relation("PlanVersions")
@@ -122,6 +123,7 @@ model TrainingPlan {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, updatedAt])
+  @@index([userId, deletedAt, updatedAt])
 }
 
 model TrainingPlanVersion {

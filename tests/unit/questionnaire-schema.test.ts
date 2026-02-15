@@ -4,6 +4,7 @@ import { questionnaireSchema } from "@/lib/schemas/questionnaire";
 describe("questionnaireSchema", () => {
   it("accepts a valid questionnaire", () => {
     const result = questionnaireSchema.safeParse({
+      plan_discipline: "sport_trad",
       age: 29,
       plan_length_weeks: 12,
       target_focus: {
@@ -14,6 +15,7 @@ describe("questionnaireSchema", () => {
       training_history_and_load: {
         recent_training_summary: "3 sessions/week for 2 months"
       },
+      facilities_and_equipment_available: "Commercial climbing gym, hangboard, pull-up bar",
       sessions_per_week: 3,
       injuries_and_constraints: "Avoid max hangs",
       notes: "Travel some weekends"
@@ -24,6 +26,7 @@ describe("questionnaireSchema", () => {
 
   it("rejects out-of-range plan length", () => {
     const result = questionnaireSchema.safeParse({
+      plan_discipline: "bouldering",
       age: 29,
       plan_length_weeks: 99,
       target_focus: {
@@ -33,6 +36,7 @@ describe("questionnaireSchema", () => {
       training_history_and_load: {
         recent_training_summary: "summary"
       },
+      facilities_and_equipment_available: "Commercial climbing gym",
       sessions_per_week: 3,
       injuries_and_constraints: "None",
       notes: ""

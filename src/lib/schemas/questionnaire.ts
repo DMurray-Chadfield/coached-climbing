@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const questionnaireSchema = z.object({
+  plan_discipline: z.enum(["bouldering", "sport_trad"]),
   age: z.number().int().min(13).max(100),
   plan_length_weeks: z.number().int().min(1).max(52),
   target_focus: z.object({
@@ -11,6 +12,7 @@ export const questionnaireSchema = z.object({
   training_history_and_load: z.object({
     recent_training_summary: z.string().min(1)
   }),
+  facilities_and_equipment_available: z.string().min(1),
   sessions_per_week: z.number().int().min(1).max(14),
   injuries_and_constraints: z.string().min(1),
   notes: z.string().default("")

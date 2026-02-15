@@ -8,7 +8,7 @@ export async function GET() {
     const userId = await requireUserId();
 
     const plans = await prisma.trainingPlan.findMany({
-      where: { userId },
+      where: { userId, deletedAt: null },
       orderBy: { updatedAt: "desc" },
       select: {
         id: true,
