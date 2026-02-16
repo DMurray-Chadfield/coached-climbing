@@ -65,7 +65,8 @@ export default async function HomePage() {
               </Link>
             </div>
             <p className="marketing-fineprint">
-              Not medical advice. If you’re injured or unsure, talk to a qualified professional.
+              Plans and coach chat are drafted by an AI model using your onboarding, chat, and saved plan data (plan,
+              completion, notes), guided by conservative coaching rules and discipline-specific context.
             </p>
           </div>
 
@@ -104,7 +105,10 @@ export default async function HomePage() {
           </li>
           <li className="marketing-step">
             <h3>Build your block</h3>
-            <p>Get a readable, week-by-week plan with sessions you can actually execute.</p>
+            <p>
+              An AI model drafts a readable, week-by-week plan (guided by discipline-specific training context) with
+              sessions you can actually execute.
+            </p>
           </li>
           <li className="marketing-step">
             <h3>Adjust and complete</h3>
@@ -152,8 +156,8 @@ export default async function HomePage() {
         <h2>What you get</h2>
         <div className="marketing-trust-grid">
           <article className="marketing-trust-item">
-            <h3>How we personalise your plan</h3>
-            <p>Your onboarding and goals shape plan structure, intensity, and weekly focus from the start.</p>
+            <h3>How your plan is personalised</h3>
+            <p>Your onboarding answers are used by an AI model to draft plan structure, intensity, and weekly focus from the start.</p>
           </article>
           <article className="marketing-trust-item">
             <h3>How it stays practical</h3>
@@ -206,6 +210,15 @@ export default async function HomePage() {
             Log in
           </Link>
         </div>
+        <p className="marketing-fineprint">
+          Not medical advice. If you’re injured or unsure, talk to a qualified professional.
+        </p>
+        <p className="marketing-fineprint">
+          <a href="https://github.com/tomteece/tomteece.github.io" target="_blank" rel="noreferrer noopener">
+            Source code on GitHub
+          </a>
+          .
+        </p>
       </section>
     </>
   );
