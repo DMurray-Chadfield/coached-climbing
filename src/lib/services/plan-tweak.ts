@@ -5,6 +5,7 @@ import type {
 import { getEnv } from "@/lib/env";
 import { trainingPlanJsonSchema, validateTrainingPlan } from "@/lib/schemas/training-plan";
 import { getLlmClientFromEnv } from "@/lib/services/llm";
+import { normalizeLlmError } from "@/lib/services/llm/error-details";
 import { parseJsonLenient } from "@/lib/services/llm/json";
 import type { LlmMessage } from "@/lib/services/llm/types";
 import type { PlanDiscipline } from "@/lib/services/training-context";
@@ -62,31 +63,6 @@ export class PlanTweakError extends Error {
   }
 }
 
-function normalizeOpenAIError(error: unknown): Record<string, unknown> {
-  if (!error || typeof error !== "object") {
-    return {
-      message: "Unknown OpenAI error"
-    };
-  }
-
-  const candidate = error as {
-    name?: string;
-    message?: string;
-    status?: number;
-    code?: string;
-    type?: string;
-    error?: { message?: string; type?: string; code?: string };
-  };
-
-  return {
-    name: candidate.name,
-    message: candidate.message ?? candidate.error?.message,
-    status: candidate.status,
-    code: candidate.code ?? candidate.error?.code,
-    type: candidate.type ?? candidate.error?.type
-  };
-}
-
 export function buildTweakMessages(params: {
   trainingContext: string;
   planJson: Record<string, unknown>;
@@ -132,6 +108,8 @@ export function buildTweakMessages(params: {
         "Do not modify locked_completed_sessions.",
         'Scope: if scope="week" and target_week_number is set, only modify that week; all other weeks must remain identical to current_plan (content + ordering).',
         'If scope="whole_plan", edit only what the request requires (no rewrites).',
+        "Preserve executive_summary structure with exactly two text sections in order: phase_by_phase_weekly_split then program_snapshot; update summary content if plan changes.",
+        "Both summary sections are plain text fields (multi-line text allowed).",
         "Structure: every session has Warm-up + Cool-down and includes Conditioning/Strength (if needed, use a 5-10 min minimal-dose accessory); 3+ sessions/week => at least 3 climbing sessions, else every session includes climbing.",
         "Ordering: hangboard before climbing; power-endurance before sustained route-sim when both exist.",
         "Any edited text must include objective + workload + intensity cue + dosage + rest + stop/scale rule.",
@@ -453,7 +431,7 @@ export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Prom
       throw new PlanTweakError(
         `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
         "LLM_FAILURE",
-        normalizeOpenAIError(error)
+        normalizeLlmError(error, `Unknown ${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} error`)
       );
     }
   }

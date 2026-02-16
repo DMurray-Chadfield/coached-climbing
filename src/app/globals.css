@@ -604,6 +604,109 @@ button[disabled] {
   gap: var(--space-4);
 }
 
+.plan-summary-card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 0.9rem;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(47, 98, 201, 0.1) 0%, rgba(47, 98, 201, 0) 42%),
+    linear-gradient(180deg, #ffffff 0%, #f4f9ff 100%);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.plan-summary-section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.summary-text-block {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  padding: 0.75rem;
+}
+
+.phase-split-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.phase-split-item {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  padding: 0.75rem;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.phase-split-item h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-family: var(--font-heading);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.phase-week-range {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.phase-split-item ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.2rem;
+  color: var(--text-secondary);
+}
+
+.phase-split-item p {
+  margin: 0;
+}
+
+.program-snapshot-grid {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.program-snapshot-grid > div {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  padding: 0.6rem 0.7rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.program-snapshot-grid dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.program-snapshot-grid dd {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.program-snapshot-constraints ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text-secondary);
+  display: grid;
+  gap: 0.2rem;
+}
+
 .progress-metrics {
   display: grid;
   gap: var(--space-3);
@@ -1185,6 +1288,11 @@ a:focus-visible {
     padding-left: 0.65rem;
   }
 
+  .phase-split-item h4 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .note-card,
   .session-description,
   .activity-description {
@@ -1209,6 +1317,18 @@ a:focus-visible {
 @media (min-width: 1024px) {
   .card {
     padding: 1.3rem;
+  }
+
+  .plan-summary-card {
+    padding: 1rem;
+  }
+
+  .program-snapshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .program-snapshot-constraints {
+    grid-column: 1 / -1;
   }
 
   .progress-metrics {

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const questionnaireSchema = z.object({
   plan_discipline: z.enum(["bouldering", "sport_trad"]),
   age: z.number().int().min(0).max(80),
-  plan_length_weeks: z.number().int().min(1).max(52),
+  plan_length_weeks: z.number().int().min(1).max(12),
   target_focus: z.object({
     summary: z.string().min(1),
     date: z.string().optional()

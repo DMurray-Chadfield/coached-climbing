@@ -255,7 +255,9 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
   const trackerTitle =
     jobStatus === "queued" ? "Starting plan generation..." : "Generating your plan with AI...";
   const trackerBody =
-    jobStatus === "queued" ? "This should start in a few seconds." : "Hang tight. This usually takes 1-3 minutes.";
+    jobStatus === "queued"
+      ? "This should start in a few seconds."
+      : "Hang tight. This usually takes 1-3 minutes. You can come back later and your plan will be ready when you return.";
 
   return (
     <>

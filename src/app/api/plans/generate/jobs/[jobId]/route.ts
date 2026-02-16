@@ -35,8 +35,6 @@ export async function GET(
         retryCount: true,
         resultPlanVersionId: true,
         errorCode: true,
-        errorMessage: true,
-        errorDetails: true,
         createdAt: true,
         startedAt: true,
         finishedAt: true
@@ -63,9 +61,8 @@ export async function GET(
       error:
         job.status === "failed"
           ? {
-              code: job.errorCode ?? "UNKNOWN_ERROR",
-              message: job.errorMessage ?? "Plan generation failed.",
-              details: job.errorDetails ?? null
+              code: "PLAN_GENERATION_FAILED",
+              message: "Plan generation failed. Please try again."
             }
           : null
     });
@@ -78,4 +75,3 @@ export async function GET(
     return jsonError(500, "INTERNAL_ERROR", "Unable to load generation status.");
   }
 }
-

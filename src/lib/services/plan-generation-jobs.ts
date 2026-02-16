@@ -288,6 +288,8 @@ export async function processPlanGenerationJob(jobId: string): Promise<void> {
       console.error("Unable to mark plan generation job failed", updateError);
     }
 
+    // Log raw error for deep debugging (network/provider/runtime failures).
+    console.error("Plan generation job raw error", error);
     console.error("Plan generation job failure", normalized);
   }
 }

@@ -52,6 +52,12 @@ describe("generateTrainingPlan", () => {
               content: JSON.stringify({
                 plan_name: "Valid Plan",
                 start_date: "2026-03-01",
+                executive_summary: {
+                  phase_by_phase_weekly_split:
+                    "Weeks 1-3: Base phase\n- 1 Strength day\n- 1 Power-Endurance day\n- 2 Aerobic days",
+                  program_snapshot:
+                    "Goal: Trip prep and strength goals\nDuration: 12 weeks\nFrequency: 3 sessions per week"
+                },
                 weeks: [
                   {
                     week_number: 1,

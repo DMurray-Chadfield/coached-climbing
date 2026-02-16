@@ -31,7 +31,7 @@
 ## MVP Onboarding Questions (Concise)
 1. Profile: "What is your climbing age (years climbing)?"
 2. Plan discipline: "Bouldering or Sport/Trad?"
-3. Plan length: "How long do you want the plan?" (weeks, max 52)
+3. Plan length: "How long do you want the plan?" (weeks, max 12)
 4. Target focus: "What are you training for, and what are your goals for this plan?" (single combined answer, optional target date)
 5. Current level summary: "Include your boulder grade, route grade, and any context notes."
 6. Training history: "What training have you done recently?"
@@ -78,6 +78,10 @@ Notes:
 {
   "plan_name": "8-week Boulder Strength Block",
   "start_date": "2026-03-02",
+  "executive_summary": {
+    "phase_by_phase_weekly_split": "Weeks 1-3: Base\n- 1 Strength day\n- 1 Power-Endurance day\n- 2 Aerobic days\nWeeks 4-8: Build/Peak\n- Increase intensity while reducing volume",
+    "program_snapshot": "Goal: Improve performance for target event\nDuration: 8 weeks\nFrequency: 4 sessions/week\nConstraints: No campus board; manage finger load"
+  },
   "weeks": [
     {
       "week_number": 1,
@@ -105,6 +109,11 @@ Notes:
 ```
 
 ## Validation Rules (Initial)
+- `executive_summary` is required
+- `executive_summary` must contain exactly two sections in strict order:
+  - `phase_by_phase_weekly_split`
+  - `program_snapshot`
+- both sections are plain text strings (`minLength: 1`, multi-line allowed)
 - `weeks` is required and must contain at least 1 week
 - Each week must include `week_number` and `sessions`
 - Each session must include `session_number`, `session_type`, `description`, and `activities`
@@ -196,6 +205,9 @@ Notes:
   - Gemini: JSON-only response + schema embedded in system instruction
 - Still run server-side schema validation before persistence.
 - If validation fails, retry once with correction context; otherwise mark request as failed.
+- Prompt/output rule:
+  - plans must start with `executive_summary.phase_by_phase_weekly_split` then `executive_summary.program_snapshot`
+  - legacy plan versions without `executive_summary` remain readable in UI; summary block is hidden for those versions
 
 ## Activity Completion Model
 - Store completion state separately from plan JSON (plan versions remain immutable)

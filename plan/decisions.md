@@ -17,3 +17,6 @@ Track major decisions and why they were made.
 | 2026-02-15 | Carry forward plan chat history across tweak-created versions | Start fresh chat thread on every new version | Maintains continuity of coaching context and user trust | Team |
 | 2026-02-15 | Soft-delete plans instead of hard delete | Hard delete all plan-related data | Keeps audit/history intact while hiding deleted plans from active UX | Team |
 | 2026-02-16 | Add pluggable LLM provider (Gemini option) | OpenAI-only | Allows swapping providers via `LLM_PROVIDER` while keeping JSON schema validation + retry server-side | Team |
+| 2026-02-16 | Require executive summary in plan JSON with Phase-by-Phase Weekly Split first | Keep summary optional, derive summary in UI | Puts high-signal plan structure first for readability and keeps output consistent across generation and tweak flows | Team |
+| 2026-02-16 | Summary format fixed to two sections in strict order | Add additional summary sections or reorder snapshot first | Users want to see plan contents immediately; two-section layout is concise and scannable | Team |
+| 2026-02-16 | Hide summary UI for legacy plans missing `executive_summary` | Auto-derive fallback summary, show warning state | Preserves backward compatibility while avoiding inferred or misleading summaries | Team |

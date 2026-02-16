@@ -143,7 +143,7 @@ export function QuestionnaireForm({ planId, initialData }: Props) {
           type="number"
           inputMode="numeric"
           min={1}
-          max={52}
+          max={12}
           step={1}
           value={planLengthWeeks}
           onChange={(event) => setPlanLengthWeeks(event.target.value)}

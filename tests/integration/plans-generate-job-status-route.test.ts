@@ -103,5 +103,38 @@ describe("plan generation job status route", () => {
     expect(response.status).toBe(200);
     expect(processPlanGenerationJob).toHaveBeenCalledWith("job_queued");
   });
-});
 
+  it("returns sanitized error payload for failed jobs", async () => {
+    vi.mocked(requireUserId).mockResolvedValue("user_1");
+    vi.mocked(prisma.planGenerationJob.findFirst).mockResolvedValue({
+      id: "job_failed",
+      trainingPlanId: "plan_1",
+      status: "failed",
+      retryCount: null,
+      resultPlanVersionId: null,
+      errorCode: "PLAN_LLM_FAILURE",
+      createdAt: new Date("2026-02-16T00:00:00.000Z"),
+      startedAt: new Date("2026-02-16T00:00:01.000Z"),
+      finishedAt: new Date("2026-02-16T00:02:00.000Z")
+    } as never);
+
+    const response = await GET(new Request("http://localhost"), {
+      params: { jobId: "ckzv3m9ub0000n8p7h9grq2la" }
+    });
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as {
+      error: {
+        code: string;
+        message: string;
+        details?: unknown;
+      } | null;
+    };
+
+    expect(body.error).toEqual({
+      code: "PLAN_GENERATION_FAILED",
+      message: "Plan generation failed. Please try again."
+    });
+    expect(body.error && "details" in body.error).toBe(false);
+  });
+});

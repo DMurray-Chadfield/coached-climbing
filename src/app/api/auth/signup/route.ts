@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
@@ -24,27 +25,38 @@ export async function POST(request: Request) {
   }
 
   const username = parsed.data.username;
+  try {
+    const existing = await prisma.user.findUnique({
+      where: { username }
+    });
 
-  const existing = await prisma.user.findUnique({
-    where: { username }
-  });
-
-  if (existing) {
-    return jsonError(409, "USERNAME_TAKEN", "That username is already taken.");
-  }
-
-  const passwordHash = await hashPassword(parsed.data.password);
-
-  const user = await prisma.user.create({
-    data: {
-      username,
-      email: null,
-      passwordHash
-    },
-    select: {
-      id: true
+    if (existing) {
+      return jsonError(409, "USERNAME_TAKEN", "That username is already taken.");
     }
-  });
 
-  return NextResponse.json({ userId: user.id }, { status: 201 });
+    const passwordHash = await hashPassword(parsed.data.password);
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email: null,
+        passwordHash
+      },
+      select: {
+        id: true
+      }
+    });
+
+    return NextResponse.json({ userId: user.id }, { status: 201 });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      return jsonError(
+        500,
+        "AUTH_SCHEMA_MISMATCH",
+        "Signup is temporarily unavailable due to a database schema mismatch."
+      );
+    }
+
+    return jsonError(500, "INTERNAL_ERROR", "Unable to create account.");
+  }
 }

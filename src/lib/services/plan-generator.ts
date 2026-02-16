@@ -7,6 +7,7 @@ import type { QuestionnaireInput } from "@/lib/schemas/questionnaire";
 import { trainingPlanJsonSchema, validateTrainingPlan } from "@/lib/schemas/training-plan";
 import { parseJsonLenient } from "@/lib/services/llm/json";
 import { getLlmClientFromEnv } from "@/lib/services/llm";
+import { normalizeLlmError } from "@/lib/services/llm/error-details";
 import { buildGenerationMessages } from "@/lib/services/prompt-builder";
 import { loadTrainingContext } from "@/lib/services/training-context";
 
@@ -25,31 +26,6 @@ export class PlanGenerationError extends Error {
   ) {
     super(message);
   }
-}
-
-function normalizeOpenAIError(error: unknown): Record<string, unknown> {
-  if (!error || typeof error !== "object") {
-    return {
-      message: "Unknown OpenAI error"
-    };
-  }
-
-  const candidate = error as {
-    name?: string;
-    message?: string;
-    status?: number;
-    code?: string;
-    type?: string;
-    error?: { message?: string; type?: string; code?: string };
-  };
-
-  return {
-    name: candidate.name,
-    message: candidate.message ?? candidate.error?.message,
-    status: candidate.status,
-    code: candidate.code ?? candidate.error?.code,
-    type: candidate.type ?? candidate.error?.type
-  };
 }
 
 export function buildOpenAIRequest(
@@ -174,7 +150,7 @@ export async function generateTrainingPlan(
       throw new PlanGenerationError(
         `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
         "LLM_FAILURE",
-        normalizeOpenAIError(error)
+        normalizeLlmError(error, `Unknown ${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} error`)
       );
     }
   }

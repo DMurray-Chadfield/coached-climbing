@@ -6,6 +6,10 @@ import type {
 import { LlmClientError, type LlmClient } from "@/lib/services/llm/client";
 import type { LlmMessage, LlmMode } from "@/lib/services/llm/types";
 
+const REQUEST_TIMEOUT_MS = 600_000;
+const MAX_NETWORK_ATTEMPTS = 1;
+const RETRY_BASE_DELAY_MS = 700;
+
 function normalizeOpenAIError(error: unknown): Record<string, unknown> {
   if (!error || typeof error !== "object") {
     return {
@@ -29,6 +33,42 @@ function normalizeOpenAIError(error: unknown): Record<string, unknown> {
     code: candidate.code ?? candidate.error?.code,
     type: candidate.type ?? candidate.error?.type
   };
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function isRetryableOpenAIError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const candidate = error as {
+    message?: string;
+    status?: number;
+    code?: string;
+    cause?: { code?: string };
+  };
+
+  if (typeof candidate.status === "number") {
+    return [408, 409, 429, 500, 502, 503, 504].includes(candidate.status);
+  }
+
+  const message = (candidate.message ?? "").toLowerCase();
+  if (
+    message.includes("connection") ||
+    message.includes("network") ||
+    message.includes("timeout") ||
+    message.includes("socket")
+  ) {
+    return true;
+  }
+
+  const code = (candidate.code ?? candidate.cause?.code ?? "").toUpperCase();
+  return ["ETIMEDOUT", "ECONNRESET", "ECONNREFUSED", "ENOTFOUND", "EAI_AGAIN"].includes(code);
 }
 
 function toOpenAiMessages(messages: LlmMessage[]): ChatCompletionMessageParam[] {
@@ -74,20 +114,41 @@ export class OpenAiLlmClient implements LlmClient {
   }
 
   async complete(input: { model: string; messages: LlmMessage[]; mode: LlmMode }): Promise<{ text: string }> {
-    try {
-      const request = buildOpenAiRequest({
-        model: input.model,
-        messages: toOpenAiMessages(input.messages),
-        mode: input.mode
-      });
+    const request = buildOpenAiRequest({
+      model: input.model,
+      messages: toOpenAiMessages(input.messages),
+      mode: input.mode
+    });
 
-      const completion = await this.client.chat.completions.create(request);
-      return {
-        text: completion.choices[0]?.message?.content ?? ""
-      };
-    } catch (error) {
-      throw new LlmClientError("OpenAI request failed", "openai", normalizeOpenAIError(error));
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= MAX_NETWORK_ATTEMPTS; attempt += 1) {
+      try {
+        const completion = await this.client.chat.completions.create(request, {
+          timeout: REQUEST_TIMEOUT_MS
+        });
+
+        return {
+          text: completion.choices[0]?.message?.content ?? ""
+        };
+      } catch (error) {
+        lastError = error;
+        const shouldRetry = attempt < MAX_NETWORK_ATTEMPTS && isRetryableOpenAIError(error);
+        if (!shouldRetry) {
+          break;
+        }
+
+        const delayMs = RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
+        console.warn("OpenAI request transient failure, retrying", {
+          attempt,
+          maxAttempts: MAX_NETWORK_ATTEMPTS,
+          delayMs,
+          error: normalizeOpenAIError(error)
+        });
+        await sleep(delayMs);
+      }
     }
+
+    throw new LlmClientError("OpenAI request failed", "openai", normalizeOpenAIError(lastError));
   }
 }
-

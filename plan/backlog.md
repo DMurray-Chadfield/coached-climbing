@@ -35,6 +35,7 @@
 | T-029 | P1 | Create manual smoke test checklist for desktop + mobile core flows | Team | Done | Checklist now includes completion, notes, tweak, and chat/reset coverage |
 | T-034 | P1 | Soft-delete plans from dashboard and hide deleted plans from app flows | Team | Done | Added `deletedAt` soft delete + delete API/UI + deleted-plan guards on plan APIs/pages |
 | T-035 | P2 | Add pluggable LLM provider (Gemini option) | Team | Done | `LLM_PROVIDER` env switch with Gemini client support and server-side JSON schema validation |
+| T-036 | P1 | Add required executive summary contract and summary-first plan detail UI | Team | Done | Added required `executive_summary` schema, generation/tweak prompt enforcement, and `/plans/[planId]` summary rendering with legacy hide behavior |
 | T-026 | P1 | Implement staging -> production deployment pipeline and smoke tests | Team | Todo | Safer releases |
 | T-027 | P0 | Implement migration tooling/workflow with migration state tracking table | Team | Done | Migration workflow now uses `_prisma_migrations` source-of-truth with explicit verification script and runbook steps |
 | T-028 | P1 | Add pre-release backup + rollback checklist to release workflow | Team | Todo | Production safety |

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { parseExecutiveSummary } from "@/lib/services/plan-summary";
 
 type PlanApiResponse = {
   id: string;
@@ -205,6 +206,14 @@ export function PlanCompletionView({ planId }: Props) {
     return parseWeeks(plan.current_plan_version.planJson);
   }, [plan]);
 
+  const executiveSummary = useMemo(() => {
+    if (!plan) {
+      return null;
+    }
+
+    return parseExecutiveSummary(plan.current_plan_version.planJson);
+  }, [plan]);
+
   useEffect(() => {
     if (weeks.length === 0) {
       setSelectedWeekNumber(null);
@@ -406,6 +415,21 @@ export function PlanCompletionView({ planId }: Props) {
 
   return (
     <section className="card plan-progress-card">
+      {executiveSummary ? (
+        <article className="plan-summary-card">
+          <h2>Executive Summary</h2>
+          <div className="plan-summary-section">
+            <h3>Phase-by-Phase Weekly Split</h3>
+            <p className="summary-text-block">{executiveSummary.phase_by_phase_weekly_split}</p>
+          </div>
+
+          <div className="plan-summary-section">
+            <h3>Program Snapshot</h3>
+            <p className="summary-text-block">{executiveSummary.program_snapshot}</p>
+          </div>
+        </article>
+      ) : null}
+
       <h2>Progress</h2>
       <div className="progress-metrics">
         <article className="metric-card">

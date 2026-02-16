@@ -63,8 +63,8 @@ export default async function PlanDetailPage({
           <GeneratePlanButton planId={plan.id} label="Regenerate" />
         </div>
       </section>
-      <PlanChatPanel planId={plan.id} planVersionId={plan.currentPlanVersion.id} />
       <PlanCompletionView planId={plan.id} />
+      <PlanChatPanel planId={plan.id} planVersionId={plan.currentPlanVersion.id} />
     </>
   );
 }

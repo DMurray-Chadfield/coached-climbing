@@ -1,12 +1,23 @@
 import Ajv, { type ErrorObject } from "ajv";
 
+const executiveSummarySchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["phase_by_phase_weekly_split", "program_snapshot"],
+  properties: {
+    phase_by_phase_weekly_split: { type: "string", minLength: 1 },
+    program_snapshot: { type: "string", minLength: 1 }
+  }
+} as const;
+
 export const trainingPlanJsonSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["plan_name", "start_date", "weeks"],
+  required: ["plan_name", "start_date", "executive_summary", "weeks"],
   properties: {
     plan_name: { type: "string", minLength: 1 },
     start_date: { type: "string", minLength: 1 },
+    executive_summary: executiveSummarySchema,
     weeks: {
       type: "array",
       minItems: 1,

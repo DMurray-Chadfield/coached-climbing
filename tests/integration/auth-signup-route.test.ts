@@ -100,4 +100,31 @@ describe("signup route", () => {
     expect(body.error.code).toBe("USERNAME_TAKEN");
     expect(prisma.user.create).not.toHaveBeenCalled();
   });
+
+  it("returns JSON error when prisma validation fails", async () => {
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error("validation failed") as never);
+
+    const response = await POST(
+      new Request("http://localhost/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: "valid_name",
+          password: "password-123"
+        })
+      })
+    );
+
+    expect(response.status).toBe(500);
+    const body = (await response.json()) as {
+      error: {
+        code: string;
+        message: string;
+      };
+    };
+    expect(body.error.code).toBe("INTERNAL_ERROR");
+    expect(body.error.message).toBe("Unable to create account.");
+  });
 });

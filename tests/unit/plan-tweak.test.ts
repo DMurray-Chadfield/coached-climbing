@@ -5,6 +5,13 @@ import {
   preserveCompletedSessions
 } from "@/lib/services/plan-tweak";
 
+const executiveSummaryFixture = {
+  phase_by_phase_weekly_split:
+    "Weeks 1-3: Base phase\n- 1 Strength day\n- 1 Power-Endurance day\n- 2 Climbing days",
+  program_snapshot:
+    "Goal: Improve climbing performance\nDuration: 12 weeks\nFrequency: 3 sessions per week"
+};
+
 describe("plan-tweak service", () => {
   it("builds tweak messages with context first", () => {
     const messages = buildTweakMessages({
@@ -12,6 +19,7 @@ describe("plan-tweak service", () => {
       planJson: {
         plan_name: "Test",
         start_date: "2026-02-15",
+        executive_summary: executiveSummaryFixture,
         weeks: []
       },
       requestText: "Reduce volume next week",
@@ -67,6 +75,7 @@ describe("plan-tweak service", () => {
       planJson: {
         plan_name: "Test",
         start_date: "2026-02-15",
+        executive_summary: executiveSummaryFixture,
         weeks: []
       },
       requestText: "Adjust week load",
@@ -84,6 +93,7 @@ describe("plan-tweak service", () => {
     const sourcePlan = {
       plan_name: "Source",
       start_date: "2026-02-15",
+      executive_summary: executiveSummaryFixture,
       weeks: [
         {
           week_number: 1,
@@ -111,6 +121,7 @@ describe("plan-tweak service", () => {
     const updatedPlan = {
       plan_name: "Updated",
       start_date: "2026-02-15",
+      executive_summary: executiveSummaryFixture,
       weeks: [
         {
           week_number: 1,

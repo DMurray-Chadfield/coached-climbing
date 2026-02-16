@@ -14,6 +14,7 @@ Use these files to track the project from idea to launch.
 - `deployment-runbook.md`: Staging/production deployment process
 - `migrations.md`: Schema migration workflow and tracking rules
 - `phase-2-billing-plan.md`: Stripe rollout plan for post-MVP monetization
+- `plan-summary-frontend.md`: Executive summary contract and plan detail rendering spec
 - `risks.md`: Known risks, impact, and mitigations
 - `decisions.md`: Important decisions and rationale
 - `meeting-notes.md`: Notes and action items from discussions

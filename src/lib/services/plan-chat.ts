@@ -1,5 +1,6 @@
 import { getEnv } from "@/lib/env";
 import { getLlmClientFromEnv } from "@/lib/services/llm";
+import { normalizeLlmError } from "@/lib/services/llm/error-details";
 import type { LlmMessage } from "@/lib/services/llm/types";
 import type { CompletionSnapshot } from "@/lib/services/plan-completion";
 import type { NotesSnapshot } from "@/lib/services/plan-notes";
@@ -35,31 +36,6 @@ export class PlanChatError extends Error {
   ) {
     super(message);
   }
-}
-
-function normalizeOpenAIError(error: unknown): Record<string, unknown> {
-  if (!error || typeof error !== "object") {
-    return {
-      message: "Unknown OpenAI error"
-    };
-  }
-
-  const candidate = error as {
-    name?: string;
-    message?: string;
-    status?: number;
-    code?: string;
-    type?: string;
-    error?: { message?: string; type?: string; code?: string };
-  };
-
-  return {
-    name: candidate.name,
-    message: candidate.message ?? candidate.error?.message,
-    status: candidate.status,
-    code: candidate.code ?? candidate.error?.code,
-    type: candidate.type ?? candidate.error?.type
-  };
 }
 
 export function buildPlanChatMessages(params: {
@@ -167,7 +143,7 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
     throw new PlanChatError(
       `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
       "LLM_FAILURE",
-      normalizeOpenAIError(error)
+      normalizeLlmError(error, `Unknown ${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} error`)
     );
   }
 }

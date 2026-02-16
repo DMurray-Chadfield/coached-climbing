@@ -8,6 +8,12 @@ type SignupResponse = {
   userId: string;
 };
 
+type SignupErrorResponse = {
+  error?: {
+    message?: string;
+  };
+};
+
 export function SignupForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -31,11 +37,13 @@ export function SignupForm() {
       })
     });
 
-    const body = (await response.json()) as SignupResponse | { error: { message: string } };
+    const body = (await response.json().catch(() => null)) as SignupResponse | SignupErrorResponse | null;
 
     if (!response.ok) {
       setIsLoading(false);
-      setError("error" in body ? body.error.message : "Signup failed.");
+      const message =
+        body && "error" in body ? body.error?.message ?? "Signup failed." : "Signup failed.";
+      setError(message);
       return;
     }
 
