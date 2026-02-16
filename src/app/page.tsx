@@ -72,7 +72,7 @@ export default async function HomePage() {
 
           <div className="marketing-hero-panel" aria-hidden="true">
             <div className="marketing-hero-bubble">
-              <p className="marketing-hero-bubble-title">Your next block</p>
+              <p className="marketing-hero-bubble-title">Your next plan</p>
               <ul className="marketing-hero-bullets">
                 <li>Warm-ups + strength</li>
                 <li>2–4 climbing sessions</li>
@@ -95,7 +95,7 @@ export default async function HomePage() {
         <ol className="marketing-steps">
           <li className="marketing-step">
             <h3>Create your plan</h3>
-            <p>Name your next block and keep each updated version for reference.</p>
+            <p>Create a plan to start. You’ll fill in onboarding next, then write your first draft.</p>
           </li>
           <li className="marketing-step">
             <h3>Answer onboarding</h3>
@@ -104,10 +104,9 @@ export default async function HomePage() {
             </p>
           </li>
           <li className="marketing-step">
-            <h3>Build your block</h3>
+            <h3>Build your plan</h3>
             <p>
-              An AI model drafts a readable, week-by-week plan (guided by discipline-specific training context) with
-              sessions you can actually execute.
+              An AI model drafts a readable, week-by-week plan (guided by discipline-specific training context) with sessions you can actually execute.
             </p>
           </li>
           <li className="marketing-step">
@@ -131,7 +130,7 @@ export default async function HomePage() {
           </article>
           <article className="marketing-compare-item">
             <h3>Easy to adjust</h3>
-            <p>When life changes, coach chat helps you adjust sessions without rewriting your entire block.</p>
+            <p>When life changes, coach chat helps you adjust sessions without rewriting your entire plan.</p>
           </article>
           <article className="marketing-compare-item">
             <h3>Progress you can track</h3>
@@ -182,11 +181,11 @@ export default async function HomePage() {
           </div>
           <div className="marketing-feature">
             <h3>Plan-specific onboarding</h3>
-            <p>Each plan keeps its own onboarding context and version history.</p>
+            <p>Each plan keeps its own onboarding answers, so the guidance stays relevant to that goal and schedule.</p>
           </div>
           <div className="marketing-feature">
             <h3>Coach chat adjustments</h3>
-            <p>Request substitutions and intensity changes without rewriting the full block.</p>
+            <p>Request substitutions and intensity changes without rewriting the full plan.</p>
           </div>
           <div className="marketing-feature">
             <h3>Progress tracking</h3>
@@ -201,7 +200,7 @@ export default async function HomePage() {
 
       <section className="card marketing-section marketing-bottom-cta">
         <h2>Ready to start?</h2>
-        <p>Create your first plan, answer onboarding, and build your first block.</p>
+        <p>Create a plan, answer onboarding, and get your first draft.</p>
         <div className="link-row marketing-cta-row">
           <Link className="plan-open-cta" href="/signup">
             Create an account
