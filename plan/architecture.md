@@ -22,7 +22,7 @@ Web application that collects climber profile data, sends structured inputs to a
 - Runtime:
   - Docker Compose services for `web`, `db`, and `proxy` in local/staging/production
 - Integrations:
-  - LLM provider API (OpenAI) for plan generation
+  - LLM provider API (OpenAI or Gemini via `LLM_PROVIDER`) for plan generation
   - Future: Stripe for subscriptions and webhook events
 
 ## LLM Context Loading Rule
@@ -32,9 +32,9 @@ Web application that collects climber profile data, sends structured inputs to a
 - Discipline source of truth:
   - generation: onboarding `plan_discipline`
   - tweak/chat: latest plan-scoped onboarding (fallback: infer from plan JSON)
-- Every plan-generation/tweak call must request structured output from OpenAI API:
-  - `response_format.type = json_schema`
-  - `json_schema.strict = true`
+- Every plan-generation/tweak call must request JSON output and validate server-side:
+  - OpenAI: structured output (`response_format.type = json_schema`, `json_schema.strict = true`)
+  - Gemini: JSON-only response (`responseMimeType: application/json`) + embedded JSON Schema instruction
 - Prompt assembly order:
   1. System/base context from selected discipline file
   2. Safety and output constraints
@@ -95,11 +95,10 @@ Web application that collects climber profile data, sends structured inputs to a
 - Security: Secure auth sessions, encrypted secrets, API key protection
 - Usability: Primary flows are fully usable on common mobile and desktop viewport sizes
 - Observability: Structured logs for generation failures and plan save events
-- Observability: Structured logs for generation failures, plan save events, and completion updates
 - Observability: Structured logs for tweak requests, validation failures, and accepted/rejected tweak outputs
 - Observability: Structured logs for plan chat interactions and apply-from-chat conversion rate
 
 ## Open Questions
-- LLM provider and model for cost/quality balance?
+- Default LLM provider/model for cost/quality balance?
 - When should Stripe be added after MVP validation?
 - Regeneration limits for free users before billing is introduced?

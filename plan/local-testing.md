@@ -7,14 +7,14 @@ Enable fast, repeatable local development with confidence before deployment.
 - App: Next.js + TypeScript (Docker)
 - DB: PostgreSQL (Docker)
 - Reverse proxy: Caddy or Nginx (Docker, optional in local)
-- AI: OpenAI API (dev key via `.env.local`)
+- AI: OpenAI or Gemini (dev key via `.env.local`)
 
 ## Local Environment Setup
 1. Create `.env.local` from `.env.example`.
 2. Install dependencies with `pnpm install`.
-3. Load env and run migrations from host shell:
+3. Load env and run migrations from host shell (while the DB container is running):
    - `set -a && source .env.local && set +a`
-   - `pnpm exec prisma migrate deploy`
+   - `pnpm prisma:migrate:deploy`
    - `pnpm prisma:generate`
 4. Start full stack locally with Docker Compose dev mode (default runtime):
    - `docker compose -f docker-compose.dev.yml up --build`

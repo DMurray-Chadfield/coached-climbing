@@ -5,7 +5,7 @@
 - Deliverables:
   - Finalized product requirements
   - Data model + JSON schema draft
-  - OpenAI integration plan and cost guardrails
+  - LLM integration plan and cost guardrails
 - Exit Criteria:
   - Requirements approved
   - Architecture documented

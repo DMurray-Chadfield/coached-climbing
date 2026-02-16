@@ -5,6 +5,7 @@
 - QuestionnaireResponse
 - TrainingPlan
 - TrainingPlanVersion
+- PlanGenerationJob
 - ActivityCompletion
 - SessionCompletion
 - PlanTweakRequest
@@ -17,6 +18,9 @@
 - One `TrainingPlan` can have many `TrainingPlanVersion` records
 - One `User` can have many `QuestionnaireResponse` records (history allowed)
 - One `TrainingPlan` can have many `QuestionnaireResponse` records (plan-scoped onboarding history)
+- One `TrainingPlan` can have many `PlanGenerationJob` records (job history)
+- One `QuestionnaireResponse` can have many `PlanGenerationJob` records (traceability)
+- One `TrainingPlanVersion` can optionally be produced by a `PlanGenerationJob`
 - One `TrainingPlanVersion` can have many `ActivityCompletion` records
 - One `TrainingPlanVersion` can have many `SessionCompletion` records
 - One `TrainingPlan` can have many `PlanTweakRequest` records
@@ -115,6 +119,21 @@ Notes:
 - Allow regenerating new versions while preserving history
 - Support soft-delete on plans via `deletedAt` (records retained, hidden from app flows)
 
+## Plan Generation Job Model
+- Motivation: make plan generation idempotent and observable (no duplicate concurrent jobs per user+plan).
+- Suggested `PlanGenerationJob` fields:
+  - `id`
+  - `user_id`
+  - `training_plan_id`
+  - `questionnaire_response_id`
+  - `idempotency_key` (unique)
+  - `status` (`queued` | `running` | `succeeded` | `failed` | `canceled`)
+  - `retry_count`
+  - `result_plan_version_id` (nullable until success)
+  - `error_code`, `error_message`, `error_details` (nullable)
+  - `started_at`, `finished_at`
+  - `created_at`, `updated_at`
+
 ## Plan Tweak Model
 - Tweak requests are stored and auditable; accepted tweaks create a new plan version
 - Suggested `PlanTweakRequest` fields:
@@ -169,10 +188,12 @@ Notes:
   - `context_source_hash` (recommended)
 
 ## Structured Output API Requirement
-- For plan generation and plan tweak calls, use OpenAI structured output mode:
-  - `response_format.type = "json_schema"`
-  - `json_schema.name = "training_plan"` (or versioned equivalent)
-  - `json_schema.strict = true`
+- For plan generation and plan tweak calls, always request JSON output and validate server-side:
+  - OpenAI: structured output mode
+    - `response_format.type = "json_schema"`
+    - `json_schema.name = "training_plan"` (or versioned equivalent)
+    - `json_schema.strict = true`
+  - Gemini: JSON-only response + schema embedded in system instruction
 - Still run server-side schema validation before persistence.
 - If validation fails, retry once with correction context; otherwise mark request as failed.
 

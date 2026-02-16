@@ -4,8 +4,8 @@
 Track schema changes safely and make them reproducible across local, staging, and production.
 
 ## Tooling Choice
-- Use SQL migrations committed to git.
-- Keep each migration as an immutable file in a versioned migrations directory.
+- Use Prisma migrations (SQL) committed to git.
+- Keep each migration as an immutable directory under `prisma/migrations/` containing `migration.sql`.
 - Use Prisma migration state table `_prisma_migrations` in Postgres as source of truth.
 
 ## Migration Workflow
@@ -25,8 +25,8 @@ Track schema changes safely and make them reproducible across local, staging, an
   - `SELECT migration_name, finished_at, rolled_back_at FROM "_prisma_migrations" ORDER BY finished_at DESC;`
 
 ## Naming Convention
-- `YYYYMMDDHHMM__short_description.sql`
-- Example: `202602151230__create_training_plan_tables.sql`
+- `YYYYMMDDHHMM__short_description`
+- Example: `202602151230__create_training_plan_tables`
 
 ## Rules
 - Never edit an already-applied migration.
@@ -65,3 +65,4 @@ Track schema changes safely and make them reproducible across local, staging, an
 - `202602151630__session_activity_notes`
 - `202602151700__soft_delete_training_plan`
 - `202602151958__drop_activity_note` (removes deprecated `ActivityNote` table)
+- `202602161200__plan_generation_jobs`

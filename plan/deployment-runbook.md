@@ -25,7 +25,7 @@ Ship safely with a predictable manual production workflow on GCP Compute.
    - `pnpm prisma:migrate:deploy`
    - `pnpm release:verify:migrations`
 6. Start/update services:
-   - `docker compose up --build -d`
+   - `docker compose -f docker-compose.prod.yml up -d`
 7. Run production smoke tests:
    - auth
    - plan generation
@@ -47,7 +47,7 @@ Ship safely with a predictable manual production workflow on GCP Compute.
 - Backup taken before production migration.
 - `_prisma_migrations` status verified before and after migration.
 - Environment secrets present and valid.
-- OpenAI key configured and reachable.
+- LLM provider key configured and reachable.
 - Rollback plan confirmed.
 
 ## Rollback Strategy
