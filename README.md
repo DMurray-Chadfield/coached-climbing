@@ -38,6 +38,20 @@ MVP vertical slice implementation for:
   - fresh DB reset: `docker compose down -v`
   - web logs: `docker compose logs -f web`
 
+## Deploy (GCP VM / “pull + run”)
+If you want to build once (CI/local), push the image, then pull it on a GCP instance and use the instance’s `.env.local`:
+
+1. Build + push an image from your build machine:
+   - Docker Hub example:
+     - `docker buildx build --platform linux/amd64 -t tomtee/climbing-app:TAG --push .`
+2. On the GCP VM, in the repo folder:
+   - Create `.env.local` (copy from `.env.example`) and set real secrets.
+   - `export WEB_IMAGE="tomtee/climbing-app:TAG"`
+   - `docker compose -f docker-compose.prod.yml pull`
+   - `docker compose -f docker-compose.prod.yml up -d`
+3. To apply changes to `.env.local`: edit it on the VM and restart:
+   - `docker compose -f docker-compose.prod.yml up -d --force-recreate web`
+
 ## Testing
 - Required CI gate:
   - `pnpm test:required-gate`
