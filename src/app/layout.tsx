@@ -29,7 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  const homeHref = session?.user ? "/dashboard" : "/login";
+  const homeHref = session?.user ? "/dashboard" : "/";
 
   return (
     <html lang="en">
@@ -52,6 +52,9 @@ export default async function RootLayout({
                 </>
               ) : (
                 <>
+                  <Link className="topbar-link" href="/#how-it-works">
+                    How it works
+                  </Link>
                   <Link className="topbar-link" href="/login">
                     Login
                   </Link>

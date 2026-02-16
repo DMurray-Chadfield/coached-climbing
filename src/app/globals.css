@@ -925,6 +925,203 @@ a:focus-visible {
   border-radius: 6px;
 }
 
+.marketing-hero {
+  padding: 1.45rem;
+}
+
+.marketing-hero-grid {
+  display: grid;
+  gap: 1.4rem;
+  align-items: center;
+}
+
+.marketing-kicker {
+  margin: 0 0 var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: rgba(47, 98, 201, 0.12);
+  color: var(--accent-strong);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.marketing-lede {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 56ch;
+}
+
+.marketing-cta-row {
+  margin-top: var(--space-5);
+  gap: var(--space-3);
+}
+
+.marketing-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.56rem 0.94rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--accent-strong);
+  font-weight: 800;
+  border: 1px solid var(--border-strong);
+  box-shadow: none;
+}
+
+.marketing-cta-secondary:hover {
+  text-decoration: none;
+  background: #f2f7ff;
+}
+
+.marketing-cta-tertiary {
+  color: var(--text-secondary);
+  font-weight: 700;
+  padding: 0.3rem 0.1rem;
+}
+
+.marketing-cta-tertiary:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+}
+
+.marketing-fineprint {
+  margin-top: var(--space-4);
+  max-width: 70ch;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.marketing-hero-panel {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.marketing-hero-bubble {
+  border: 1px solid rgba(183, 200, 227, 0.85);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.05rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 248, 255, 0.96) 100%);
+  box-shadow: 0 16px 36px rgba(20, 48, 94, 0.08);
+}
+
+.marketing-hero-bubble-accent {
+  border-color: rgba(47, 98, 201, 0.45);
+  background: radial-gradient(circle at 10% 12%, rgba(47, 98, 201, 0.16) 0%, rgba(47, 98, 201, 0) 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(232, 240, 255, 0.98) 100%);
+}
+
+.marketing-hero-bubble-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.marketing-hero-bullets {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.marketing-hero-bubble-body {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.marketing-hero-bubble-body + .marketing-hero-bubble-body {
+  margin-top: var(--space-2);
+}
+
+.marketing-hero-bubble-muted {
+  color: var(--text-muted);
+}
+
+.marketing-section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.marketing-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.marketing-step {
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.05rem;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.marketing-step h3 {
+  margin: 0;
+}
+
+.marketing-feature-grid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.marketing-feature {
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.05rem;
+}
+
+.marketing-feature h3 {
+  margin: 0 0 var(--space-2);
+}
+
+.marketing-bottom-cta {
+  text-align: center;
+  justify-items: center;
+}
+
+.marketing-bottom-cta p {
+  max-width: 62ch;
+}
+
+@media (min-width: 860px) {
+  .marketing-hero-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+
+  .marketing-hero-panel {
+    justify-items: end;
+  }
+
+  .marketing-hero-bubble {
+    width: min(360px, 100%);
+  }
+}
+
+@media (min-width: 840px) {
+  .marketing-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .marketing-feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 640px) {
   .page-shell {
     padding: 1.2rem 0.75rem 2rem;
