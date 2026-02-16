@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api";
 import { requireUserId } from "@/lib/server/auth-guard";
-import { PlanChatError, generatePlanChatReply } from "@/lib/services/plan-chat";
+import { PlanChatError, generatePlanChatReply, streamPlanChatReply } from "@/lib/services/plan-chat";
 import { getCompletionSnapshot } from "@/lib/services/plan-completion";
 import { getNotesSnapshot } from "@/lib/services/plan-notes";
 
@@ -77,6 +77,9 @@ export async function POST(
   }
 ) {
   try {
+    const wantsStream =
+      request.headers.get("accept")?.includes("text/event-stream") ||
+      new URL(request.url).searchParams.get("stream") === "1";
     const userId = await requireUserId();
     const payload = await request.json().catch(() => null);
     const parsed = postSchema.safeParse(payload);
@@ -164,6 +167,152 @@ export async function POST(
         planVersionId: thread.planVersionId
       })
     ]);
+
+    if (wantsStream) {
+      const encoder = new TextEncoder();
+
+      const sseEvent = (event: string, data: unknown) => {
+        const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+        return encoder.encode(payload);
+      };
+
+      const stream = new ReadableStream<Uint8Array>({
+        start(controller) {
+          void (async () => {
+            try {
+              const userMessage = await prisma.planChatMessage.create({
+                data: {
+                  threadId: thread.id,
+                  role: "user",
+                  content: parsed.data.content,
+                  sourceTweakRequestId: parsed.data.sourceTweakRequestId
+                },
+                select: {
+                  id: true,
+                  role: true,
+                  content: true,
+                  sourceTweakRequestId: true,
+                  createdAt: true
+                }
+              });
+
+              await prisma.planChatThread.update({
+                where: { id: thread.id },
+                data: { updatedAt: new Date() }
+              });
+
+              controller.enqueue(
+                sseEvent("user_message", {
+                  ...userMessage,
+                  createdAt: userMessage.createdAt.toISOString()
+                })
+              );
+
+              let assistantContent = "";
+
+              for await (const delta of streamPlanChatReply(
+                {
+                  onboarding: (latestQuestionnaire?.data as Record<string, unknown> | null) ?? null,
+                  planJson: thread.planVersion.planJson as Record<string, unknown>,
+                  completion,
+                  notes,
+                  history: history.map((item) => ({
+                    role: item.role,
+                    content: item.content
+                  })),
+                  userMessage: parsed.data.content
+                },
+                { signal: request.signal }
+              )) {
+                if (request.signal.aborted) {
+                  break;
+                }
+
+                assistantContent += delta;
+                controller.enqueue(sseEvent("assistant_delta", { delta }));
+              }
+
+              if (request.signal.aborted) {
+                controller.close();
+                return;
+              }
+
+              if (!assistantContent || assistantContent.trim().length === 0) {
+                // Fallback: if streaming produced no text (e.g. SSE parsing mismatch),
+                // try the non-streaming path once before surfacing INVALID_RESPONSE.
+                assistantContent = await generatePlanChatReply({
+                  onboarding: (latestQuestionnaire?.data as Record<string, unknown> | null) ?? null,
+                  planJson: thread.planVersion.planJson as Record<string, unknown>,
+                  completion,
+                  notes,
+                  history: history.map((item) => ({
+                    role: item.role,
+                    content: item.content
+                  })),
+                  userMessage: parsed.data.content
+                });
+              }
+
+              if (!assistantContent || assistantContent.trim().length === 0) {
+                throw new PlanChatError("Model response content was empty", "INVALID_RESPONSE");
+              }
+
+              const assistantMessage = await prisma.$transaction(async (tx) => {
+                const created = await tx.planChatMessage.create({
+                  data: {
+                    threadId: thread.id,
+                    role: "assistant",
+                    content: assistantContent
+                  },
+                  select: {
+                    id: true,
+                    role: true,
+                    content: true,
+                    sourceTweakRequestId: true,
+                    createdAt: true
+                  }
+                });
+
+                await tx.planChatThread.update({
+                  where: { id: thread.id },
+                  data: { updatedAt: new Date() }
+                });
+
+                return created;
+              });
+
+              controller.enqueue(
+                sseEvent("assistant_message", {
+                  ...assistantMessage,
+                  createdAt: assistantMessage.createdAt.toISOString()
+                })
+              );
+              controller.enqueue(sseEvent("done", { ok: true }));
+              controller.close();
+            } catch (error) {
+              const message =
+                error instanceof PlanChatError
+                  ? error.code === "INVALID_RESPONSE"
+                    ? "Model returned an invalid chat response."
+                    : "Chat request failed."
+                  : "Unable to create chat messages.";
+
+              controller.enqueue(sseEvent("error", { message }));
+              controller.close();
+            }
+          })();
+        }
+      });
+
+      return new NextResponse(stream, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive"
+        }
+      });
+    }
 
     const assistantContent = await generatePlanChatReply({
       onboarding: (latestQuestionnaire?.data as Record<string, unknown> | null) ?? null,

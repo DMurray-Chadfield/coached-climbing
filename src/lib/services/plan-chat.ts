@@ -147,3 +147,53 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
     );
   }
 }
+
+export async function* streamPlanChatReply(
+  input: GeneratePlanChatReplyInput,
+  options?: { signal?: AbortSignal }
+): AsyncIterable<string> {
+  const env = getEnv();
+  const { client, model } = getLlmClientFromEnv();
+  const discipline = resolvePlanDiscipline({
+    onboarding: input.onboarding,
+    planJson: input.planJson
+  });
+  const context = await loadTrainingContext(discipline);
+
+  const messages = buildPlanChatMessages({
+    trainingContext: context,
+    onboarding: input.onboarding,
+    planJson: input.planJson,
+    completion: input.completion,
+    notes: input.notes,
+    history: input.history,
+    userMessage: input.userMessage
+  });
+
+  try {
+    if (!client.completeStream) {
+      const completion = await client.complete({
+        model,
+        messages,
+        mode: { kind: "text" }
+      });
+      if (completion.text) {
+        yield completion.text;
+      }
+      return;
+    }
+
+    yield* client.completeStream({
+      model,
+      messages,
+      mode: { kind: "text" },
+      ...(options?.signal ? { signal: options.signal } : {})
+    });
+  } catch (error) {
+    throw new PlanChatError(
+      `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
+      "LLM_FAILURE",
+      normalizeLlmError(error, `Unknown ${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} error`)
+    );
+  }
+}

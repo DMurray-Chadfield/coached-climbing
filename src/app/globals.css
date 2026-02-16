@@ -996,11 +996,100 @@ button[disabled] {
   font-size: 0.9rem;
 }
 
+.plan-chat-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plan-chat-typing-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(47, 98, 201, 0.25);
+  border-top-color: rgba(47, 98, 201, 0.9);
+  animation: plan-chat-spin 0.9s linear infinite;
+}
+
+@keyframes plan-chat-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .plan-chat-message p {
   margin: 0;
   color: var(--text-secondary);
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.plan-chat-message-content {
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.plan-chat-message-content ul,
+.plan-chat-message-content ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.plan-chat-message-content li {
+  margin: 0.15rem 0;
+}
+
+.plan-chat-message-content blockquote {
+  margin: 0;
+  padding: 0.35rem 0.65rem;
+  border-left: 3px solid rgba(47, 98, 201, 0.35);
+  background: rgba(47, 98, 201, 0.06);
+  border-radius: 8px;
+}
+
+.plan-chat-message-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.92em;
+  background: rgba(20, 48, 94, 0.06);
+  border: 1px solid rgba(20, 48, 94, 0.12);
+  padding: 0.08rem 0.28rem;
+  border-radius: 6px;
+}
+
+.plan-chat-message-content pre {
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(20, 48, 94, 0.12);
+  background: rgba(20, 48, 94, 0.04);
+  overflow-x: auto;
+}
+
+.plan-chat-message-content pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  color: #233b5d;
+  white-space: pre;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.plan-chat-message-content h4,
+.plan-chat-message-content h5,
+.plan-chat-message-content h6 {
+  margin: 0;
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+}
+
+.plan-chat-message-content strong {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.plan-chat-message-content em {
+  font-style: italic;
 }
 
 .plan-chat-message-actions {

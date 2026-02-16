@@ -8,6 +8,7 @@ Use these files to track the project from idea to launch.
 - `milestones.md`: Key phases and delivery targets
 - `timeline.md`: Dates, dependencies, and sequencing
 - `backlog.md`: Prioritized tasks
+- `user-feedback.md`: Raw feedback and notes (not necessarily actioned)
 - `architecture.md`: Technical approach and system boundaries
 - `data-model.md`: JSON structure for generated training plans
 - `local-testing.md`: Local test strategy and quality gates

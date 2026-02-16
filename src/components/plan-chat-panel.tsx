@@ -2,6 +2,72 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import type { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+function normalizeChatMarkdown(input: string): string {
+  // Improve readability for common "Label: explanation" lines emitted by the model
+  // without needing the model to output explicit bullet markdown.
+  const lines = input.replace(/\r\n/g, "\n").split("\n");
+  const out: string[] = [];
+  let inFence = false;
+
+  const isLabelLine = (line: string) => /^\*\*[^*]+\*\*:\s+/.test(line.trim());
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i] ?? "";
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("```")) {
+      inFence = !inFence;
+      out.push(line);
+      continue;
+    }
+
+    if (inFence) {
+      out.push(line);
+      continue;
+    }
+
+    // If we see a run of 2+ "**Label:** ..." lines, turn them into a bullet list.
+    if (isLabelLine(line)) {
+      const runStart = i;
+      let runEnd = i;
+      while (runEnd < lines.length && isLabelLine(lines[runEnd] ?? "")) {
+        runEnd += 1;
+      }
+
+      const runLength = runEnd - runStart;
+      if (runLength >= 2) {
+        const prev = out[out.length - 1] ?? "";
+        if (prev.trim() !== "") {
+          out.push("");
+        }
+
+        for (let j = runStart; j < runEnd; j += 1) {
+          out.push(`- ${(lines[j] ?? "").trim()}`);
+        }
+
+        out.push("");
+        i = runEnd - 1;
+        continue;
+      }
+    }
+
+    out.push(line);
+  }
+
+  return out.join("\n").trimEnd();
+}
+
+const markdownComponents: Components = {
+  a: ({ href, children, ...props }) => (
+    <a {...props} href={href} target="_blank" rel="noreferrer noopener">
+      {children}
+    </a>
+  )
+};
 
 type ChatThread = {
   id: string;
@@ -17,6 +83,10 @@ type ChatMessage = {
   content: string;
   sourceTweakRequestId: string | null;
   createdAt: string;
+};
+
+type UiChatMessage = ChatMessage & {
+  clientSequence: number;
 };
 
 type Props = {
@@ -38,12 +108,14 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
   const previousPlanIdRef = useRef(planId);
   const pendingAskRef = useRef<string | null>(null);
   const sendMessageRef = useRef<(content: string) => void>(() => {});
+  const messageSequenceRef = useRef(0);
 
   const [threadId, setThreadId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<UiChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [isStreamingResponse, setIsStreamingResponse] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isApplyingMessageId, setIsApplyingMessageId] = useState<string | null>(null);
   const [applyResult, setApplyResult] = useState<ApplyTweakResult | null>(null);
@@ -70,11 +142,13 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
       setMessages([]);
       setDraft("");
       setIsSending(false);
+      setIsStreamingResponse(false);
       setIsResetting(false);
       setIsApplyingMessageId(null);
       setLastFailedDraft(null);
       setIsLoading(true);
       setError(null);
+      messageSequenceRef.current = 0;
 
       const threadResponse = await fetch(`/api/plans/${planId}/chat/threads`, {
         method: "POST",
@@ -128,7 +202,12 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
       }
 
       setThreadId(resolvedThreadId);
-      setMessages(messagesBody.messages);
+      const seededMessages = messagesBody.messages.map((message, index) => ({
+        ...message,
+        clientSequence: index
+      }));
+      messageSequenceRef.current = seededMessages.length;
+      setMessages(seededMessages);
       setIsLoading(false);
     }
 
@@ -140,7 +219,8 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
   }, [planId, planVersionId]);
 
   const sortedMessages = useMemo(() => {
-    return [...messages].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+    // Use a client-side sequence to avoid clock-skew weirdness while streaming.
+    return [...messages].sort((a, b) => a.clientSequence - b.clientSequence);
   }, [messages]);
 
   useEffect(() => {
@@ -161,51 +241,213 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
     }
 
     setIsSending(true);
+    setIsStreamingResponse(true);
     setError(null);
     setLastFailedDraft(null);
     setApplyResult(null);
 
-    const optimisticId = `optimistic-${Date.now()}`;
-    const optimisticMessage: ChatMessage = {
-      id: optimisticId,
+    const optimisticUserId = `optimistic-user-${Date.now()}`;
+    const optimisticAssistantId = `optimistic-assistant-${Date.now()}`;
+    const optimisticUserMessage: UiChatMessage = {
+      id: optimisticUserId,
       role: "user",
       content: trimmed,
       sourceTweakRequestId: null,
       createdAt: new Date().toISOString()
+      ,
+      clientSequence: messageSequenceRef.current++
     };
 
-    setMessages((current) => [...current, optimisticMessage]);
+    const optimisticAssistantMessage: UiChatMessage = {
+      id: optimisticAssistantId,
+      role: "assistant",
+      content: "",
+      sourceTweakRequestId: null,
+      createdAt: new Date(Date.now() + 1).toISOString()
+      ,
+      clientSequence: messageSequenceRef.current++
+    };
+
+    setMessages((current) => [...current, optimisticUserMessage, optimisticAssistantMessage]);
     setDraft("");
 
     const response = await fetch(`/api/plans/${planId}/chat/threads/${threadId}/messages`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Accept: "text/event-stream"
       },
       body: JSON.stringify({
         content: trimmed
       })
     });
 
-    const body = (await response.json().catch(() => null)) as
-      | { userMessage: ChatMessage; assistantMessage: ChatMessage }
-      | { error?: { message?: string } }
-      | null;
+    const contentType = response.headers.get("content-type") ?? "";
 
-    setIsSending(false);
-
-    if (!response.ok || !body || !("userMessage" in body) || !("assistantMessage" in body)) {
-      setMessages((current) => current.filter((message) => message.id !== optimisticId));
-      setError(body && "error" in body ? body.error?.message ?? "Failed to send message." : "Failed to send message.");
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
+      setIsSending(false);
+      setIsStreamingResponse(false);
+      setMessages((current) => current.filter((message) => message.id !== optimisticUserId && message.id !== optimisticAssistantId));
+      setError(body?.error?.message ?? "Failed to send message.");
       setLastFailedDraft(trimmed);
       return;
     }
 
-    setMessages((current) => [
-      ...current.filter((message) => message.id !== optimisticId),
-      body.userMessage,
-      body.assistantMessage
-    ]);
+    if (!contentType.includes("text/event-stream") || !response.body) {
+      setIsStreamingResponse(false);
+      const body = (await response.json().catch(() => null)) as
+        | { userMessage: ChatMessage; assistantMessage: ChatMessage }
+        | { error?: { message?: string } }
+        | null;
+
+      setIsSending(false);
+
+      if (!body || !("userMessage" in body) || !("assistantMessage" in body)) {
+        setMessages((current) =>
+          current.filter((message) => message.id !== optimisticUserId && message.id !== optimisticAssistantId)
+        );
+        setError(body && "error" in body ? body.error?.message ?? "Failed to send message." : "Failed to send message.");
+        setLastFailedDraft(trimmed);
+        return;
+      }
+
+      setMessages((current) => [
+        ...current.filter((message) => message.id !== optimisticUserId && message.id !== optimisticAssistantId),
+        { ...body.userMessage, clientSequence: optimisticUserMessage.clientSequence },
+        { ...body.assistantMessage, clientSequence: optimisticAssistantMessage.clientSequence }
+      ]);
+
+      return;
+    }
+
+    const decoder = new TextDecoder();
+    const reader = response.body.getReader();
+    let buffer = "";
+    let resolvedAssistantMessage: ChatMessage | null = null;
+
+    function applyUserMessage(message: ChatMessage) {
+      // Replace the optimistic user message in-place to avoid duplicates.
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === optimisticUserId ? { ...message, clientSequence: item.clientSequence } : item
+        )
+      );
+    }
+
+    function appendAssistantDelta(delta: string) {
+      if (!delta) {
+        return;
+      }
+      // Once we have a final assistant message, ignore late deltas.
+      if (resolvedAssistantMessage) {
+        return;
+      }
+      setMessages((current) =>
+        current.map((message) =>
+          message.id === optimisticAssistantId ? { ...message, content: (message.content ?? "") + delta } : message
+        )
+      );
+    }
+
+    function applyAssistantMessage(message: ChatMessage) {
+      resolvedAssistantMessage = message;
+      // Replace the optimistic assistant message in-place to avoid duplicating history.
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === optimisticAssistantId ? { ...message, clientSequence: item.clientSequence } : item
+        )
+      );
+    }
+
+    function parseEvent(raw: string): { event: string; data: string } | null {
+      const lines = raw.split("\n");
+      let event = "message";
+      const dataLines: string[] = [];
+
+      for (const line of lines) {
+        if (line.startsWith("event:")) {
+          event = line.slice("event:".length).trim();
+          continue;
+        }
+        if (line.startsWith("data:")) {
+          dataLines.push(line.slice("data:".length).trimStart());
+        }
+      }
+
+      const data = dataLines.join("\n").trim();
+      if (!data) {
+        return null;
+      }
+
+      return { event, data };
+    }
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const boundaryIndex = () => {
+          const lf = buffer.indexOf("\n\n");
+          const crlf = buffer.indexOf("\r\n\r\n");
+          if (lf === -1 && crlf === -1) return null;
+          if (lf !== -1 && (crlf === -1 || lf < crlf)) return { index: lf, length: 2 };
+          return { index: crlf, length: 4 };
+        };
+
+        let boundary = boundaryIndex();
+        while (boundary) {
+          const rawEvent = buffer.slice(0, boundary.index);
+          buffer = buffer.slice(boundary.index + boundary.length);
+
+          const parsedEvent = parseEvent(rawEvent);
+          if (!parsedEvent) {
+            boundary = boundaryIndex();
+            continue;
+          }
+
+          if (parsedEvent.event === "user_message") {
+            const message = JSON.parse(parsedEvent.data) as ChatMessage;
+            applyUserMessage(message);
+          } else if (parsedEvent.event === "assistant_delta") {
+            const payload = JSON.parse(parsedEvent.data) as { delta?: string };
+            appendAssistantDelta(payload.delta ?? "");
+          } else if (parsedEvent.event === "assistant_message") {
+            const message = JSON.parse(parsedEvent.data) as ChatMessage;
+            applyAssistantMessage(message);
+          } else if (parsedEvent.event === "error") {
+            const payload = JSON.parse(parsedEvent.data) as { message?: string };
+            throw new Error(payload.message ?? "Failed to send message.");
+          }
+
+          boundary = boundaryIndex();
+        }
+      }
+
+      setIsSending(false);
+      setIsStreamingResponse(false);
+
+      if (!resolvedAssistantMessage) {
+        setMessages((current) =>
+          current.filter((message) => message.id !== optimisticAssistantId && message.id !== optimisticUserId)
+        );
+        setError("Chat request failed.");
+        setLastFailedDraft(trimmed);
+      }
+    } catch (streamError) {
+      setIsSending(false);
+      setIsStreamingResponse(false);
+      setMessages((current) =>
+        current.filter((message) => message.id !== optimisticAssistantId && message.id !== optimisticUserId)
+      );
+      setError(streamError instanceof Error ? streamError.message : "Failed to send message.");
+      setLastFailedDraft(trimmed);
+    }
   }
 
   useEffect(() => {
@@ -420,7 +662,14 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
           sortedMessages.map((message) => (
             <article key={message.id} className={`plan-chat-message ${message.role === "assistant" ? "assistant" : "user"}`}>
               <h3>{message.role === "assistant" ? "Coach" : "You"}</h3>
-              <p>{message.content}</p>
+              <div className="plan-chat-message-content">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={markdownComponents}
+                >
+                  {normalizeChatMarkdown(message.content)}
+                </ReactMarkdown>
+              </div>
               {message.role === "assistant" ? (
                 <div className="plan-chat-message-actions">
                   <button
@@ -436,10 +685,13 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
             </article>
           ))
         )}
-        {isSending ? (
+        {isSending && !isStreamingResponse ? (
           <article className="plan-chat-message assistant">
             <h3>Coach</h3>
-            <p>Coach is typing...</p>
+            <p className="plan-chat-typing">
+              <span className="plan-chat-typing-spinner" aria-hidden="true" />
+              <span>Coach is typing...</span>
+            </p>
           </article>
         ) : null}
         <div ref={messagesEndRef} />

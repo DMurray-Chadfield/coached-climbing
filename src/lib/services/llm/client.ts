@@ -12,5 +12,7 @@ export class LlmClientError extends Error {
 
 export interface LlmClient {
   complete(input: { model: string; messages: LlmMessage[]; mode: LlmMode }): Promise<{ text: string }>;
+  completeStream?(
+    input: { model: string; messages: LlmMessage[]; mode: LlmMode; signal?: AbortSignal }
+  ): AsyncIterable<string>;
 }
-

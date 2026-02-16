@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import type {
   ChatCompletionCreateParamsNonStreaming,
+  ChatCompletionCreateParamsStreaming,
   ChatCompletionMessageParam
 } from "openai/resources/chat/completions";
 import { LlmClientError, type LlmClient } from "@/lib/services/llm/client";
@@ -82,8 +83,10 @@ function buildOpenAiRequest(params: {
   model: string;
   messages: ChatCompletionMessageParam[];
   mode: LlmMode;
-}): ChatCompletionCreateParamsNonStreaming & { reasoning_effort?: "low" } {
-  const request: ChatCompletionCreateParamsNonStreaming & { reasoning_effort?: "low" } = {
+}): (ChatCompletionCreateParamsNonStreaming | ChatCompletionCreateParamsStreaming) & { reasoning_effort?: "low" } {
+  const request: (ChatCompletionCreateParamsNonStreaming | ChatCompletionCreateParamsStreaming) & {
+    reasoning_effort?: "low";
+  } = {
     model: params.model,
     messages: params.messages
   };
@@ -124,7 +127,7 @@ export class OpenAiLlmClient implements LlmClient {
 
     for (let attempt = 1; attempt <= MAX_NETWORK_ATTEMPTS; attempt += 1) {
       try {
-        const completion = await this.client.chat.completions.create(request, {
+        const completion = await this.client.chat.completions.create(request as ChatCompletionCreateParamsNonStreaming, {
           timeout: REQUEST_TIMEOUT_MS
         });
 
@@ -150,5 +153,40 @@ export class OpenAiLlmClient implements LlmClient {
     }
 
     throw new LlmClientError("OpenAI request failed", "openai", normalizeOpenAIError(lastError));
+  }
+
+  async *completeStream(input: {
+    model: string;
+    messages: LlmMessage[];
+    mode: LlmMode;
+    signal?: AbortSignal;
+  }): AsyncIterable<string> {
+    const request = buildOpenAiRequest({
+      model: input.model,
+      messages: toOpenAiMessages(input.messages),
+      mode: input.mode
+    }) as ChatCompletionCreateParamsStreaming;
+
+    const stream = await this.client.chat.completions.create(
+      {
+        ...request,
+        stream: true
+      },
+      {
+        timeout: REQUEST_TIMEOUT_MS,
+        ...(input.signal ? { signal: input.signal } : {})
+      }
+    );
+
+    for await (const chunk of stream) {
+      if (input.signal?.aborted) {
+        break;
+      }
+
+      const delta = chunk.choices?.[0]?.delta?.content ?? "";
+      if (delta) {
+        yield delta;
+      }
+    }
   }
 }
