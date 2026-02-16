@@ -66,6 +66,20 @@ Typical weekly loading:
 - Hard system work usually up to 2-3 sessions/week total (tolerance-dependent).
 - Aerobic capacity guardrails: ARC 10-40 min continuous; keep interval aerobic work controllable; keep total climbing work <= 45 min/session (rests allowed).
 
+## Session Length and Mixed Systems
+Session length progression (including warm-up and rests):
+- Start of plan target: ~90 minutes (about 1.5 hours).
+- Build toward: ~120 minutes (about 2 hours) as tolerance improves.
+- Progress by adding *planned, repeatable work* (more reps/sets, slightly longer time-on, or a short second block), not by adding low-quality extra climbing.
+
+Early/mid plan default:
+- One main energy-system stimulus per session (e.g., strength *or* aerobic capacity *or* aerobic power).
+
+Toward end of plan (more specific / more like a redpoint day):
+- Train multiple energy systems in one session by using a primary block + a shorter secondary block (usually 10-30 minutes of work).
+- Keep high-intensity first and aerobic-ish second (follow the session ordering above), unless the intent is explicitly "pumpy route-sim first".
+- If adding the secondary block reduces the primary block’s quality, shrink or drop the secondary block.
+
 ## System Prescriptions (Concise)
 - Aerobic capacity / ARC:
   - Short intervals (1 ON / 1 OFF): 1 min climb / 1 min rest x 10; effort ~6-7/10; recover enough to start the next rep in control (if not, use 1:2 or reduce intensity); progress +1 rep or slightly harder before reducing rest.
