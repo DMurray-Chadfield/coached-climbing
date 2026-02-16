@@ -10,8 +10,7 @@ type SignupResponse = {
 
 export function SignupForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,9 +26,8 @@ export function SignupForm() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        email,
-        password,
-        ...(name.trim() ? { name: name.trim() } : {})
+        username,
+        password
       })
     });
 
@@ -42,7 +40,7 @@ export function SignupForm() {
     }
 
     await signIn("credentials", {
-      email,
+      identifier: username,
       password,
       redirect: false
     });
@@ -55,17 +53,13 @@ export function SignupForm() {
   return (
     <form onSubmit={onSubmit} className="auth-form">
       <label>
-        <span>Name</span>
-        <input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" />
-      </label>
-      <label>
-        <span>Email</span>
+        <span>Username</span>
         <input
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@example.com"
-          autoComplete="email"
+          type="text"
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          placeholder="your_username"
+          autoComplete="username"
           required
         />
       </label>

@@ -6,7 +6,7 @@ export default function SignupPage() {
     <section className="auth-shell">
       <article className="card auth-card">
         <h1>Create your coaching account</h1>
-        <p className="auth-subtitle">Set up your account to build and refine personalized climbing plans.</p>
+        <p className="auth-subtitle">Choose a username and password to build and refine personalized climbing plans.</p>
         <SignupForm />
         <p className="auth-footer">
           Already have an account? <Link href="/login">Login</Link>

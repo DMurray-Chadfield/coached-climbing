@@ -18,12 +18,12 @@
 | T-007 | P0 | Build authenticated homepage listing user plans + "Create Plan" CTA | Team | Done | Dashboard is start point with Create Plan, per-plan onboarding link, and Open Plan primary CTA |
 | T-015 | P0 | Implement activity + session completion models and toggle APIs | Team | Done | Added `ActivityCompletion`/`SessionCompletion` models + idempotent toggle APIs with ownership checks |
 | T-016 | P1 | Add session/activity completion checkboxes in plan UI and progress indicators | Team | Done | `/plans/[planId]` now renders completion checkboxes and plan/session progress percentages backed by API state |
-| T-031 | P1 | Add activity logging UI for stats + feelings and persist activity log entries | Team | Todo | Enables richer AI plan discussions |
+| T-031 | P1 | Add activity logging UI for stats + feelings and persist activity log entries | Team | Done | De-scoped from MVP; session-level notes retained and activity-log surface removed |
 | T-032 | P0 | Implement completion/log carry-forward mapping between plan versions | Team | Done | Deterministic carry-forward copies matching completion + session-note state into new tweak-created versions |
 | T-014 | P1 | Build weekly/session plan viewer UI | Team | Done | Plan detail page renders stored current version JSON |
 | T-017 | P0 | Build plan tweak API (week or whole plan) with LLM + schema validation | Team | Done | JSON-first tweak contract with validation, retry, and versioned persistence (OpenAI structured output when enabled) |
 | T-033 | P0 | Enforce JSON-schema-guided output for generation/tweak endpoints | Team | Done | OpenAI uses `response_format: json_schema` with `strict: true`; Gemini requests JSON-only and relies on server-side validation |
-| T-018 | P1 | Add tweak UI in plan view (request box + scope selector + summary display) | Team | Todo | User-facing tweak flow |
+| T-018 | P1 | Add tweak UI in plan view (request box + scope selector + summary display) | Team | Done | Closed via chat-centric tweak UX (`Apply as tweak`) with success/change-summary feedback |
 | T-019 | P1 | Persist tweak request history and resulting plan versions | Team | Done | Tweak request records + result version linkage persisted and listable via tweak history endpoint |
 | T-020 | P0 | Enforce LLM base context loading from discipline-specific context files for all LLM endpoints | Team | Done | Generation, tweak, and chat now load `training-ideas-bouldering.md` or `training-ideas-sport-trad.md` based on plan discipline |
 | T-021 | P1 | Build plan chat API + thread/message persistence | Team | Done | Added owned thread/message APIs with assistant reply persistence and no plan mutation |

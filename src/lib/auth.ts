@@ -5,6 +5,49 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 
+type IdentifierCredentials = {
+  identifier?: string;
+  password?: string;
+};
+
+function normalizeIdentifier(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+export async function authorizeWithIdentifier(credentials?: IdentifierCredentials) {
+  const identifier = typeof credentials?.identifier === "string" ? normalizeIdentifier(credentials.identifier) : "";
+  const password = typeof credentials?.password === "string" ? credentials.password : "";
+
+  if (!identifier || !password) {
+    return null;
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { username: identifier }
+  });
+
+  if (!user && identifier.includes("@")) {
+    user = await prisma.user.findUnique({
+      where: { email: identifier }
+    });
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const isValid = await verifyPassword(password, user.passwordHash);
+  if (!isValid) {
+    return null;
+  }
+
+  return {
+    id: user.id,
+    email: user.email ?? undefined,
+    name: user.name
+  };
+}
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt"
@@ -13,33 +56,11 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        identifier: { label: "Username or Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
-        const email = credentials.email.toLowerCase().trim();
-        const user = await prisma.user.findUnique({
-          where: { email }
-        });
-
-        if (!user) {
-          return null;
-        }
-
-        const isValid = await verifyPassword(credentials.password, user.passwordHash);
-        if (!isValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name
-        };
+        return authorizeWithIdentifier(credentials as IdentifierCredentials);
       }
     })
   ],

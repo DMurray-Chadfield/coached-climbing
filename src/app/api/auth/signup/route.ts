@@ -5,9 +5,14 @@ import { hashPassword } from "@/lib/password";
 import { jsonError } from "@/lib/api";
 
 const signupSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  name: z.string().min(1).max(100).optional()
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3)
+    .max(40)
+    .regex(/^[a-z0-9_-]+$/),
+  password: z.string().min(8)
 });
 
 export async function POST(request: Request) {
@@ -18,28 +23,26 @@ export async function POST(request: Request) {
     return jsonError(400, "INVALID_PAYLOAD", "Invalid signup payload", parsed.error.flatten());
   }
 
-  const email = parsed.data.email.toLowerCase().trim();
+  const username = parsed.data.username;
 
   const existing = await prisma.user.findUnique({
-    where: { email }
+    where: { username }
   });
 
   if (existing) {
-    return jsonError(409, "EMAIL_TAKEN", "An account with this email already exists.");
+    return jsonError(409, "USERNAME_TAKEN", "That username is already taken.");
   }
 
   const passwordHash = await hashPassword(parsed.data.password);
 
   const user = await prisma.user.create({
     data: {
-      email,
-      passwordHash,
-      name: parsed.data.name
+      username,
+      email: null,
+      passwordHash
     },
     select: {
-      id: true,
-      email: true,
-      name: true
+      id: true
     }
   });
 

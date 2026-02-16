@@ -6,7 +6,7 @@ export default function LoginPage() {
     <section className="auth-shell">
       <article className="card auth-card">
         <h1>Welcome back</h1>
-        <p className="auth-subtitle">Log in to view your training plans and continue coaching.</p>
+        <p className="auth-subtitle">Log in with your username to view your training plans and continue coaching.</p>
         <LoginForm />
         <p className="auth-footer">
           Need an account? <Link href="/signup">Sign up</Link>
