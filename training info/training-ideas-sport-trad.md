@@ -64,7 +64,7 @@ Session ordering (high to low intensity):
 
 Typical weekly loading:
 - Hard system work usually up to 2-3 sessions/week total (tolerance-dependent).
-- Aerobic capacity guardrails: ARC 10-40 min continuous; keep interval aerobic work controllable; keep total climbing work <= 45 min/session (rests allowed).
+- Aerobic capacity guardrails: ARC 10-40 min continuous; keep interval aerobic work controllable; when doing aerobic-capacity work, keep total aerobic-capacity climbing work <= ~45 min/session (rests allowed).
 
 ## Session Length and Mixed Systems
 Session length progression (including warm-up and rests):
