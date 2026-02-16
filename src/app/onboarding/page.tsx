@@ -1,9 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth/next";
 import { notFound, redirect } from "next/navigation";
 import { QuestionnaireForm } from "@/components/questionnaire-form";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false
+  }
+};
 
 export default async function OnboardingPage({
   searchParams

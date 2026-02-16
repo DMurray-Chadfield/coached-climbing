@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -6,6 +7,13 @@ import { prisma } from "@/lib/prisma";
 import { CreatePlanButton } from "@/components/create-plan-button";
 import { GeneratePlanButton } from "@/components/generate-plan-button";
 import { DeletePlanButton } from "@/components/delete-plan-button";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false
+  }
+};
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -36,7 +44,7 @@ export default async function DashboardPage() {
     <>
       <section className="card dashboard-hero">
         <h1>Dashboard</h1>
-        <p>Build your next block, track completion, and tune sessions with coach chat feedback.</p>
+        <p>Build your next block, track progress, and adjust sessions with coach chat support.</p>
         <div className="dashboard-actions">
           <CreatePlanButton />
         </div>

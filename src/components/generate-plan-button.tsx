@@ -253,7 +253,7 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
   }
 
   const trackerTitle =
-    jobStatus === "queued" ? "Starting plan generation..." : "Generating your plan with AI...";
+    jobStatus === "queued" ? "Starting plan generation..." : "Generating your plan...";
   const trackerBody =
     jobStatus === "queued"
       ? "This should start in a few seconds."

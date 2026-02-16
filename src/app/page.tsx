@@ -1,7 +1,39 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "AI Intelligent Personalised Climbing Training Plans",
+  description:
+    "Generate AI-powered intelligent personalised climbing training blocks in minutes, then adjust sessions with coach chat and track your progress.",
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "AI Intelligent Personalised Climbing Training Plans",
+    description:
+      "Generate AI-powered intelligent personalised climbing training blocks in minutes, then adjust sessions with coach chat and track your progress.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Personalised climbing training plans built around your goals"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Intelligent Personalised Climbing Training Plans",
+    description:
+      "Generate AI-powered intelligent personalised climbing training blocks in minutes, then adjust sessions with coach chat and track your progress.",
+    images: ["/twitter-image"]
+  }
+};
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -15,11 +47,11 @@ export default async function HomePage() {
       <section className="card marketing-hero">
         <div className="marketing-hero-grid">
           <div className="marketing-hero-copy">
-            <p className="marketing-kicker">AI Climbing Coach</p>
-            <h1>Personalized climbing blocks, generated in minutes.</h1>
+            <p className="marketing-kicker">Coached Climbing</p>
+            <h1>Personalised training plans, built around your goals.</h1>
             <p className="marketing-lede">
-              Answer a short onboarding questionnaire, generate a structured plan, then iterate with coach chat and check
-              off sessions as you go.
+              Answer a short onboarding questionnaire to build a structured plan, adjust sessions with coach chat, and
+              track what you complete.
             </p>
             <div className="link-row marketing-cta-row">
               <Link className="plan-open-cta" href="/signup">
@@ -61,53 +93,90 @@ export default async function HomePage() {
         <h2>How it works</h2>
         <ol className="marketing-steps">
           <li className="marketing-step">
-            <h3>Create a plan</h3>
-            <p>Name your block. Every time you regenerate, the app keeps a new immutable version.</p>
+            <h3>Create your plan</h3>
+            <p>Name your next block and keep each regenerated version for reference.</p>
           </li>
           <li className="marketing-step">
             <h3>Answer onboarding</h3>
             <p>
-              Tell us your discipline, schedule, goals, and constraints. The generator uses this as the “truth” for your
-              plan.
+              Share your discipline, schedule, goals, and constraints so your plan fits real life.
             </p>
           </li>
           <li className="marketing-step">
-            <h3>Generate your block</h3>
+            <h3>Build your block</h3>
             <p>Get a readable, week-by-week plan with sessions you can actually execute.</p>
           </li>
           <li className="marketing-step">
-            <h3>Iterate and complete</h3>
-            <p>Chat to tweak sessions, then check off what you did. Regenerate anytime to adapt.</p>
+            <h3>Adjust and complete</h3>
+            <p>Use coach chat to refine sessions, then track what you complete each week.</p>
           </li>
         </ol>
+      </section>
+
+      <section className="card marketing-section">
+        <h2>Why not generic plans?</h2>
+        <p className="marketing-compare-intro">
+          Generic templates can be hard to stick to. Your plan should fit your schedule, goals, and training reality.
+        </p>
+        <div className="marketing-compare-grid">
+          <article className="marketing-compare-item">
+            <h3>Built from your context</h3>
+            <p>
+              Your onboarding captures discipline, goals, schedule, and constraints so your plan starts from your reality.
+            </p>
+          </article>
+          <article className="marketing-compare-item">
+            <h3>Easy to adjust</h3>
+            <p>When life changes, coach chat helps you adjust sessions without rewriting your entire block.</p>
+          </article>
+          <article className="marketing-compare-item">
+            <h3>Progress you can track</h3>
+            <p>Track completed sessions and notes so your next steps are based on what you actually did.</p>
+          </article>
+          <article className="marketing-compare-item">
+            <h3>Clear session instructions</h3>
+            <p>Each session is laid out clearly, so you always know what to do next without guesswork.</p>
+          </article>
+        </div>
+        <div className="link-row marketing-cta-row">
+          <Link className="plan-open-cta" href="/signup">
+            Get started
+          </Link>
+          <Link className="marketing-cta-secondary" href="/login">
+            Log in
+          </Link>
+        </div>
       </section>
 
       <section className="card marketing-section">
         <h2>What you get</h2>
         <div className="marketing-feature-grid">
           <div className="marketing-feature">
+            <h3>Custom personalised training plans</h3>
+            <p>
+              Your plan is built from your goals, schedule, and constraints, so it is more useful than a one-size-fits-all
+              generic template.
+            </p>
+          </div>
+          <div className="marketing-feature">
             <h3>Structured plans</h3>
-            <p>Plans are generated with strict schemas so sessions stay consistent and easy to scan.</p>
+            <p>Consistent session structure that is easy to scan and follow.</p>
           </div>
           <div className="marketing-feature">
-            <h3>Plan-scoped onboarding</h3>
-            <p>Different goals? Different plan. Each plan has its own questionnaire and its own versions.</p>
+            <h3>Plan-specific onboarding</h3>
+            <p>Each plan keeps its own onboarding context and version history.</p>
           </div>
           <div className="marketing-feature">
-            <h3>Coach chat tweaks</h3>
-            <p>Ask for substitutions, swaps, and intensity adjustments without rewriting the whole block.</p>
+            <h3>Coach chat adjustments</h3>
+            <p>Request substitutions and intensity changes without rewriting the full block.</p>
           </div>
           <div className="marketing-feature">
-            <h3>Completion tracking</h3>
-            <p>Mark sessions done and keep notes. The app stays grounded in what you actually completed.</p>
+            <h3>Progress tracking</h3>
+            <p>Track completed sessions and keep notes to stay consistent.</p>
           </div>
           <div className="marketing-feature">
-            <h3>Regenerate safely</h3>
-            <p>Regeneration creates a new version—so you can iterate without losing what worked.</p>
-          </div>
-          <div className="marketing-feature">
-            <h3>Designed for reality</h3>
-            <p>Life happens. Adjust the plan when travel, soreness, or schedule changes show up.</p>
+            <h3>Built for real schedules</h3>
+            <p>Adapt when travel, fatigue, or time constraints affect training.</p>
           </div>
         </div>
       </section>

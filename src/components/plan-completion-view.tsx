@@ -414,196 +414,203 @@ export function PlanCompletionView({ planId }: Props) {
   const selectedWeek = weeks.find((week) => week.weekNumber === selectedWeekNumber) ?? weeks[0];
 
   return (
-    <section className="card plan-progress-card">
+    <>
       {executiveSummary ? (
-        <article className="plan-summary-card">
-          <h2>Executive Summary</h2>
-          <div className="plan-summary-section">
-            <h3>Phase-by-Phase Weekly Split</h3>
-            <p className="summary-text-block">{executiveSummary.phase_by_phase_weekly_split}</p>
-          </div>
+        <section className="card">
+          <article className="plan-summary-card">
+            <h2>Summary</h2>
+            <div className="plan-summary-section">
+              <h3>Phase-by-Phase Weekly Split</h3>
+              <p className="summary-text-block">{executiveSummary.phase_by_phase_weekly_split}</p>
+            </div>
 
-          <div className="plan-summary-section">
-            <h3>Program Snapshot</h3>
-            <p className="summary-text-block">{executiveSummary.program_snapshot}</p>
-          </div>
-        </article>
+            <div className="plan-summary-section">
+              <h3>Program Snapshot</h3>
+              <p className="summary-text-block">{executiveSummary.program_snapshot}</p>
+            </div>
+          </article>
+        </section>
       ) : null}
 
-      <h2>Progress</h2>
-      <div className="progress-metrics">
-        <article className="metric-card">
-          <h3>Plan Completion</h3>
-          <p>
-            <strong>{plan.completion.plan_completion_percent}%</strong> ({plan.completion.completed_activities}/
-            {plan.completion.total_activities} activities)
-          </p>
-        </article>
-        <article className="metric-card">
-          <h3>Sessions Completed</h3>
-          <p>
-            <strong>{plan.completion.completed_sessions}</strong>/{plan.completion.total_sessions}
-          </p>
-        </article>
-      </div>
-      <div className="progress-bar" aria-hidden="true">
-        <span style={{ width: `${plan.completion.plan_completion_percent}%` }} />
-      </div>
-      {error ? <p className="error">{error}</p> : null}
+      <section className="card plan-progress-card">
+        <h2>Progress</h2>
+        <div className="progress-metrics">
+          <article className="metric-card">
+            <h3>Plan Completion</h3>
+            <p>
+              <strong>{plan.completion.plan_completion_percent}%</strong> ({plan.completion.completed_activities}/
+              {plan.completion.total_activities} activities)
+            </p>
+          </article>
+          <article className="metric-card">
+            <h3>Sessions Completed</h3>
+            <p>
+              <strong>{plan.completion.completed_sessions}</strong>/{plan.completion.total_sessions}
+            </p>
+          </article>
+        </div>
+        <div className="progress-bar" aria-hidden="true">
+          <span style={{ width: `${plan.completion.plan_completion_percent}%` }} />
+        </div>
+        {error ? <p className="error">{error}</p> : null}
 
-      <nav className="week-tabs" aria-label="Plan weeks">
-        {weeks.map((week) => (
-          <button
-            key={week.weekNumber}
-            type="button"
-            className={`week-tab ${selectedWeek?.weekNumber === week.weekNumber ? "is-active" : ""}`}
-            onClick={() => setSelectedWeekNumber(week.weekNumber)}
-          >
-            Week {week.weekNumber}
-          </button>
-        ))}
-      </nav>
+        <nav className="week-tabs" aria-label="Plan weeks">
+          {weeks.map((week) => (
+            <button
+              key={week.weekNumber}
+              type="button"
+              className={`week-tab ${selectedWeek?.weekNumber === week.weekNumber ? "is-active" : ""}`}
+              onClick={() => setSelectedWeekNumber(week.weekNumber)}
+            >
+              Week {week.weekNumber}
+            </button>
+          ))}
+        </nav>
 
-      {selectedWeek ? (
-        <article key={selectedWeek.weekNumber} className="week-block">
-          <h3 className="week-heading">
-            <span className="week-title">Week {selectedWeek.weekNumber}</span>
-            {selectedWeek.focus ? <span className="week-focus">{selectedWeek.focus}</span> : null}
-          </h3>
+        {selectedWeek ? (
+          <article key={selectedWeek.weekNumber} className="week-block">
+            <h3 className="week-heading">
+              <span className="week-title">Week {selectedWeek.weekNumber}</span>
+              {selectedWeek.focus ? <span className="week-focus">{selectedWeek.focus}</span> : null}
+            </h3>
 
-          {selectedWeek.sessions.map((session) => {
-            const sessionCompletion = sessionMap.get(`${selectedWeek.weekNumber}:${session.sessionNumber}`);
+            {selectedWeek.sessions.map((session) => {
+              const sessionCompletion = sessionMap.get(`${selectedWeek.weekNumber}:${session.sessionNumber}`);
 
-            return (
-              <div key={`${selectedWeek.weekNumber}:${session.sessionNumber}`} className="session-block">
-                <label className="completion-row session-row">
-                  <input
-                    type="checkbox"
-                    checked={sessionCompletion?.completed ?? false}
-                    disabled={isUpdating === `s:${selectedWeek.weekNumber}:${session.sessionNumber}`}
-                    onChange={(event) =>
-                      onToggleSession(selectedWeek.weekNumber, session.sessionNumber, event.currentTarget.checked)
-                    }
-                  />
-                  <span>
-                    Session {session.sessionNumber}: {session.sessionType || "Session"}
-                  </span>
-                </label>
-
-                {session.description ? <p className="session-description">{session.description}</p> : null}
-                <div className="note-card">
-                  <label htmlFor={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}>
-                    Session Notes
+              return (
+                <div key={`${selectedWeek.weekNumber}:${session.sessionNumber}`} className="session-block">
+                  <label className="completion-row session-row">
+                    <input
+                      type="checkbox"
+                      checked={sessionCompletion?.completed ?? false}
+                      disabled={isUpdating === `s:${selectedWeek.weekNumber}:${session.sessionNumber}`}
+                      onChange={(event) =>
+                        onToggleSession(selectedWeek.weekNumber, session.sessionNumber, event.currentTarget.checked)
+                      }
+                    />
+                    <span>
+                      Session {session.sessionNumber}: {session.sessionType || "Session"}
+                    </span>
                   </label>
-                  <textarea
-                    id={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}
-                    rows={3}
-                    placeholder="Notes for coach"
-                    value={sessionNoteDrafts[`${selectedWeek.weekNumber}:${session.sessionNumber}`] ?? ""}
-                    onChange={(event) => {
-                      const nextValue = event.currentTarget.value;
-                      setSessionNoteDrafts((current) => ({
-                        ...current,
-                        [`${selectedWeek.weekNumber}:${session.sessionNumber}`]: nextValue
-                      }));
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="note-save-btn"
-                    disabled={isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`}
-                    onClick={() =>
-                      patchNotes(
-                        `/api/plans/${plan.id}/sessions/notes`,
-                        {
-                          planVersionId: plan.current_plan_version.id,
-                          weekNumber: selectedWeek.weekNumber,
-                          sessionNumber: session.sessionNumber,
-                          noteText: sessionNoteDrafts[`${selectedWeek.weekNumber}:${session.sessionNumber}`] ?? ""
-                        },
-                        `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`
-                      )
-                    }
-                  >
-                    {isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`
-                      ? "Saving..."
-                      : "Save Coach Session Note"}
-                  </button>
-                </div>
-                <ul className="session-activity-list">
-                  {session.activities.map((activity) => {
-                    const activityKey = `${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`;
-                    const checked = activityMap.get(activityKey) ?? false;
-                    const activityName = activity.name || activity.activityId;
-                    const helpMessage = [
-                      `How do I do this activity?`,
-                      `Week ${selectedWeek.weekNumber}, Session ${session.sessionNumber}: ${activityName}`,
-                      activity.durationMinutes ? `Planned duration: ${activity.durationMinutes} min` : null,
-                      activity.description ? `Plan notes: ${activity.description}` : null,
-                      "Please explain setup, key cues, common mistakes, how to scale it, and how to judge completion."
-                    ]
-                      .filter((line): line is string => Boolean(line))
-                      .join("\n");
-                    return (
-                      <li key={activity.activityId}>
-                        <div className="completion-row">
-                          <label className="completion-row-label">
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              disabled={isUpdating === `a:${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`}
-                              onChange={(event) =>
-                                onToggleActivity(
-                                  selectedWeek.weekNumber,
-                                  session.sessionNumber,
-                                  activity.activityId,
-                                  event.currentTarget.checked
-                                )
-                              }
-                            />
-                            <span>
-                              <strong>{activityName}</strong>
-                              {activity.durationMinutes ? ` (${activity.durationMinutes} min)` : ""}
-                            </span>
-                          </label>
-                          <button
-                            type="button"
-                            className="activity-help-btn"
-                            aria-label={`Ask coach how to do ${activityName}`}
-                            title="Ask coach how to do this"
-                            disabled={isLoading}
-                            onClick={(event) => {
-                              event.preventDefault();
-                              event.stopPropagation();
-                              window.dispatchEvent(
-                                new CustomEvent("plan-chat:ask", {
-                                  detail: { content: helpMessage }
-                                })
-                              );
-                              document.getElementById("plan-chat")?.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                              });
-                            }}
-                          >
-                            ?
-                          </button>
-                        </div>
-                        {activity.description ? <p className="activity-description">{activity.description}</p> : null}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
-          })}
-        </article>
-      ) : null}
 
-      <details className="plan-json-details">
-        <summary>Plan JSON</summary>
-        <pre className="plan-json-pre">{JSON.stringify(plan.current_plan_version.planJson, null, 2)}</pre>
-      </details>
-    </section>
+                  {session.description ? <p className="session-description">{session.description}</p> : null}
+                  <div className="note-card">
+                    <label htmlFor={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}>
+                      Session Notes
+                    </label>
+                    <textarea
+                      id={`session-note-${selectedWeek.weekNumber}-${session.sessionNumber}`}
+                      rows={3}
+                      placeholder="Notes for coach"
+                      value={sessionNoteDrafts[`${selectedWeek.weekNumber}:${session.sessionNumber}`] ?? ""}
+                      onChange={(event) => {
+                        const nextValue = event.currentTarget.value;
+                        setSessionNoteDrafts((current) => ({
+                          ...current,
+                          [`${selectedWeek.weekNumber}:${session.sessionNumber}`]: nextValue
+                        }));
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="note-save-btn"
+                      disabled={isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`}
+                      onClick={() =>
+                        patchNotes(
+                          `/api/plans/${plan.id}/sessions/notes`,
+                          {
+                            planVersionId: plan.current_plan_version.id,
+                            weekNumber: selectedWeek.weekNumber,
+                            sessionNumber: session.sessionNumber,
+                            noteText: sessionNoteDrafts[`${selectedWeek.weekNumber}:${session.sessionNumber}`] ?? ""
+                          },
+                          `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`
+                        )
+                      }
+                    >
+                      {isUpdating === `sn:${selectedWeek.weekNumber}:${session.sessionNumber}`
+                        ? "Saving..."
+                        : "Save Coach Session Note"}
+                    </button>
+                  </div>
+                  <ul className="session-activity-list">
+                    {session.activities.map((activity) => {
+                      const activityKey = `${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`;
+                      const checked = activityMap.get(activityKey) ?? false;
+                      const activityName = activity.name || activity.activityId;
+                      const helpMessage = [
+                        `How do I do this activity?`,
+                        `Week ${selectedWeek.weekNumber}, Session ${session.sessionNumber}: ${activityName}`,
+                        activity.durationMinutes ? `Planned duration: ${activity.durationMinutes} min` : null,
+                        activity.description ? `Plan notes: ${activity.description}` : null,
+                        "Please explain setup, key cues, common mistakes, how to scale it, and how to judge completion."
+                      ]
+                        .filter((line): line is string => Boolean(line))
+                        .join("\n");
+                      return (
+                        <li key={activity.activityId}>
+                          <div className="completion-row">
+                            <label className="completion-row-label">
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                disabled={
+                                  isUpdating ===
+                                  `a:${selectedWeek.weekNumber}:${session.sessionNumber}:${activity.activityId}`
+                                }
+                                onChange={(event) =>
+                                  onToggleActivity(
+                                    selectedWeek.weekNumber,
+                                    session.sessionNumber,
+                                    activity.activityId,
+                                    event.currentTarget.checked
+                                  )
+                                }
+                              />
+                              <span>
+                                <strong>{activityName}</strong>
+                                {activity.durationMinutes ? ` (${activity.durationMinutes} min)` : ""}
+                              </span>
+                            </label>
+                            <button
+                              type="button"
+                              className="activity-help-btn"
+                              aria-label={`Ask coach how to do ${activityName}`}
+                              title="Ask coach how to do this"
+                              disabled={isLoading}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                window.dispatchEvent(
+                                  new CustomEvent("plan-chat:ask", {
+                                    detail: { content: helpMessage }
+                                  })
+                                );
+                                document.getElementById("plan-chat")?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start"
+                                });
+                              }}
+                            >
+                              ?
+                            </button>
+                          </div>
+                          {activity.description ? <p className="activity-description">{activity.description}</p> : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
+          </article>
+        ) : null}
+
+        <details className="plan-json-details">
+          <summary>Plan JSON</summary>
+          <pre className="plan-json-pre">{JSON.stringify(plan.current_plan_version.planJson, null, 2)}</pre>
+        </details>
+      </section>
+    </>
   );
 }

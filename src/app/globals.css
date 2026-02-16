@@ -1161,6 +1161,27 @@ a:focus-visible {
   gap: var(--space-4);
 }
 
+.marketing-compare-intro {
+  margin: 0;
+  max-width: 70ch;
+}
+
+.marketing-compare-grid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.marketing-compare-item {
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.05rem;
+}
+
+.marketing-compare-item h3 {
+  margin: 0 0 var(--space-2);
+}
+
 .marketing-steps {
   margin: 0;
   padding: 0;
@@ -1224,6 +1245,10 @@ a:focus-visible {
 @media (min-width: 840px) {
   .marketing-steps {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .marketing-compare-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .marketing-feature-grid {

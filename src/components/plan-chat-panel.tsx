@@ -406,7 +406,7 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
                     onClick={() => onApplyAsTweak(message)}
                     disabled={isSending || isResetting || isApplying}
                   >
-                    {isApplyingMessageId === message.id ? "Applying..." : "Apply as tweak"}
+                    {isApplyingMessageId === message.id ? "Applying..." : "Apply adjustment"}
                   </button>
                 </div>
               ) : null}
@@ -444,7 +444,7 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
         <div className="generation-tracker" role="status" aria-live="polite">
           <div className="generation-tracker-spinner" aria-hidden="true" />
           <div>
-            <strong>Applying tweak with AI...</strong>
+            <strong>Applying tweak...</strong>
             <p>Updating your plan version now.</p>
           </div>
         </div>

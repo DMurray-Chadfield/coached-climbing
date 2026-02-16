@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth/next";
 import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -6,6 +7,13 @@ import { prisma } from "@/lib/prisma";
 import { GeneratePlanButton } from "@/components/generate-plan-button";
 import { PlanCompletionView } from "@/components/plan-completion-view";
 import { PlanChatPanel } from "@/components/plan-chat-panel";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false
+  }
+};
 
 export default async function PlanDetailPage({
   params

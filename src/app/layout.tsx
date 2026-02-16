@@ -7,8 +7,39 @@ import { authOptions } from "@/lib/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 
 export const metadata: Metadata = {
-  title: "AI Climbing Coach",
-  description: "Generate personalized climbing plans"
+  metadataBase: new URL("https://coachedclimbing.com"),
+  title: {
+    default: "AI Intelligent Personalised Climbing Training Plans",
+    template: "%s | Coached Climbing"
+  },
+  description:
+    "AI-powered intelligent personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Coached Climbing",
+    title: "AI Intelligent Personalised Climbing Training Plans",
+    description:
+      "AI-powered intelligent personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Coached Climbing"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Intelligent Personalised Climbing Training Plans",
+    description:
+      "AI-powered intelligent personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
+    images: ["/twitter-image"]
+  }
 };
 
 const bodyFont = Manrope({
@@ -40,13 +71,16 @@ export default async function RootLayout({
               <span className="brand-mark-badge" aria-hidden="true">
                 AC
               </span>
-              <span className="brand-mark-label">AI Climbing Coach</span>
+              <span className="brand-mark-label">Coached Climbing</span>
             </Link>
             <nav className="link-row topbar-nav">
               {session?.user ? (
                 <>
                   <Link className="topbar-link" href="/dashboard">
                     Dashboard
+                  </Link>
+                  <Link className="topbar-link" href="mailto:tom@coachedclimbing.com">
+                    Feedback
                   </Link>
                   <SignOutButton />
                 </>
@@ -55,8 +89,11 @@ export default async function RootLayout({
                   <Link className="topbar-link" href="/#how-it-works">
                     How it works
                   </Link>
+                  <Link className="topbar-link" href="mailto:tom@coachedclimbing.com">
+                    Feedback
+                  </Link>
                   <Link className="topbar-link" href="/login">
-                    Login
+                    Log in
                   </Link>
                   <Link className="topbar-link topbar-link-accent" href="/signup">
                     Sign up
