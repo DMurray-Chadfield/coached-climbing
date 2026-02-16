@@ -61,6 +61,7 @@ export default async function RootLayout({
 }>) {
   const session = await getServerSession(authOptions);
   const homeHref = session?.user ? "/dashboard" : "/";
+  const feedbackHref = `mailto:tom@coachedclimbing.com?subject=${encodeURIComponent("Coached Climbing feedback")}&body=${encodeURIComponent("Hi Tom,\n\nI'd like to share feedback:\n")}`;
 
   return (
     <html lang="en">
@@ -79,7 +80,7 @@ export default async function RootLayout({
                   <Link className="topbar-link" href="/dashboard">
                     Dashboard
                   </Link>
-                  <Link className="topbar-link" href="mailto:tom@coachedclimbing.com">
+                  <Link className="topbar-link" href={feedbackHref}>
                     Feedback
                   </Link>
                   <SignOutButton />
@@ -88,9 +89,6 @@ export default async function RootLayout({
                 <>
                   <Link className="topbar-link" href="/#how-it-works">
                     How it works
-                  </Link>
-                  <Link className="topbar-link" href="mailto:tom@coachedclimbing.com">
-                    Feedback
                   </Link>
                   <Link className="topbar-link" href="/login">
                     Log in

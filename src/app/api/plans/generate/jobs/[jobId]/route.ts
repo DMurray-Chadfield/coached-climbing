@@ -62,7 +62,7 @@ export async function GET(
         job.status === "failed"
           ? {
               code: "PLAN_GENERATION_FAILED",
-              message: "Plan generation failed. Please try again."
+              message: "Plan writing failed. Please try again."
             }
           : null
     });
@@ -72,6 +72,6 @@ export async function GET(
     }
 
     console.error("Unexpected plan generation job status error", error);
-    return jsonError(500, "INTERNAL_ERROR", "Unable to load generation status.");
+    return jsonError(500, "INTERNAL_ERROR", "Unable to load plan status.");
   }
 }

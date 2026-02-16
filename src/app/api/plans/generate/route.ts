@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       }
 
       if (error.code === "QUESTIONNAIRE_REQUIRED") {
-        return jsonError(400, "QUESTIONNAIRE_REQUIRED", "Complete onboarding for this plan before generating.");
+        return jsonError(400, "QUESTIONNAIRE_REQUIRED", "Complete onboarding for this plan before writing.");
       }
 
       if (error.code === "INVALID_IDEMPOTENCY_KEY") {
@@ -67,6 +67,6 @@ export async function POST(request: Request) {
 
     console.error("Unexpected generate plan error", error);
 
-    return jsonError(500, "INTERNAL_ERROR", "Unable to generate plan.");
+    return jsonError(500, "INTERNAL_ERROR", "Unable to write plan.");
   }
 }

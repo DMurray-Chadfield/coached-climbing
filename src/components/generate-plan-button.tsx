@@ -56,7 +56,7 @@ type StoredJob = {
   createdAt: string;
 };
 
-export function GeneratePlanButton({ planId, label = "Generate Plan", variant = "solid" }: Props) {
+export function GeneratePlanButton({ planId, label = "Write plan", variant = "solid" }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -134,7 +134,7 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
         setIsLoading(false);
         setJobStatus(null);
         const body = (await response.json().catch(() => null)) as GenerateError | null;
-        setError(body?.error?.message ?? "Failed to load generation status.");
+        setError(body?.error?.message ?? "Failed to load plan status.");
         return;
       }
 
@@ -154,7 +154,7 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
         clearStoredJob();
         setIsLoading(false);
         setJobStatus(null);
-        setError(body.error?.message ?? "Plan generation failed.");
+        setError(body.error?.message ?? "Plan writing failed.");
         return;
       }
 
@@ -227,14 +227,14 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
     if (!response.ok) {
       setIsLoading(false);
       setJobStatus(null);
-      setError("error" in body ? body.error.message : "Failed to generate plan.");
+      setError("error" in body ? body.error.message : "Failed to write plan.");
       return;
     }
 
     if (!("jobId" in body) || !body.jobId) {
       setIsLoading(false);
       setJobStatus(null);
-      setError("Failed to start plan generation.");
+      setError("Failed to start writing plan.");
       return;
     }
 
@@ -252,8 +252,7 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
     startPolling(body.jobId, new Date().toISOString());
   }
 
-  const trackerTitle =
-    jobStatus === "queued" ? "Starting plan generation..." : "Generating your plan...";
+  const trackerTitle = jobStatus === "queued" ? "Starting to write your plan..." : "Writing your plan...";
   const trackerBody =
     jobStatus === "queued"
       ? "This should start in a few seconds."
@@ -268,7 +267,7 @@ export function GeneratePlanButton({ planId, label = "Generate Plan", variant = 
           disabled={isLoading}
           className={variant === "link" ? "link-row-button" : undefined}
         >
-          {isLoading ? "Generating..." : label}
+          {isLoading ? "Writing..." : label}
         </button>
         {error ? <p className="error">{error}</p> : null}
       </div>

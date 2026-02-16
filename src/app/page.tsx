@@ -94,7 +94,7 @@ export default async function HomePage() {
         <ol className="marketing-steps">
           <li className="marketing-step">
             <h3>Create your plan</h3>
-            <p>Name your next block and keep each regenerated version for reference.</p>
+            <p>Name your next block and keep each updated version for reference.</p>
           </li>
           <li className="marketing-step">
             <h3>Answer onboarding</h3>
@@ -150,6 +150,20 @@ export default async function HomePage() {
 
       <section className="card marketing-section">
         <h2>What you get</h2>
+        <div className="marketing-trust-grid">
+          <article className="marketing-trust-item">
+            <h3>How we personalise your plan</h3>
+            <p>Your onboarding and goals shape plan structure, intensity, and weekly focus from the start.</p>
+          </article>
+          <article className="marketing-trust-item">
+            <h3>How it stays practical</h3>
+            <p>Coach chat adjustments help you adapt sessions quickly when your schedule or energy changes.</p>
+          </article>
+          <article className="marketing-trust-item">
+            <h3>How it stays grounded</h3>
+            <p>Progress tracking and notes keep each adjustment tied to what you actually completed.</p>
+          </article>
+        </div>
         <div className="marketing-feature-grid">
           <div className="marketing-feature">
             <h3>Custom personalised training plans</h3>
@@ -183,7 +197,7 @@ export default async function HomePage() {
 
       <section className="card marketing-section marketing-bottom-cta">
         <h2>Ready to start?</h2>
-        <p>Create your first plan, answer onboarding, and generate your first block.</p>
+        <p>Create your first plan, answer onboarding, and build your first block.</p>
         <div className="link-row marketing-cta-row">
           <Link className="plan-open-cta" href="/signup">
             Create an account

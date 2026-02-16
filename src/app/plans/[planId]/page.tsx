@@ -50,7 +50,7 @@ export default async function PlanDetailPage({
     return (
       <section className="card plan-header-card">
         <h1>{plan.name}</h1>
-        <p className="plan-header-meta">This is a draft plan. Complete onboarding and generate your first version.</p>
+        <p className="plan-header-meta">This is a draft plan. Complete onboarding and write your first version.</p>
         <div className="link-row">
           <Link href={`/onboarding?planId=${plan.id}`}>Complete onboarding</Link>
           <Link href="/dashboard">Back to dashboard</Link>
@@ -68,7 +68,7 @@ export default async function PlanDetailPage({
         <div className="link-row">
           <Link href="/dashboard">Back to dashboard</Link>
           <Link href={`/onboarding?planId=${plan.id}`}>Update onboarding for this plan</Link>
-          <GeneratePlanButton planId={plan.id} label="Regenerate" />
+          <GeneratePlanButton planId={plan.id} label="Rewrite plan" />
         </div>
       </section>
       <PlanCompletionView planId={plan.id} />

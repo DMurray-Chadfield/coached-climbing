@@ -51,6 +51,11 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const isApplying = isApplyingMessageId !== null;
   const tweakAppliedFromQuery = searchParams.get("tweakApplied") === "1";
+  const suggestedPrompts = [
+    "Can you adjust this week for lower fatigue?",
+    "Please swap Session 2 for a shorter option.",
+    "How should I adapt this plan if I only have 3 sessions this week?"
+  ];
 
   useEffect(() => {
     let ignore = false;
@@ -351,6 +356,11 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
     setMessages([]);
   }
 
+  function onUsePrompt(prompt: string) {
+    setDraft(prompt);
+    composerRef.current?.focus();
+  }
+
   return (
     <section className="card plan-chat-card" id="plan-chat">
       <div className="plan-chat-header">
@@ -368,6 +378,19 @@ export function PlanChatPanel({ planId, planVersionId }: Props) {
       <p className="plan-chat-subtitle">
         Chat with your coach using your onboarding, plan, notes, and completion progress.
       </p>
+      <div className="plan-chat-quick-prompts" aria-label="Suggested prompts">
+        {suggestedPrompts.map((prompt) => (
+          <button
+            key={prompt}
+            type="button"
+            className="plan-chat-prompt-chip"
+            disabled={isLoading || isSending || isResetting || isApplying || !threadId}
+            onClick={() => onUsePrompt(prompt)}
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
 
       {error ? <p className="error">{error}</p> : null}
       {lastFailedDraft ? (

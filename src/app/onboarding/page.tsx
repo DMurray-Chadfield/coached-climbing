@@ -62,8 +62,8 @@ export default async function OnboardingPage({
         <div className="onboarding-header">
           <h1>Plan Onboarding</h1>
           <p>
-            Complete this once for the selected plan, then generate your first version. You can return later and update it
-            before regenerating.
+            Complete this once for the selected plan, then write your first version. You can return later and update it
+            before rewriting.
           </p>
           <div className="link-row">
             <Link href="/dashboard">Back to dashboard</Link>

@@ -68,7 +68,7 @@ export default async function DashboardPage() {
                       plan.currentPlanVersionId ? "plan-status-generated" : "plan-status-draft"
                     }`}
                   >
-                    {plan.currentPlanVersionId ? "Generated" : "Draft"}
+                    {plan.currentPlanVersionId ? "Written" : "Draft"}
                   </span>
                 </div>
                 <div className="link-row">
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
                     </Link>
                   ) : null}
                   <Link href={`/onboarding?planId=${plan.id}`}>Onboarding</Link>
-                  {!plan.currentPlanVersionId ? <GeneratePlanButton planId={plan.id} label="Generate" /> : null}
+                  {!plan.currentPlanVersionId ? <GeneratePlanButton planId={plan.id} label="Write plan" /> : null}
                   <DeletePlanButton planId={plan.id} />
                 </div>
               </li>
