@@ -1,5 +1,5 @@
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import type { QuestionnaireInput } from "@/lib/schemas/questionnaire";
+import type { LlmMessage } from "@/lib/services/llm/types";
 
 const COACHING_CONSTRAINTS = [
   "You are a conservative climbing coach.",
@@ -20,14 +20,14 @@ export function buildGenerationMessages(params: {
   trainingContext: string;
   questionnaire: QuestionnaireInput;
   correctionFeedback?: string;
-}): ChatCompletionMessageParam[] {
+}): LlmMessage[] {
   const { age, ...questionnaireWithoutAge } = params.questionnaire;
   const promptQuestionnaire = {
     ...questionnaireWithoutAge,
     climbing_age_years: age
   };
 
-  const baseMessages: ChatCompletionMessageParam[] = [
+  const baseMessages: LlmMessage[] = [
     {
       role: "system",
       content: params.trainingContext

@@ -24,6 +24,7 @@ describe("generateTrainingPlan", () => {
     process.env.DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/test";
     process.env.NEXTAUTH_URL = "http://localhost:3000";
     process.env.NEXTAUTH_SECRET = "super-secret-for-tests";
+    process.env.LLM_PROVIDER = "openai";
     process.env.OPENAI_API_KEY = "test-key";
     process.env.OPENAI_MODEL_PRIMARY = "gpt-5-mini";
 

@@ -3,7 +3,7 @@
 MVP vertical slice implementation for:
 - auth (signup/login/logout)
 - per-plan onboarding questionnaire
-- OpenAI plan generation with strict JSON schema output
+- LLM-backed plan generation with strict JSON schema output
 - immutable plan version persistence
 - authenticated dashboard + plan detail viewer
 
@@ -11,12 +11,13 @@ MVP vertical slice implementation for:
 - Next.js + TypeScript
 - Prisma + PostgreSQL
 - NextAuth credentials
-- OpenAI Chat Completions structured output
+- LLM provider: OpenAI or Gemini (via `LLM_PROVIDER`)
 - Vitest (unit + integration)
 
 ## Local Setup
 1. Install Node.js 20+ and pnpm.
 2. Copy `.env.example` to `.env.local` and fill secrets.
+   - Default is OpenAI (`LLM_PROVIDER="openai"`). To use Gemini set `LLM_PROVIDER="gemini"` plus Gemini env vars.
 3. Install deps:
    - `pnpm install`
 4. Apply migrations and generate Prisma client:
@@ -25,6 +26,17 @@ MVP vertical slice implementation for:
    - `pnpm prisma:generate`
 5. Run app stack with Docker dev mode (default runtime):
    - `pnpm docker:dev:build`
+
+## Switch LLM Provider
+Select the provider via `.env.local`:
+- OpenAI:
+  - `LLM_PROVIDER="openai"`
+  - `OPENAI_API_KEY="..."`
+  - `OPENAI_MODEL_PRIMARY="gpt-5-mini"`
+- Gemini:
+  - `LLM_PROVIDER="gemini"`
+  - `GEMINI_API_KEY="..."`
+  - `GEMINI_MODEL_PRIMARY="gemini-2.5-pro"`
 
 ## Docker Runtime (Default)
 - Dev mode (hot reload):

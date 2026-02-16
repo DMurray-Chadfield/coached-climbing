@@ -1,4 +1,3 @@
-import OpenAI from "openai";
 import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam
@@ -6,6 +5,8 @@ import type {
 import { getEnv } from "@/lib/env";
 import type { QuestionnaireInput } from "@/lib/schemas/questionnaire";
 import { trainingPlanJsonSchema, validateTrainingPlan } from "@/lib/schemas/training-plan";
+import { parseJsonLenient } from "@/lib/services/llm/json";
+import { getLlmClientFromEnv } from "@/lib/services/llm";
 import { buildGenerationMessages } from "@/lib/services/prompt-builder";
 import { loadTrainingContext } from "@/lib/services/training-context";
 
@@ -77,25 +78,11 @@ export function buildOpenAIRequest(
   return request;
 }
 
-function parseModelResponse(content: string | null | undefined): unknown {
-  if (!content) {
-    throw new PlanGenerationError("Model response content was empty", "INVALID_RESPONSE");
-  }
-
-  try {
-    return JSON.parse(content);
-  } catch {
-    throw new PlanGenerationError("Model response was not valid JSON", "INVALID_RESPONSE", {
-      content
-    });
-  }
-}
-
 export async function generateTrainingPlan(
   questionnaire: QuestionnaireInput
 ): Promise<PlanGenerationSuccess> {
   const env = getEnv();
-  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+  const { client, model } = getLlmClientFromEnv();
   const context = await loadTrainingContext(questionnaire.plan_discipline);
 
   let correctionFeedback: string | undefined;
@@ -107,17 +94,60 @@ export async function generateTrainingPlan(
       correctionFeedback
     });
 
-    const request = buildOpenAIRequest(env.OPENAI_MODEL_PRIMARY, messages);
-
     try {
-      const completion = await client.chat.completions.create(request);
-      const content = completion.choices[0]?.message?.content;
-      const parsed = parseModelResponse(content);
-      const validation = validateTrainingPlan(parsed);
+      const completion = await client.complete({
+        model,
+        messages,
+        mode: {
+          kind: "json",
+          schemaName: "training_plan",
+          schema: trainingPlanJsonSchema as unknown as Record<string, unknown>
+        }
+      });
+
+      if (!completion.text || completion.text.trim().length === 0) {
+        correctionFeedback = JSON.stringify(
+          {
+            error: "Model response content was empty"
+          },
+          null,
+          2
+        );
+
+        if (attempt === MAX_ATTEMPTS) {
+          throw new PlanGenerationError("Model response content was empty", "INVALID_RESPONSE");
+        }
+
+        continue;
+      }
+
+      const parsedJson = parseJsonLenient(completion.text);
+
+      if (!parsedJson.ok) {
+        correctionFeedback = JSON.stringify(
+          {
+            error: parsedJson.error,
+            snippet: parsedJson.snippet
+          },
+          null,
+          2
+        );
+
+        if (attempt === MAX_ATTEMPTS) {
+          throw new PlanGenerationError("Model response was not valid JSON", "INVALID_RESPONSE", {
+            error: parsedJson.error,
+            snippet: parsedJson.snippet
+          });
+        }
+
+        continue;
+      }
+
+      const validation = validateTrainingPlan(parsedJson.value);
 
       if (validation.valid) {
         return {
-          planJson: parsed as Record<string, unknown>,
+          planJson: parsedJson.value as Record<string, unknown>,
           retryCount: attempt - 1
         };
       }
@@ -141,7 +171,11 @@ export async function generateTrainingPlan(
       if (error instanceof PlanGenerationError) {
         throw error;
       }
-      throw new PlanGenerationError("OpenAI request failed", "LLM_FAILURE", normalizeOpenAIError(error));
+      throw new PlanGenerationError(
+        `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
+        "LLM_FAILURE",
+        normalizeOpenAIError(error)
+      );
     }
   }
 

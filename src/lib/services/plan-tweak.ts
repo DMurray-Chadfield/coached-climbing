@@ -1,10 +1,12 @@
-import OpenAI from "openai";
 import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam
 } from "openai/resources/chat/completions";
 import { getEnv } from "@/lib/env";
 import { trainingPlanJsonSchema, validateTrainingPlan } from "@/lib/schemas/training-plan";
+import { getLlmClientFromEnv } from "@/lib/services/llm";
+import { parseJsonLenient } from "@/lib/services/llm/json";
+import type { LlmMessage } from "@/lib/services/llm/types";
 import type { PlanDiscipline } from "@/lib/services/training-context";
 import {
   loadTrainingContext,
@@ -96,7 +98,7 @@ export function buildTweakMessages(params: {
     sessionNumber: number;
   }>;
   correctionFeedback?: string;
-}): ChatCompletionMessageParam[] {
+}): LlmMessage[] {
   const basePayload: Record<string, unknown> = {
     task: "Apply a requested tweak to a climbing training plan while preserving valid JSON schema.",
     scope: params.scope,
@@ -115,7 +117,7 @@ export function buildTweakMessages(params: {
     }));
   }
 
-  const baseMessages: ChatCompletionMessageParam[] = [
+  const baseMessages: LlmMessage[] = [
     {
       role: "system",
       content: params.trainingContext
@@ -293,20 +295,6 @@ export function buildTweakOpenAIRequest(
   return request;
 }
 
-function parseModelResponse(content: string | null | undefined): Record<string, unknown> {
-  if (!content) {
-    throw new PlanTweakError("Model response content was empty", "INVALID_RESPONSE");
-  }
-
-  try {
-    return JSON.parse(content) as Record<string, unknown>;
-  } catch {
-    throw new PlanTweakError("Model response was not valid JSON", "INVALID_RESPONSE", {
-      content
-    });
-  }
-}
-
 function parseTweakPayload(payload: Record<string, unknown>): {
   updatedPlan: Record<string, unknown>;
   changeSummary: string;
@@ -337,7 +325,7 @@ function parseTweakPayload(payload: Record<string, unknown>): {
 
 export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Promise<TweakedPlanResult> {
   const env = getEnv();
-  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+  const { client, model } = getLlmClientFromEnv();
   const discipline = resolvePlanDiscipline({
     explicitDiscipline: input.planDiscipline,
     planJson: input.planJson
@@ -357,12 +345,73 @@ export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Prom
       correctionFeedback
     });
 
-    const request = buildTweakOpenAIRequest(env.OPENAI_MODEL_PRIMARY, messages);
-
     try {
-      const completion = await client.chat.completions.create(request);
-      const content = completion.choices[0]?.message?.content;
-      const payload = parseModelResponse(content);
+      const completion = await client.complete({
+        model,
+        messages,
+        mode: {
+          kind: "json",
+          schemaName: "training_plan_tweak",
+          schema: tweakResponseSchema as unknown as Record<string, unknown>
+        }
+      });
+
+      if (!completion.text || completion.text.trim().length === 0) {
+        correctionFeedback = JSON.stringify(
+          {
+            error: "Model response content was empty"
+          },
+          null,
+          2
+        );
+
+        if (attempt === MAX_ATTEMPTS) {
+          throw new PlanTweakError("Model response content was empty", "INVALID_RESPONSE");
+        }
+
+        continue;
+      }
+
+      const parsedJson = parseJsonLenient(completion.text);
+
+      if (!parsedJson.ok) {
+        correctionFeedback = JSON.stringify(
+          {
+            error: parsedJson.error,
+            snippet: parsedJson.snippet
+          },
+          null,
+          2
+        );
+
+        if (attempt === MAX_ATTEMPTS) {
+          throw new PlanTweakError("Model response was not valid JSON", "INVALID_RESPONSE", {
+            error: parsedJson.error,
+            snippet: parsedJson.snippet
+          });
+        }
+
+        continue;
+      }
+
+      if (!isRecord(parsedJson.value)) {
+        correctionFeedback = JSON.stringify(
+          {
+            error: "Model response was not a JSON object",
+            snippet: completion.text.slice(0, 2000)
+          },
+          null,
+          2
+        );
+
+        if (attempt === MAX_ATTEMPTS) {
+          throw new PlanTweakError("Model response was not a JSON object", "INVALID_RESPONSE");
+        }
+
+        continue;
+      }
+
+      const payload = parsedJson.value;
       const parsed = parseTweakPayload(payload);
       const protectedPlan = preserveCompletedSessions(
         input.planJson,
@@ -401,7 +450,11 @@ export async function generateTweakedPlan(input: GenerateTweakedPlanInput): Prom
         throw error;
       }
 
-      throw new PlanTweakError("OpenAI request failed", "LLM_FAILURE", normalizeOpenAIError(error));
+      throw new PlanTweakError(
+        `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
+        "LLM_FAILURE",
+        normalizeOpenAIError(error)
+      );
     }
   }
 

@@ -1,9 +1,6 @@
-import OpenAI from "openai";
-import type {
-  ChatCompletionCreateParamsNonStreaming,
-  ChatCompletionMessageParam
-} from "openai/resources/chat/completions";
 import { getEnv } from "@/lib/env";
+import { getLlmClientFromEnv } from "@/lib/services/llm";
+import type { LlmMessage } from "@/lib/services/llm/types";
 import type { CompletionSnapshot } from "@/lib/services/plan-completion";
 import type { NotesSnapshot } from "@/lib/services/plan-notes";
 import {
@@ -73,7 +70,7 @@ export function buildPlanChatMessages(params: {
   notes: NotesSnapshot;
   history: PlanChatHistoryItem[];
   userMessage: string;
-}): ChatCompletionMessageParam[] {
+}): LlmMessage[] {
   const onboardingContext = compactOnboardingContext(params.onboarding);
   const onboardingSummary = onboardingContext
     ? JSON.stringify(onboardingContext, null, 2)
@@ -81,7 +78,7 @@ export function buildPlanChatMessages(params: {
   const completionSummary = JSON.stringify(compactCompletionContext(params.completion), null, 2);
   const notesSummary = JSON.stringify(compactNotesContext(params.notes, params.completion), null, 2);
 
-  const messages: ChatCompletionMessageParam[] = [
+  const messages: LlmMessage[] = [
     {
       role: "system",
       content: params.trainingContext
@@ -131,7 +128,7 @@ export function buildPlanChatMessages(params: {
 
 export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): Promise<string> {
   const env = getEnv();
-  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+  const { client, model } = getLlmClientFromEnv();
   const discipline = resolvePlanDiscipline({
     onboarding: input.onboarding,
     planJson: input.planJson
@@ -149,20 +146,13 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
   });
 
   try {
-    const request: ChatCompletionCreateParamsNonStreaming & {
-      reasoning_effort?: "low";
-    } = {
-      model: env.OPENAI_MODEL_PRIMARY,
-      messages
-    };
+    const completion = await client.complete({
+      model,
+      messages,
+      mode: { kind: "text" }
+    });
 
-    if (env.OPENAI_MODEL_PRIMARY === "gpt-5.2") {
-      request.reasoning_effort = "low";
-    }
-
-    const completion = await client.chat.completions.create(request);
-
-    const content = completion.choices[0]?.message?.content;
+    const content = completion.text;
 
     if (!content || content.trim().length === 0) {
       throw new PlanChatError("Model response content was empty", "INVALID_RESPONSE");
@@ -174,6 +164,10 @@ export async function generatePlanChatReply(input: GeneratePlanChatReplyInput): 
       throw error;
     }
 
-    throw new PlanChatError("OpenAI request failed", "LLM_FAILURE", normalizeOpenAIError(error));
+    throw new PlanChatError(
+      `${env.LLM_PROVIDER === "gemini" ? "Gemini" : "OpenAI"} request failed`,
+      "LLM_FAILURE",
+      normalizeOpenAIError(error)
+    );
   }
 }
