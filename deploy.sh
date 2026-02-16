@@ -12,7 +12,7 @@ export WEB_IMAGE
 docker compose -f "${COMPOSE_FILE}" pull
 docker compose -f "${COMPOSE_FILE}" up -d db web
 
-docker compose -f "${COMPOSE_FILE}" exec -T web sh -lc 'npx prisma@5.22.0 migrate deploy --schema=./prisma/schema.prisma'
+docker compose -f "${COMPOSE_FILE}" exec -T web sh -lc 'prisma migrate deploy --schema=./prisma/schema.prisma'
 
 docker compose -f "${COMPOSE_FILE}" up -d --remove-orphans
 docker compose -f "${COMPOSE_FILE}" ps
