@@ -80,9 +80,9 @@ export default async function RootLayout({
                   <Link className="topbar-link" href="/dashboard">
                     Dashboard
                   </Link>
-                  <Link className="topbar-link" href={feedbackHref}>
+                  <a className="topbar-link" href={feedbackHref}>
                     Feedback
-                  </Link>
+                  </a>
                   <SignOutButton />
                 </>
               ) : (
