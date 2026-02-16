@@ -30,6 +30,14 @@ enum PlanChatRole {
   assistant
 }
 
+enum PlanGenerationJobStatus {
+  queued
+  running
+  succeeded
+  failed
+  canceled
+}
+
 model User {
   id                     String                  @id @default(cuid())
   email                  String                  @unique
@@ -48,6 +56,7 @@ model User {
   planTweakRequests      PlanTweakRequest[]
   planChatThreads        PlanChatThread[]
   sessionNotes           SessionNote[]
+  planGenerationJobs     PlanGenerationJob[]
 }
 
 model Account {
@@ -96,6 +105,7 @@ model QuestionnaireResponse {
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   trainingPlan TrainingPlan? @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  planGenerationJobs PlanGenerationJob[]
 
   @@index([userId, trainingPlanId, createdAt])
 }
@@ -117,6 +127,7 @@ model TrainingPlan {
   planTweakRequests    PlanTweakRequest[]
   planChatThreads      PlanChatThread[]
   sessionNotes         SessionNote[]
+  generationJobs       PlanGenerationJob[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -138,9 +149,36 @@ model TrainingPlanVersion {
   resultTweakRequests PlanTweakRequest[] @relation("ResultPlanVersion")
   planChatThreads PlanChatThread[]
   sessionNotes SessionNote[]
+  generatedByJobs PlanGenerationJob[] @relation("GeneratedPlanVersion")
 
   @@unique([trainingPlanId, versionNumber])
   @@index([trainingPlanId, createdAt])
+}
+
+model PlanGenerationJob {
+  id                    String                  @id @default(cuid())
+  userId                String
+  trainingPlanId        String
+  questionnaireResponseId String
+  idempotencyKey        String                  @unique
+  status                PlanGenerationJobStatus
+  retryCount            Int?
+  resultPlanVersionId   String?
+  errorCode             String?
+  errorMessage          String?
+  errorDetails          Json?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  startedAt             DateTime?
+  finishedAt            DateTime?
+
+  user                  User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingPlan          TrainingPlan            @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  questionnaireResponse QuestionnaireResponse   @relation(fields: [questionnaireResponseId], references: [id], onDelete: Cascade)
+  resultPlanVersion     TrainingPlanVersion?    @relation("GeneratedPlanVersion", fields: [resultPlanVersionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, trainingPlanId, createdAt])
+  @@index([trainingPlanId, status, createdAt])
 }
 
 model ActivityCompletion {

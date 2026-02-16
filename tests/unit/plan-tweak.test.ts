@@ -24,10 +24,10 @@ describe("plan-tweak service", () => {
       content: "TRAINING_CONTEXT"
     });
     expect(messages[1]?.role).toBe("system");
-    expect(messages[1]?.content).toContain("place 4x4s first");
-    expect(messages[1]?.content).toContain("place hangboarding first");
-    expect(messages[1]?.content).toContain("Warm-up activity and a Cool-down activity");
-    expect(messages[1]?.content).toContain("Hangboard/Fingerboard activity or one Conditioning/Strength activity");
+    expect(messages[1]?.content).toContain("Ordering: hangboard before climbing");
+    expect(messages[1]?.content).toContain("power-endurance before sustained route-sim");
+    expect(messages[1]?.content).toContain("Warm-up + Cool-down");
+    expect(messages[1]?.content).toContain("Conditioning/Strength");
     expect(messages[2]?.role).toBe("user");
     expect(typeof messages[2]?.content).toBe("string");
     expect((messages[2]?.content as string).includes("target_week_number")).toBe(true);
