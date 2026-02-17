@@ -5,18 +5,18 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "AI Intelligent Personalised Climbing Training Plans",
+  title: "Personalised climbing training plans",
   description:
-    "Generate AI-powered intelligent personalised climbing training blocks in minutes, then adjust sessions with coach chat and track your progress.",
+    "Structured climbing sessions you can adjust with coach chat, plus progress tracking.",
   alternates: {
     canonical: "/"
   },
   openGraph: {
     type: "website",
     url: "/",
-    title: "AI Intelligent Personalised Climbing Training Plans",
+    title: "Personalised climbing training plans",
     description:
-      "Generate AI-powered intelligent personalised climbing training blocks in minutes, then adjust sessions with coach chat and track your progress.",
+      "Structured climbing sessions you can adjust with coach chat, plus progress tracking.",
     images: [
       {
         url: "/opengraph-image",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Intelligent Personalised Climbing Training Plans",
+    title: "Personalised climbing training plans",
     description:
-      "Generate AI-powered intelligent personalised climbing training blocks in minutes, then adjust sessions with coach chat and track your progress.",
+      "Structured climbing sessions you can adjust with coach chat, plus progress tracking.",
     images: ["/twitter-image"]
   }
 };

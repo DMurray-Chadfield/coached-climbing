@@ -9,11 +9,11 @@ import { SignOutButton } from "@/components/sign-out-button";
 export const metadata: Metadata = {
   metadataBase: new URL("https://coachedclimbing.com"),
   title: {
-    default: "AI Intelligent Personalised Climbing Training Plans",
+    default: "Personalised climbing training plans",
     template: "%s | Coached Climbing"
   },
   description:
-    "AI-powered intelligent personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
+    "Personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
   alternates: {
     canonical: "/"
   },
@@ -21,9 +21,9 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Coached Climbing",
-    title: "AI Intelligent Personalised Climbing Training Plans",
+    title: "Personalised climbing training plans",
     description:
-      "AI-powered intelligent personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
+      "Personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
     images: [
       {
         url: "/opengraph-image",
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Intelligent Personalised Climbing Training Plans",
+    title: "Personalised climbing training plans",
     description:
-      "AI-powered intelligent personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
+      "Personalised climbing training plans with structured sessions, coach chat adjustments, and progress tracking.",
     images: ["/twitter-image"]
   }
 };
@@ -70,7 +70,7 @@ export default async function RootLayout({
           <div className="topbar-inner">
             <Link href={homeHref} className="brand-mark">
               <span className="brand-mark-badge" aria-hidden="true">
-                AC
+                CC
               </span>
               <span className="brand-mark-label">Coached Climbing</span>
             </Link>
