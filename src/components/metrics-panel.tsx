@@ -211,6 +211,9 @@ export function MetricsPanel() {
     <section className="card dashboard-list-card">
       <div className="metrics-header">
         <h2>Progress Metrics</h2>
+        <p className="metrics-subtext">
+          Track your progress with the following metrics, or add your own. Your coach will have access to any metrics you add.
+        </p>
         <button
           className="button-secondary metrics-add-btn"
           onClick={() => {
@@ -267,7 +270,15 @@ export function MetricsPanel() {
 
           {selectedUnit === "kg" && (
             <fieldset className="metrics-unit-fieldset">
-              <legend>Include body weight in percentage</legend>
+              <legend>
+                Include body weight in percentage
+                <span className="metrics-info-toggle" tabIndex={0} role="button" aria-label="More info">
+                  &#9432;
+                  <span className="metrics-info-popup">
+                    When set to &ldquo;Yes&rdquo;, the displayed percentage includes your body weight in the calculation: (body weight + weight added) / body weight &times; 100%. When set to &ldquo;No&rdquo;, only the added weight is used: weight added / body weight &times; 100%.
+                  </span>
+                </span>
+              </legend>
               <div className="metrics-radio-group">
                 <label className="metrics-radio-label">
                   <input
