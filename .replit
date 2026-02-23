@@ -1,0 +1,14 @@
+modules = ["nodejs-20", "web", "bash"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+NEXTAUTH_URL = "https://4d9d10da-cbb1-4ae7-8061-f672f8063132-00-1ki6q8foponfg.kirk.replit.dev"
+NEXTAUTH_SECRET = "277d3140936ab639eeb0719df6f68bebce1a41b008a2becb05ec152602e219d6"
+LLM_PROVIDER = "openai"
+OPENAI_MODEL_PRIMARY = "gpt-4o-mini"
