@@ -1538,14 +1538,45 @@ a:focus-visible {
   border: 1px solid var(--border-soft);
 }
 
-.metrics-add-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-3);
+.metrics-unit-fieldset {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin: 0;
 }
 
-.metrics-add-row label:last-child input {
-  max-width: 100px;
+.metrics-unit-fieldset legend {
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 0 0.4rem;
+  font-size: 0.9rem;
+}
+
+.metrics-radio-group {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.metrics-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.metrics-radio-label input[type="radio"] {
+  width: auto;
+  min-height: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.metrics-custom-unit-input {
+  margin-top: var(--space-2);
 }
 
 .metrics-list {

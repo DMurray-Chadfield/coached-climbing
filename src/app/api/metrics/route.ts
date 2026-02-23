@@ -8,7 +8,8 @@ import { seedDefaultMetrics } from "@/lib/services/default-metrics";
 const createMetricSchema = z.object({
   name: z.string().trim().min(1).max(100),
   unit: z.string().trim().min(1).max(30),
-  description: z.string().trim().max(500).default("")
+  description: z.string().trim().max(500).default(""),
+  includeBwInPercentage: z.boolean().default(false)
 });
 
 export async function GET() {
@@ -47,6 +48,7 @@ export async function GET() {
         unit: d.unit,
         description: d.description,
         isDefault: d.isDefault,
+        includeBwInPercentage: d.includeBwInPercentage,
         latestEntry: d.entries[0]
           ? {
               id: d.entries[0].id,
@@ -88,9 +90,10 @@ export async function POST(request: Request) {
         name: parsed.data.name,
         unit: parsed.data.unit,
         description: parsed.data.description,
-        isDefault: false
+        isDefault: false,
+        includeBwInPercentage: parsed.data.includeBwInPercentage
       },
-      select: { id: true, name: true, unit: true, description: true, isDefault: true }
+      select: { id: true, name: true, unit: true, description: true, isDefault: true, includeBwInPercentage: true }
     });
 
     return NextResponse.json({ metric }, { status: 201 });

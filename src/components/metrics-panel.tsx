@@ -14,6 +14,7 @@ type Metric = {
   unit: string;
   description: string;
   isDefault: boolean;
+  includeBwInPercentage: boolean;
   latestEntry: MetricEntry | null;
 };
 
@@ -23,6 +24,9 @@ type EntryDetail = {
   recordedAt: string;
 };
 
+const UNIT_OPTIONS = ["kg", "s", "cm", "other"] as const;
+type UnitOption = (typeof UNIT_OPTIONS)[number];
+
 function formatDate(iso: string): string {
   return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium"
@@ -31,11 +35,14 @@ function formatDate(iso: string): string {
 
 function computeBodyWeightPercent(
   weightAdded: number,
-  bodyWeightEntry: MetricEntry | null
+  bodyWeightEntry: MetricEntry | null,
+  includeBwInNumerator: boolean
 ): string | null {
   if (!bodyWeightEntry || bodyWeightEntry.value <= 0) return null;
   const bw = bodyWeightEntry.value;
-  const pct = (100 * (weightAdded + bw)) / bw;
+  const pct = includeBwInNumerator
+    ? (100 * (weightAdded + bw)) / bw
+    : (100 * weightAdded) / bw;
   return pct.toFixed(1);
 }
 
@@ -49,7 +56,9 @@ export function MetricsPanel() {
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [showAddMetric, setShowAddMetric] = useState(false);
   const [newMetricName, setNewMetricName] = useState("");
-  const [newMetricUnit, setNewMetricUnit] = useState("");
+  const [selectedUnit, setSelectedUnit] = useState<UnitOption>("kg");
+  const [customUnit, setCustomUnit] = useState("");
+  const [includeBwInPercentage, setIncludeBwInPercentage] = useState(true);
   const [newMetricDescription, setNewMetricDescription] = useState("");
   const [addMetricError, setAddMetricError] = useState("");
   const [creatingMetric, setCreatingMetric] = useState(false);
@@ -142,13 +151,25 @@ export function MetricsPanel() {
     }
   };
 
+  const resetAddForm = () => {
+    setNewMetricName("");
+    setSelectedUnit("kg");
+    setCustomUnit("");
+    setIncludeBwInPercentage(true);
+    setNewMetricDescription("");
+    setAddMetricError("");
+  };
+
   const handleCreateMetric = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddMetricError("");
-    if (!newMetricName.trim() || !newMetricUnit.trim()) {
+
+    const resolvedUnit = selectedUnit === "other" ? customUnit.trim() : selectedUnit;
+    if (!newMetricName.trim() || !resolvedUnit) {
       setAddMetricError("Name and unit are required.");
       return;
     }
+
     setCreatingMetric(true);
     try {
       const res = await fetch("/api/metrics", {
@@ -156,14 +177,13 @@ export function MetricsPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: newMetricName.trim(),
-          unit: newMetricUnit.trim(),
-          description: newMetricDescription.trim()
+          unit: resolvedUnit,
+          description: newMetricDescription.trim(),
+          includeBwInPercentage: selectedUnit === "kg" ? includeBwInPercentage : false
         })
       });
       if (res.ok) {
-        setNewMetricName("");
-        setNewMetricUnit("");
-        setNewMetricDescription("");
+        resetAddForm();
         setShowAddMetric(false);
         await fetchMetrics();
       } else {
@@ -193,7 +213,10 @@ export function MetricsPanel() {
         <h2>Progress Metrics</h2>
         <button
           className="button-secondary metrics-add-btn"
-          onClick={() => setShowAddMetric(!showAddMetric)}
+          onClick={() => {
+            if (showAddMetric) resetAddForm();
+            setShowAddMetric(!showAddMetric);
+          }}
           type="button"
         >
           {showAddMetric ? "Cancel" : "+ Add Metric"}
@@ -202,28 +225,74 @@ export function MetricsPanel() {
 
       {showAddMetric && (
         <form className="metrics-add-form" onSubmit={handleCreateMetric}>
-          <div className="metrics-add-row">
-            <label>
-              <span>Name</span>
+          <label>
+            <span>Name</span>
+            <input
+              type="text"
+              placeholder="e.g. Campus Board Max"
+              value={newMetricName}
+              onChange={(e) => setNewMetricName(e.target.value)}
+              required
+            />
+          </label>
+
+          <fieldset className="metrics-unit-fieldset">
+            <legend>Unit</legend>
+            <div className="metrics-radio-group">
+              {UNIT_OPTIONS.map((opt) => (
+                <label key={opt} className="metrics-radio-label">
+                  <input
+                    type="radio"
+                    name="metric-unit"
+                    value={opt}
+                    checked={selectedUnit === opt}
+                    onChange={() => setSelectedUnit(opt)}
+                  />
+                  <span>{opt === "other" ? "Other" : opt}</span>
+                </label>
+              ))}
+            </div>
+
+            {selectedUnit === "other" && (
               <input
                 type="text"
-                placeholder="e.g. Campus Board Max"
-                value={newMetricName}
-                onChange={(e) => setNewMetricName(e.target.value)}
+                placeholder="Enter custom unit"
+                value={customUnit}
+                onChange={(e) => setCustomUnit(e.target.value)}
                 required
+                className="metrics-custom-unit-input"
               />
-            </label>
-            <label>
-              <span>Unit</span>
-              <input
-                type="text"
-                placeholder="e.g. kg"
-                value={newMetricUnit}
-                onChange={(e) => setNewMetricUnit(e.target.value)}
-                required
-              />
-            </label>
-          </div>
+            )}
+          </fieldset>
+
+          {selectedUnit === "kg" && (
+            <fieldset className="metrics-unit-fieldset">
+              <legend>Include body weight in percentage</legend>
+              <div className="metrics-radio-group">
+                <label className="metrics-radio-label">
+                  <input
+                    type="radio"
+                    name="include-bw"
+                    value="yes"
+                    checked={includeBwInPercentage === true}
+                    onChange={() => setIncludeBwInPercentage(true)}
+                  />
+                  <span>Yes</span>
+                </label>
+                <label className="metrics-radio-label">
+                  <input
+                    type="radio"
+                    name="include-bw"
+                    value="no"
+                    checked={includeBwInPercentage === false}
+                    onChange={() => setIncludeBwInPercentage(false)}
+                  />
+                  <span>No</span>
+                </label>
+              </div>
+            </fieldset>
+          )}
+
           <label>
             <span>Description (optional)</span>
             <input
@@ -246,9 +315,14 @@ export function MetricsPanel() {
         <ul className="metrics-list">
           {metrics.map((metric) => {
             const isBodyWeight = metric.name === "Body Weight";
-            const showBwPct = !isBodyWeight && metric.latestEntry && bodyWeightEntry;
+            const isKg = metric.unit === "kg";
+            const showBwPct = !isBodyWeight && isKg && metric.latestEntry && bodyWeightEntry;
             const bwPct = showBwPct
-              ? computeBodyWeightPercent(metric.latestEntry!.value, bodyWeightEntry)
+              ? computeBodyWeightPercent(
+                  metric.latestEntry!.value,
+                  bodyWeightEntry,
+                  metric.includeBwInPercentage
+                )
               : null;
 
             return (
@@ -336,22 +410,27 @@ export function MetricsPanel() {
                           <tr>
                             <th>Date</th>
                             <th>Value</th>
-                            {!isBodyWeight && <th>% BW</th>}
+                            {!isBodyWeight && isKg && <th>% BW</th>}
                             <th></th>
                           </tr>
                         </thead>
                         <tbody>
                           {entries.map((entry) => {
-                            const entryBwPct = !isBodyWeight
-                              ? computeBodyWeightPercent(entry.value, bodyWeightEntry)
-                              : null;
+                            const entryBwPct =
+                              !isBodyWeight && isKg
+                                ? computeBodyWeightPercent(
+                                    entry.value,
+                                    bodyWeightEntry,
+                                    metric.includeBwInPercentage
+                                  )
+                                : null;
                             return (
                               <tr key={entry.id}>
                                 <td>{formatDate(entry.recordedAt)}</td>
                                 <td>
                                   {entry.value} {metric.unit}
                                 </td>
-                                {!isBodyWeight && (
+                                {!isBodyWeight && isKg && (
                                   <td>{entryBwPct ? `${entryBwPct}%` : "\u2014"}</td>
                                 )}
                                 <td>
