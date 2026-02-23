@@ -4,6 +4,12 @@
 An AI-powered climbing coaching application that creates personalized training plans. Users complete an onboarding questionnaire, and the app generates structured week-by-week training plans using AI (OpenAI). Users can chat with the coach to adjust plans and track completion.
 
 ## Recent Changes
+- 2026-02-23: Added progress metrics feature
+  - MetricDefinition and MetricEntry database models with Prisma migration
+  - API routes for metrics CRUD: list, create, delete definitions; add, list, delete entries
+  - MetricsPanel dashboard component with latest values, history, BW% calculations, custom metric creation
+  - Default metrics (Body Weight, Finger Strength, Weighted Pull-ups) auto-seeded for new users
+  - Metrics integrated into AI coach context (plan generation and chat) so coach references user data
 - 2026-02-23: Initial Replit environment setup from GitHub import
 - Configured Next.js for Replit (port 5000, allowed dev origins)
 - Set up PostgreSQL database with Prisma migrations
