@@ -113,7 +113,12 @@ export class OpenAiLlmClient implements LlmClient {
   private readonly client: OpenAI;
 
   constructor(apiKey: string) {
-    this.client = new OpenAI({ apiKey });
+    const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+    const integrationKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+    this.client = new OpenAI({
+      apiKey: integrationKey || apiKey,
+      ...(baseURL ? { baseURL } : {})
+    });
   }
 
   async complete(input: { model: string; messages: LlmMessage[]; mode: LlmMode }): Promise<{ text: string }> {

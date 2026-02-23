@@ -8,11 +8,15 @@ const CommonEnvSchema = z.object({
 
 const OpenAiEnvSchema = CommonEnvSchema.extend({
   LLM_PROVIDER: z.literal("openai").default("openai"),
-  OPENAI_API_KEY: z.string().min(1),
+  OPENAI_API_KEY: z.string().min(1).optional(),
+  AI_INTEGRATIONS_OPENAI_API_KEY: z.string().min(1).optional(),
   OPENAI_MODEL_PRIMARY: z.string().min(1),
   GEMINI_API_KEY: z.string().min(1).optional(),
   GEMINI_MODEL_PRIMARY: z.string().min(1).optional()
-});
+}).refine(
+  (data) => data.OPENAI_API_KEY || data.AI_INTEGRATIONS_OPENAI_API_KEY,
+  { message: "Either OPENAI_API_KEY or AI_INTEGRATIONS_OPENAI_API_KEY must be set" }
+);
 
 const GeminiEnvSchema = CommonEnvSchema.extend({
   LLM_PROVIDER: z.literal("gemini"),

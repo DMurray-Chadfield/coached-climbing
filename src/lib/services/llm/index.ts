@@ -13,7 +13,7 @@ export function getLlmClientFromEnv(): { client: LlmClient; model: string } {
   }
 
   return {
-    client: new OpenAiLlmClient(env.OPENAI_API_KEY),
+    client: new OpenAiLlmClient(env.OPENAI_API_KEY ?? ""),
     model: env.OPENAI_MODEL_PRIMARY
   };
 }
