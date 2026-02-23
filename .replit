@@ -13,3 +13,36 @@ NEXTAUTH_URL = "https://4d9d10da-cbb1-4ae7-8061-f672f8063132-00-1ki6q8foponfg.ki
 NEXTAUTH_SECRET = "277d3140936ab639eeb0719df6f68bebce1a41b008a2becb05ec152602e219d6"
 LLM_PROVIDER = "openai"
 OPENAI_MODEL_PRIMARY = "gpt-4o-mini"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace && npx next dev -H 0.0.0.0 -p 5000"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["npx", "next", "start", "-H", "0.0.0.0"]
+build = ["bash", "-c", "npx prisma generate && npx prisma migrate deploy && npx next build"]
